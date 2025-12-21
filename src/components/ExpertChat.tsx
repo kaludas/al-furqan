@@ -9,6 +9,104 @@ type Message = {
   content: string;
 };
 
+// Function to format AI response with doctrine colors
+const formatDoctrineContent = (content: string) => {
+  // Define patterns for each doctrine section
+  const patterns = [
+    { 
+      regex: /(\*\*1\.\s*LE PRISME CHRÉTIEN[^*]*\*\*|1\.\s*LE PRISME CHRÉTIEN[^\n]*)/gi,
+      header: "LE PRISME CHRÉTIEN",
+      color: "text-blue-400",
+      bgColor: "bg-blue-500/10",
+      borderColor: "border-blue-500/30"
+    },
+    {
+      regex: /(\*\*2\.\s*LE PRISME JUDAÏQUE[^*]*\*\*|2\.\s*LE PRISME JUDAÏQUE[^\n]*)/gi,
+      header: "LE PRISME JUDAÏQUE",
+      color: "text-yellow-400",
+      bgColor: "bg-yellow-500/10",
+      borderColor: "border-yellow-500/30"
+    },
+    {
+      regex: /(\*\*3\.\s*L['']ILLUSION OCCULTE[^*]*\*\*|3\.\s*L['']ILLUSION OCCULTE[^\n]*)/gi,
+      header: "L'ILLUSION OCCULTE",
+      color: "text-purple-400",
+      bgColor: "bg-purple-500/10",
+      borderColor: "border-purple-500/30"
+    },
+    {
+      regex: /(\*\*4\.\s*LA LUMIÈRE DE LA RÉVÉLATION[^*]*\*\*|4\.\s*LA LUMIÈRE DE LA RÉVÉLATION[^\n]*)/gi,
+      header: "LA LUMIÈRE DE LA RÉVÉLATION",
+      color: "text-emerald-400",
+      bgColor: "bg-emerald-500/10",
+      borderColor: "border-emerald-500/30"
+    },
+    {
+      regex: /(\*\*5\.\s*LE VERDICT DE LA RAISON[^*]*\*\*|5\.\s*LE VERDICT DE LA RAISON[^\n]*)/gi,
+      header: "LE VERDICT DE LA RAISON",
+      color: "text-primary",
+      bgColor: "bg-primary/10",
+      borderColor: "border-primary/30"
+    }
+  ];
+
+  // Split content into sections
+  let sections: { type: string; content: string; color: string; bgColor: string; borderColor: string }[] = [];
+  let remainingContent = content;
+  let lastIndex = 0;
+
+  // Simple approach: just render with highlighted headers
+  return content;
+};
+
+// Component to render formatted message content
+const FormattedMessage = ({ content }: { content: string }) => {
+  // Check for doctrine section headers and apply colors
+  const renderFormattedContent = () => {
+    const lines = content.split('\n');
+    
+    return lines.map((line, index) => {
+      // Christianity header
+      if (line.match(/1\.\s*LE PRISME CHRÉTIEN|LE PRISME CHRÉTIEN/i)) {
+        return <p key={index} className="text-blue-400 font-bold mt-4 mb-2 text-base">{line.replace(/\*\*/g, '')}</p>;
+      }
+      // Judaism header
+      if (line.match(/2\.\s*LE PRISME JUDAÏQUE|LE PRISME JUDAÏQUE/i)) {
+        return <p key={index} className="text-yellow-400 font-bold mt-4 mb-2 text-base">{line.replace(/\*\*/g, '')}</p>;
+      }
+      // Occultism header
+      if (line.match(/3\.\s*L['']ILLUSION OCCULTE|L['']ILLUSION OCCULTE/i)) {
+        return <p key={index} className="text-purple-400 font-bold mt-4 mb-2 text-base">{line.replace(/\*\*/g, '')}</p>;
+      }
+      // Quran header
+      if (line.match(/4\.\s*LA LUMIÈRE DE LA RÉVÉLATION|LA LUMIÈRE DE LA RÉVÉLATION/i)) {
+        return <p key={index} className="text-emerald-400 font-bold mt-4 mb-2 text-base">{line.replace(/\*\*/g, '')}</p>;
+      }
+      // Verdict header
+      if (line.match(/5\.\s*LE VERDICT DE LA RAISON|LE VERDICT DE LA RAISON/i)) {
+        return <p key={index} className="text-primary font-bold mt-4 mb-2 text-base">{line.replace(/\*\*/g, '')}</p>;
+      }
+      // Quran verses in quotes
+      if (line.match(/«.*»/) || line.match(/".*"/)) {
+        return <p key={index} className="text-emerald-300 italic my-1">{line}</p>;
+      }
+      // Sourate references
+      if (line.match(/Sourate|Coran\s+\d+:\d+/i)) {
+        return <p key={index} className="text-emerald-400/80 text-xs my-1">{line}</p>;
+      }
+      // Bold text (surrounded by **)
+      if (line.match(/\*\*[^*]+\*\*/)) {
+        const formatted = line.replace(/\*\*([^*]+)\*\*/g, '<strong class="text-foreground">$1</strong>');
+        return <p key={index} className="my-1" dangerouslySetInnerHTML={{ __html: formatted }} />;
+      }
+      // Normal line
+      return <p key={index} className="my-1">{line}</p>;
+    });
+  };
+
+  return <div className="whitespace-pre-wrap text-sm leading-relaxed">{renderFormattedContent()}</div>;
+};
+
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/theology-chat`;
 
 const allSuggestedQuestions = [
@@ -298,7 +396,11 @@ export const ExpertChat = () => {
                           : "bg-card/80 text-foreground rounded-bl-md border border-glass"
                       )}
                     >
-                      <p className="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</p>
+                      {message.role === "assistant" ? (
+                        <FormattedMessage content={message.content} />
+                      ) : (
+                        <p className="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</p>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -360,7 +462,7 @@ export const ExpertChat = () => {
                   <div className="p-5">
                     {activeTab === "response" && (
                       <div className="text-muted-foreground text-sm leading-relaxed">
-                        <p className="whitespace-pre-wrap">{lastAssistantMessage.content}</p>
+                        <FormattedMessage content={lastAssistantMessage.content} />
                       </div>
                     )}
                     {activeTab === "sources" && (
