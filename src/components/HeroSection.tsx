@@ -14,8 +14,8 @@ export const HeroSection = () => {
           </p>
           
           <h1 className="font-display text-5xl md:text-7xl lg:text-8xl font-semibold text-foreground mb-4 leading-tight">
-            Le Coran
-            <span className="block text-gradient-gold">& l'Occultisme</span>
+            Al-Furqan
+            <span className="block text-gradient-gold">Le Discriminateur</span>
           </h1>
           
           <p className="text-4xl md:text-5xl font-display text-primary/80 mb-8 animate-float">
@@ -23,8 +23,8 @@ export const HeroSection = () => {
           </p>
           
           <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto mb-12 leading-relaxed">
-            Une exploration rigoureuse des structures linguistiques, des miracles rhétoriques 
-            et de la clarté doctrinale du monothéisme face aux traditions ésotériques.
+            Théologie comparée : Islam, Christianisme, Judaïsme et Occultisme. 
+            Une analyse rigoureuse qui sépare la vérité de l'illusion.
           </p>
         </div>
 

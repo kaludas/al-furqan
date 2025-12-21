@@ -1,6 +1,7 @@
 import { Navigation } from "@/components/Navigation";
 import { HeroSection } from "@/components/HeroSection";
 import { ExpertChat } from "@/components/ExpertChat";
+import { ReligionComparator } from "@/components/ReligionComparator";
 import { IjazModule } from "@/components/IjazModule";
 import { ProphetTimeline } from "@/components/ProphetTimeline";
 import { ScienceLab } from "@/components/ScienceLab";
@@ -17,13 +18,14 @@ const Index = () => {
         <HeroSection />
       </div>
       <ExpertChat />
-      <IjazModule />
-      <ProphetTimeline />
-      <ScienceLab />
-      <SymbolScanner />
+      <ReligionComparator />
       <div id="tawhid">
         <TawhidSection />
       </div>
+      <IjazModule />
+      <ScienceLab />
+      <ProphetTimeline />
+      <SymbolScanner />
       <FitraTest />
       <Footer />
     </main>
