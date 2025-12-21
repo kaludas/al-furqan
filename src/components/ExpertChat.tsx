@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { GlassCard } from "./GlassCard";
 import { SectionTitle } from "./SectionTitle";
-import { Send, Loader2, Sparkles, BookOpen, ShieldAlert, Lightbulb, RefreshCw, Cross, Star, Moon, Eye } from "lucide-react";
+import { Send, Loader2, Sparkles, BookOpen, ShieldAlert, Lightbulb, RefreshCw, Cross, Star, Moon, Eye, HelpCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type Message = {
@@ -66,24 +66,28 @@ const FormattedMessage = ({ content }: { content: string }) => {
     const lines = content.split('\n');
     
     return lines.map((line, index) => {
-      // Christianity header
-      if (line.match(/1\.\s*LE PRISME CHRÉTIEN|LE PRISME CHRÉTIEN/i)) {
+      // Christianity header (blue)
+      if (line.match(/1\.\s*✝️?\s*LE PRISME CHRÉTIEN|LE PRISME CHRÉTIEN/i)) {
         return <p key={index} className="text-blue-400 font-bold mt-4 mb-2 text-base">{line.replace(/\*\*/g, '')}</p>;
       }
-      // Judaism header
-      if (line.match(/2\.\s*LE PRISME JUDAÏQUE|LE PRISME JUDAÏQUE/i)) {
+      // Judaism header (yellow)
+      if (line.match(/2\.\s*✡️?\s*LE PRISME JUDAÏQUE|LE PRISME JUDAÏQUE/i)) {
         return <p key={index} className="text-yellow-400 font-bold mt-4 mb-2 text-base">{line.replace(/\*\*/g, '')}</p>;
       }
-      // Occultism header
-      if (line.match(/3\.\s*L['']ILLUSION OCCULTE|L['']ILLUSION OCCULTE/i)) {
+      // Occultism header (purple)
+      if (line.match(/3\.\s*🌑?\s*L['']ILLUSION OCCULTE|L['']ILLUSION OCCULTE/i)) {
         return <p key={index} className="text-purple-400 font-bold mt-4 mb-2 text-base">{line.replace(/\*\*/g, '')}</p>;
       }
-      // Quran header
-      if (line.match(/4\.\s*LA LUMIÈRE DE LA RÉVÉLATION|LA LUMIÈRE DE LA RÉVÉLATION/i)) {
+      // Agnosticism header (gray/slate)
+      if (line.match(/4\.\s*❔?\s*LE PRISME AGNOSTIQUE|LE PRISME AGNOSTIQUE/i)) {
+        return <p key={index} className="text-slate-400 font-bold mt-4 mb-2 text-base">{line.replace(/\*\*/g, '')}</p>;
+      }
+      // Quran header (emerald)
+      if (line.match(/5\.\s*☀️?\s*LA LUMIÈRE DE LA RÉVÉLATION|LA LUMIÈRE DE LA RÉVÉLATION/i)) {
         return <p key={index} className="text-emerald-400 font-bold mt-4 mb-2 text-base">{line.replace(/\*\*/g, '')}</p>;
       }
-      // Verdict header
-      if (line.match(/5\.\s*LE VERDICT DE LA RAISON|LE VERDICT DE LA RAISON/i)) {
+      // Verdict header (primary/gold)
+      if (line.match(/6\.\s*⚖️?\s*LE VERDICT DE LA RAISON|LE VERDICT DE LA RAISON/i)) {
         return <p key={index} className="text-primary font-bold mt-4 mb-2 text-base">{line.replace(/\*\*/g, '')}</p>;
       }
       // Quran verses in quotes
@@ -159,6 +163,16 @@ const allSuggestedQuestions = [
   "Qu'est-ce que la Fitra et comment la préserver ?",
   "Pourquoi le monothéisme pur est-il la seule logique ?",
   "Comment distinguer révélation divine et tradition humaine ?",
+  
+  // Questions sur l'Agnosticisme
+  "Dieu existe-t-il ? Réponse à l'agnosticisme.",
+  "Comment le Coran répond-il au doute ?",
+  "Peut-on prouver l'existence de Dieu rationnellement ?",
+  "Pourquoi l'incertitude n'est-elle pas une option logique ?",
+  "Comment sortir du scepticisme spirituel ?",
+  "Qu'est-ce que le raisonnement par l'absurde coranique ?",
+  "Pourquoi l'Islam est une religion de preuve, pas de mystère ?",
+  "Les signes de l'univers prouvent-ils un Créateur ?",
 ];
 
 function shuffleArray<T>(array: T[]): T[] {
@@ -317,7 +331,7 @@ export const ExpertChat = () => {
         <SectionTitle
           arabicTitle="الفرقان"
           title="Al-Furqan : Le Discriminateur"
-          subtitle="Théologie comparée entre Islam, Christianisme, Judaïsme et Occultisme. L'IA analyse chaque question sous 5 prismes différents."
+          subtitle="Théologie comparée entre Islam, Christianisme, Judaïsme, Occultisme et Agnosticisme. L'IA analyse chaque question sous 6 prismes différents."
         />
 
         <GlassCard glow className="p-6 md:p-8">
@@ -325,10 +339,10 @@ export const ExpertChat = () => {
           <div className="text-center mb-8">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm mb-4">
               <Sparkles size={16} />
-              <span>Mode Confrontation à 5 Piliers</span>
+              <span>Mode Confrontation à 6 Piliers</span>
             </div>
             
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-6">
+            <div className="grid grid-cols-3 md:grid-cols-5 gap-3 mt-6">
               <div className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-center">
                 <Cross className="w-5 h-5 mx-auto mb-1 text-blue-400" />
                 <p className="text-xs text-blue-400 font-medium">Christianisme</p>
@@ -341,7 +355,11 @@ export const ExpertChat = () => {
                 <Eye className="w-5 h-5 mx-auto mb-1 text-purple-400" />
                 <p className="text-xs text-purple-400 font-medium">Occultisme</p>
               </div>
-              <div className="p-3 rounded-xl bg-primary/10 border border-primary/20 text-center">
+              <div className="p-3 rounded-xl bg-slate-500/10 border border-slate-500/20 text-center">
+                <HelpCircle className="w-5 h-5 mx-auto mb-1 text-slate-400" />
+                <p className="text-xs text-slate-400 font-medium">Agnosticisme</p>
+              </div>
+              <div className="p-3 rounded-xl bg-primary/10 border border-primary/20 text-center col-span-3 md:col-span-1">
                 <Moon className="w-5 h-5 mx-auto mb-1 text-primary" />
                 <p className="text-xs text-primary font-medium">Coran</p>
               </div>
@@ -494,6 +512,14 @@ export const ExpertChat = () => {
                           <div className="p-3 rounded-lg bg-purple-500/10 text-sm">
                             <span className="text-purple-400 font-medium">🔮 Sefer ha-Zohar</span>
                             <p className="text-muted-foreground text-xs mt-1">Texte central de la Kabbale</p>
+                          </div>
+                          <div className="p-3 rounded-lg bg-slate-500/10 text-sm">
+                            <span className="text-slate-400 font-medium">❔ Philosophie Sceptique</span>
+                            <p className="text-muted-foreground text-xs mt-1">Pyrrhon, Hume, Russell</p>
+                          </div>
+                          <div className="p-3 rounded-lg bg-slate-500/10 text-sm">
+                            <span className="text-slate-400 font-medium">❔ Arguments Cosmologiques</span>
+                            <p className="text-muted-foreground text-xs mt-1">Kalam, Al-Ghazali, Ibn Rushd</p>
                           </div>
                         </div>
                       </div>
