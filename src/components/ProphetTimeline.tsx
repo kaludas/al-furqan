@@ -2,6 +2,7 @@ import { useState } from "react";
 import { GlassCard } from "./GlassCard";
 import { SectionTitle } from "./SectionTitle";
 import { cn } from "@/lib/utils";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface Prophet {
   name: string;
@@ -279,314 +280,123 @@ const prophets: Prophet[] = [
 ];
 
 const myths: Myth[] = [
-  // Civilisations anciennes
   {
     name: "Mythologie Sumérienne",
     year: -4000,
     yearLabel: "~4000 av. J.-C.",
     civilization: "Mésopotamie",
-    description: "Panthéon d'Anu, Enlil, Enki. Épopée de Gilgamesh. Déluge avec Utnapishtim.",
-    keyTeachings: ["Polythéisme", "Dieux capricieux aux passions humaines", "Magie rituelle", "Divination par le foie"],
-    contrast: "Les dieux sumériens sont multiples et imparfaits. Le Tawhid affirme un Créateur unique, parfait et transcendant.",
-    sources: ["Tablettes de Nippur", "Épopée de Gilgamesh", "Enuma Elish"]
+    description: "Panthéon d'Anu, Enlil, Enki. Épopée de Gilgamesh.",
+    keyTeachings: ["Polythéisme", "Dieux capricieux", "Magie rituelle"],
+    contrast: "Les dieux sumériens sont multiples et imparfaits. Le Tawhid affirme un Créateur unique et parfait.",
+    sources: ["Tablettes de Nippur", "Épopée de Gilgamesh"]
   },
   {
-    name: "Religion Égyptienne Ancienne",
+    name: "Religion Égyptienne",
     year: -3500,
     yearLabel: "~3500 av. J.-C.",
     civilization: "Égypte",
-    description: "Râ, Osiris, Isis, Horus. Cycle de mort et résurrection. Livre des Morts.",
-    keyTeachings: ["Panthéon complexe", "Pharaon comme dieu vivant", "Magie funéraire", "Jugement par Osiris"],
-    contrast: "La divinisation du Pharaon contredit directement le Tawhid où aucun humain ne peut être adoré.",
-    sources: ["Textes des Pyramides", "Livre des Morts", "Textes des Sarcophages"]
-  },
-  {
-    name: "Cultes à Mystères Égyptiens",
-    year: -2500,
-    yearLabel: "~2500 av. J.-C.",
-    civilization: "Égypte",
-    description: "Culte d'Osiris-Isis. Secrets réservés aux prêtres initiés. Rituels de momification.",
-    keyTeachings: ["Savoir caché aux masses", "Initiation secrète", "Résurrection par rituels", "Magie opérative"],
-    contrast: "Le savoir réservé aux prêtres vs. le Coran accessible à tous. L''Ilm universel vs. Gnose élitiste.",
-    sources: ["Papyrus de Turin", "Rituels d'Abydos", "Textes d'Hermopolis"]
+    description: "Râ, Osiris, Isis. Pharaon comme dieu vivant.",
+    keyTeachings: ["Panthéon complexe", "Pharaon divinisé", "Magie funéraire"],
+    contrast: "La divinisation du Pharaon contredit le Tawhid.",
+    sources: ["Textes des Pyramides", "Livre des Morts"]
   },
   {
     name: "Zoroastrisme",
     year: -1500,
     yearLabel: "~1500 av. J.-C.",
     civilization: "Perse",
-    description: "Ahura Mazda vs Angra Mainyu. Dualisme cosmique. Mages comme classe sacerdotale.",
-    keyTeachings: ["Dualisme Bien/Mal", "Combat cosmique éternel", "Feu sacré", "Prêtrise héréditaire"],
-    contrast: "Le dualisme pose deux forces égales. L'Islam affirme qu'Allah est Tout-Puissant, le mal n'étant qu'une épreuve.",
-    sources: ["Avesta", "Gathas de Zarathoustra", "Bundahishn"]
-  },
-  {
-    name: "Védisme & Brahmanisme",
-    year: -1500,
-    yearLabel: "~1500 av. J.-C.",
-    civilization: "Inde",
-    description: "Vedas, Brahmanes, système de castes. Brahman comme réalité ultime impersonnelle.",
-    keyTeachings: ["Panthéon védique", "Rituels sacrificiels", "Castes sacrées", "Karma et réincarnation"],
-    contrast: "Le système des castes contredit l'égalité des hommes devant Allah. L'Islam rejette l'idée d'un Dieu impersonnel.",
-    sources: ["Rig Veda", "Upanishads", "Brahmanas"]
+    description: "Ahura Mazda vs Angra Mainyu. Dualisme cosmique.",
+    keyTeachings: ["Dualisme Bien/Mal", "Combat cosmique", "Feu sacré"],
+    contrast: "Le dualisme pose deux forces égales. Allah est Tout-Puissant.",
+    sources: ["Avesta", "Gathas"]
   },
   {
     name: "Mythologie Grecque",
     year: -1200,
     yearLabel: "~1200 av. J.-C.",
     civilization: "Grèce",
-    description: "Zeus, Olympe, Titans. Dieux aux passions humaines. Héros demi-dieux.",
-    keyTeachings: ["Polythéisme anthropomorphique", "Dieux jaloux et immoraux", "Destin (Fatum)", "Demi-dieux"],
-    contrast: "Les dieux grecs mentent, trompent, commettent l'adultère. Allah est Al-Quddus (Le Saint, Le Pur).",
-    sources: ["Théogonie d'Hésiode", "Iliade et Odyssée d'Homère", "Métamorphoses d'Ovide"]
+    description: "Zeus, Olympe, dieux aux passions humaines.",
+    keyTeachings: ["Polythéisme anthropomorphique", "Dieux immoraux", "Destin (Fatum)"],
+    contrast: "Les dieux grecs mentent et trompent. Allah est Al-Quddus (Le Saint).",
+    sources: ["Théogonie d'Hésiode", "Iliade d'Homère"]
   },
   {
-    name: "Mystères d'Éleusis",
-    year: -1000,
-    yearLabel: "~1000 av. J.-C.",
-    civilization: "Grèce",
-    description: "Culte de Déméter et Perséphone. Initiation secrète promettant une meilleure vie après la mort.",
-    keyTeachings: ["Rites secrets", "Expériences mystiques induites", "Boisson sacrée (kykeon)", "Silence imposé"],
-    contrast: "L'Islam enseigne que le salut vient de la foi et des œuvres, non de rituels secrets ou d'expériences mystiques.",
-    sources: ["Hymne homérique à Déméter", "Platon (Phèdre)", "Cicéron (De Legibus)"]
-  },
-  {
-    name: "Orphisme",
-    year: -600,
-    yearLabel: "~600 av. J.-C.",
-    civilization: "Grèce",
-    description: "Culte d'Orphée et Dionysos. Cycle des réincarnations. L'âme divine prisonnière du corps.",
-    keyTeachings: ["Métempsycose", "Corps = prison de l'âme", "Végétarisme rituel", "Textes sacrés secrets"],
-    contrast: "L'Islam rejette la réincarnation. L'âme retourne à Allah une seule fois pour le Jugement.",
-    sources: ["Tablettes d'or orphiques", "Papyrus de Derveni", "Fragments orphiques"]
-  },
-  {
-    name: "Pythagorisme",
-    year: -530,
-    yearLabel: "~530 av. J.-C.",
-    civilization: "Grèce",
-    description: "Communauté ésotérique de Pythagore. Nombres sacrés. Transmigration des âmes.",
-    keyTeachings: ["Mathématiques mystiques", "Réincarnation", "Règles alimentaires secrètes", "Silence initiatique"],
-    contrast: "Les nombres ne sont pas sacrés en Islam. La création est un signe d'Allah, non une manifestation numérique.",
-    sources: ["Vers d'Or pythagoriciens", "Vie de Pythagore (Jamblique)", "Fragments de Philolaos"]
-  },
-  {
-    name: "Hermès Trismégiste",
+    name: "Hermétisme",
     year: -300,
     yearLabel: "~300 av. J.-C.",
-    civilization: "Égypte hellénistique",
-    description: "Corpus Hermeticum. Fusion gréco-égyptienne. 'Ce qui est en bas est comme ce qui est en haut.'",
-    keyTeachings: ["Syncrétisme", "Gnose élitiste", "Correspondances cosmiques", "Alchimie spirituelle"],
-    contrast: "L'hermétisme mélange les traditions. L'Islam préserve la pureté du message prophétique original.",
-    sources: ["Corpus Hermeticum", "Table d'Émeraude", "Asclepius"]
-  },
-  {
-    name: "Cultes de Mithra",
-    year: -100,
-    yearLabel: "~100 av. J.-C.",
-    civilization: "Perse → Rome",
-    description: "Dieu solaire. Tauroctonie. 7 degrés d'initiation (Corax, Nymphus, Miles, Leo, Perses, Heliodromus, Pater).",
-    keyTeachings: ["Hiérarchie secrète à 7 niveaux", "Banquet sacré", "Sacrifice du taureau", "Culte solaire"],
-    contrast: "Les grades secrets vs. l'égalité des croyants. Le banquet mithraïque vs. la prière collective publique.",
-    sources: ["Mithraea archéologiques", "Inscriptions latines", "Études de Franz Cumont"]
-  },
-  {
-    name: "Gnosticisme",
-    year: 100,
-    yearLabel: "~100 apr. J.-C.",
-    civilization: "Méditerranée",
-    description: "Démiurge mauvais créateur du monde. Étincelle divine prisonnière. Salut par la connaissance cachée.",
-    keyTeachings: ["Dualisme matière/esprit", "Démiurge ignorant", "Archontes", "Gnose secrète", "Docétisme"],
-    contrast: "L'Islam rejette l'idée que la création soit mauvaise. Allah a créé le monde 'bi-l-haqq' (avec vérité).",
-    sources: ["Bibliothèque de Nag Hammadi", "Évangile de Thomas", "Évangile de Philippe", "Pistis Sophia"]
-  },
-  {
-    name: "Néoplatonisme",
-    year: 250,
-    yearLabel: "~250 apr. J.-C.",
     civilization: "Alexandrie",
-    description: "L'Un ineffable. Émanations successives. Retour mystique à l'Un par l'extase.",
-    keyTeachings: ["Hiérarchie des êtres", "Émanation (et non création)", "Extase mystique", "Théurgie"],
-    contrast: "Allah crée ex nihilo, Il n'émane pas. La création est distincte du Créateur, pas une émanation de Lui.",
-    sources: ["Ennéades de Plotin", "Éléments de Théologie de Proclus", "Vie de Plotin (Porphyre)"]
-  },
-  {
-    name: "Manichéisme",
-    year: 240,
-    yearLabel: "240 apr. J.-C.",
-    civilization: "Perse → Empire",
-    description: "Mani comme 'Sceau des Prophètes'. Dualisme absolu Lumière/Ténèbres. Syncrétisme universel.",
-    keyTeachings: ["Deux principes éternels", "Particules de lumière prisonnières", "Élus et Auditeurs", "Syncrétisme"],
-    contrast: "Le mal n'est pas une force égale à Dieu. Allah est Al-Qahhar (Le Dominateur absolu).",
-    sources: ["Manuscrits de Tourfan", "Kephalaia", "Psaumes manichéens"]
-  },
-  {
-    name: "Ismaélisme Batiniyya",
-    year: 765,
-    yearLabel: "765 apr. J.-C.",
-    civilization: "Monde islamique",
-    description: "Interprétation ésotérique (batin) vs exotérique (zahir). Imam caché. Hiérarchie de da'is.",
-    keyTeachings: ["Sens caché du Coran", "Imam infaillible", "Degrés d'initiation", "Cyclologie"],
-    contrast: "Le Coran s'adresse à tous directement (mubin = clair). Pas besoin d'initié pour comprendre le message.",
-    sources: ["Rasa'il Ikhwan al-Safa", "Da'a'im al-Islam", "Études de Henry Corbin"]
-  },
-  {
-    name: "Templiers & Ésotérisme médiéval",
-    year: 1119,
-    yearLabel: "1119 apr. J.-C.",
-    civilization: "Europe médiévale",
-    description: "Ordre du Temple. Accusations de pratiques occultes, adoration du Baphomet, rituels secrets.",
-    keyTeachings: ["Serments secrets", "Grades initiatiques", "Richesse cachée", "Pratiques hétérodoxes"],
-    contrast: "Les sociétés secrètes vs. la transparence de la da'wa islamique (appel public à la vérité).",
-    sources: ["Procès des Templiers (1307-1314)", "Bulles papales", "Chroniques médiévales"]
+    description: "Hermès Trismégiste, Table d'Émeraude.",
+    keyTeachings: ["Correspondances occultes", "Alchimie", "Gnose secrète"],
+    contrast: "La connaissance cachée vs le Coran clair pour tous.",
+    sources: ["Corpus Hermeticum", "Table d'Émeraude"]
   },
   {
     name: "Kabbale",
-    year: 1200,
-    yearLabel: "~1200 apr. J.-C.",
-    civilization: "Espagne → Europe",
-    description: "Arbre de vie, 10 Sefirot, Ein Sof. Gematria. Interprétation mystique de la Torah.",
-    keyTeachings: ["Ein Sof infini", "Sefirot comme émanations", "Gematria/numérologie", "Adam Kadmon"],
-    contrast: "Les Sefirot suggèrent des intermédiaires. Le Tawhid rejette tout intermédiaire entre Allah et les humains.",
-    sources: ["Sefer ha-Bahir", "Sefer ha-Zohar", "Écrits d'Isaac Louria"]
+    year: 100,
+    yearLabel: "~100 apr. J.-C.",
+    civilization: "Judée",
+    description: "Tradition mystique juive. Arbre de Vie, Sephiroth.",
+    keyTeachings: ["Émanations divines", "Numérologie", "Magie des noms"],
+    contrast: "Allah est Un, sans émanations ni hiérarchies célestes complexes.",
+    sources: ["Sefer Yetzirah", "Zohar"]
   },
   {
-    name: "Alchimie Occidentale",
-    year: 1300,
-    yearLabel: "~1300 apr. J.-C.",
-    civilization: "Europe",
-    description: "Transmutation des métaux. Pierre philosophale. Grand Œuvre. Union des opposés.",
-    keyTeachings: ["Solve et Coagula", "Mercure philosophique", "Mariage alchimique", "Symbolisme hermétique"],
-    contrast: "L'alchimie cherche le pouvoir sur la matière. L'Islam enseigne la soumission au Créateur de la matière.",
-    sources: ["Rosarium Philosophorum", "Turba Philosophorum", "Écrits de Paracelse"]
-  },
-  {
-    name: "Rose-Croix",
-    year: 1614,
-    yearLabel: "1614 apr. J.-C.",
-    civilization: "Europe",
-    description: "Fama Fraternitatis. Christian Rosenkreutz. Réforme universelle du savoir. Secrets alchimiques.",
-    keyTeachings: ["Fraternité invisible", "Guérison gratuite", "Sagesse cachée", "Illumination progressive"],
-    contrast: "La fraternité secrète vs. l'Oumma (communauté) visible et ouverte de l'Islam.",
-    sources: ["Fama Fraternitatis (1614)", "Confessio Fraternitatis (1615)", "Noces Chymiques (1616)"]
-  },
-  {
-    name: "Franc-Maçonnerie",
+    name: "Franc-maçonnerie",
     year: 1717,
     yearLabel: "1717 apr. J.-C.",
-    civilization: "Europe → Monde",
-    description: "Grande Loge de Londres. Degrés initiatiques (Apprenti, Compagnon, Maître). Temple de Salomon.",
-    keyTeachings: ["Grand Architecte", "Rituels symboliques", "Secrets des grades", "Fraternité universelle"],
-    contrast: "Le 'Grand Architecte' est vague et syncrétique. Allah a des noms et attributs révélés précisément.",
-    sources: ["Constitutions d'Anderson", "Rituels maçonniques", "Discours de Ramsay"]
+    civilization: "Europe",
+    description: "Société initiatique. Grades secrets.",
+    keyTeachings: ["Degrés initiatiques", "Symbolisme ésotérique", "Serments"],
+    contrast: "L'Islam rejette les sociétés secrètes et les serments cachés.",
+    sources: ["Constitutions d'Anderson", "Rituels maçonniques"]
   },
   {
-    name: "Illuminisme (Weishaupt)",
-    year: 1776,
-    yearLabel: "1776 apr. J.-C.",
-    civilization: "Bavière → Europe",
-    description: "Ordre des Illuminés. Adam Weishaupt. Infiltration des institutions. Rationalisme radical.",
-    keyTeachings: ["Anti-monarchisme", "Anti-cléricalisme", "Grades secrets", "Illumination par la raison"],
-    contrast: "L'Islam appelle à la raison publiquement, sans sociétés secrètes ni conspirations.",
-    sources: ["Écrits de Weishaupt", "Documents saisis (1786)", "Enquête bavaroise"]
-  },
-  {
-    name: "Baphomet (Éliphas Lévi)",
-    year: 1856,
-    yearLabel: "1856 apr. J.-C.",
-    civilization: "France occultiste",
-    description: "Figure androgyne. 'Solve et Coagula'. Représente l'équilibre des forces opposées.",
-    keyTeachings: ["Dualité absolue", "Androgynie primordiale", "Magie dogmatique", "Syncrétisme total"],
-    contrast: "La dualité égale bien/mal vs. le Tawhid où Allah est la source de tout. Le mal n'est qu'épreuve.",
-    sources: ["Dogme et Rituel de la Haute Magie", "Clefs des Grands Mystères", "Histoire de la Magie"]
-  },
-  {
-    name: "Théosophie (Blavatsky)",
-    year: 1875,
-    yearLabel: "1875 apr. J.-C.",
-    civilization: "International",
-    description: "Société Théosophique. Maîtres Ascensionnés. Syncrétisme Orient/Occident. Races-racines.",
-    keyTeachings: ["Maîtres cachés", "Évolution spirituelle", "Akasha", "Syncrétisme universel"],
-    contrast: "Les 'Maîtres Ascensionnés' vs. les prophètes mortels. L'Islam rejette la déification des humains.",
-    sources: ["Isis Dévoilée", "La Doctrine Secrète", "La Voix du Silence"]
-  },
-  {
-    name: "Golden Dawn",
-    year: 1888,
-    yearLabel: "1888 apr. J.-C.",
-    civilization: "Angleterre",
-    description: "Ordre Hermétique de l'Aube Dorée. Magie cérémonielle. Grades kabbalistiques. Tarot initiatique.",
-    keyTeachings: ["Magie rituelle", "Kabbale occidentale", "Grades hermétiques", "Invocation d'entités"],
-    contrast: "L'invocation d'entités = shirk (association). Le musulman n'invoque qu'Allah seul.",
-    sources: ["Rituels de la Golden Dawn", "The Equinox", "Flying Rolls"]
-  },
-  {
-    name: "Thelema (Crowley)",
-    year: 1904,
-    yearLabel: "1904 apr. J.-C.",
-    civilization: "International",
-    description: "'Fais ce que tu veux sera toute la Loi.' Liber AL. Ordo Templi Orientis.",
-    keyTeachings: ["Volonté Vraie", "Éon d'Horus", "Magie sexuelle", "Invocation de 'démons'"],
-    contrast: "'Fais ce que tu veux' vs. 'Soumets-toi à Allah'. L'Islam est libération par la soumission au Créateur.",
-    sources: ["Liber AL vel Legis", "Magick in Theory and Practice", "The Book of Thoth"]
-  },
-  {
-    name: "Nouvel Âge (New Age)",
-    year: 1960,
-    yearLabel: "~1960 apr. J.-C.",
-    civilization: "Occident → Global",
-    description: "Ère du Verseau. Channeling. Cristaux. 'Nous sommes tous Dieu.'",
-    keyTeachings: ["Panthéisme", "Auto-déification", "Syncrétisme spirituel", "Réincarnation"],
-    contrast: "'Nous sommes Dieu' = shirk suprême. Le Tawhid distingue clairement Créateur et créatures.",
-    sources: ["A Course in Miracles", "Écrits de Shirley MacLaine", "Mouvement de Findhorn"]
-  },
-  {
-    name: "Kabbale Moderne (Berg)",
-    year: 1984,
-    yearLabel: "1984 apr. J.-C.",
-    civilization: "États-Unis → Global",
-    description: "Centre de la Kabbale. Popularisation commerciale. Célébrités initiées. Fil rouge.",
-    keyTeachings: ["Kabbale accessible", "Correction (tikkun)", "Fil rouge protecteur", "Lumière infinie"],
-    contrast: "Commercialisation du sacré vs. gratuité de la guidance islamique. Le Coran est accessible à tous, sans paiement.",
-    sources: ["The Zohar (Philip Berg)", "Kabbalah Centre International", "Publications du Centre"]
-  },
-  {
-    name: "Occultisme Digital & Transhumanisme",
-    year: 2010,
-    yearLabel: "~2010 apr. J.-C.",
-    civilization: "Global",
-    description: "Techno-occultisme. Fusion homme-machine. Conscience uploadée. Immortalité digitale.",
-    keyTeachings: ["Singularité", "Transcendance technologique", "IA comme dieu", "Post-humanisme"],
-    contrast: "La quête d'immortalité technologique vs. l'Au-delà promis par Allah. L'humilité vs. l'hubris.",
-    sources: ["Écrits de Ray Kurzweil", "Mouvement transhumaniste", "Silicon Valley mysticisme"]
+    name: "New Age",
+    year: 1970,
+    yearLabel: "~1970 apr. J.-C.",
+    civilization: "Occident",
+    description: "Syncrétisme spirituel moderne.",
+    keyTeachings: ["Tout est dieu (panthéisme)", "Canalisation d'esprits", "Cristaux"],
+    contrast: "Le New Age mélange tout. L'Islam distingue clairement le Créateur de la création.",
+    sources: ["Mouvement New Age", "Channeling"]
   }
+];
+
+// Group prophets by era for better display
+const eras = [
+  { name: "Ère Primitive", start: -4000, end: -2500, prophets: prophets.filter(p => p.year >= -4000 && p.year < -2500) },
+  { name: "Ère Patriarcale", start: -2500, end: -1500, prophets: prophets.filter(p => p.year >= -2500 && p.year < -1500) },
+  { name: "Ère Mosaïque", start: -1500, end: -500, prophets: prophets.filter(p => p.year >= -1500 && p.year < -500) },
+  { name: "Ère Messianique", start: -500, end: 700, prophets: prophets.filter(p => p.year >= -500) },
 ];
 
 export const ProphetTimeline = () => {
   const [showMyths, setShowMyths] = useState(false);
   const [selectedProphet, setSelectedProphet] = useState<Prophet | null>(null);
   const [selectedMyth, setSelectedMyth] = useState<Myth | null>(null);
+  const [currentEra, setCurrentEra] = useState(0);
 
-  const allYears = [...prophets.map(p => p.year), ...myths.map(m => m.year)];
-  const minYear = Math.min(...allYears);
-  const maxYear = Math.max(...allYears);
-  const range = maxYear - minYear;
-
-  const getPosition = (year: number) => ((year - minYear) / range) * 100;
+  const navigateEra = (direction: 'prev' | 'next') => {
+    if (direction === 'prev' && currentEra > 0) {
+      setCurrentEra(currentEra - 1);
+    } else if (direction === 'next' && currentEra < eras.length - 1) {
+      setCurrentEra(currentEra + 1);
+    }
+  };
 
   return (
     <section id="timeline" className="relative py-24 px-4">
       <div className="absolute bottom-1/4 left-0 w-80 h-80 bg-accent/5 rounded-full blur-3xl" />
       
-      <div className="container max-w-6xl relative z-10">
+      <div className="container max-w-7xl relative z-10">
         <SectionTitle
           arabicTitle="خط التوحيد"
           title="Chronologie du Tawhid"
-          subtitle="Les 25 prophètes de l'Islam face aux traditions ésotériques de l'histoire humaine."
+          subtitle="Les 25 prophètes de l'Islam : une chaîne ininterrompue de monothéisme."
         />
 
-        {/* Toggle */}
-        <div className="flex justify-center mb-12">
+        {/* Toggle & Era Navigation */}
+        <div className="flex flex-col md:flex-row justify-center items-center gap-4 mb-8">
           <div className="glass-card p-1 inline-flex rounded-xl">
             <button
               onClick={() => { setShowMyths(false); setSelectedMyth(null); }}
@@ -604,7 +414,7 @@ export const ProphetTimeline = () => {
                 showMyths ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground"
               )}
             >
-              Superposer Mythologies
+              + Mythologies
             </button>
           </div>
         </div>
@@ -617,7 +427,7 @@ export const ProphetTimeline = () => {
           </div>
           <div className="glass-card p-4 text-center">
             <p className="text-3xl font-display text-primary">1</p>
-            <p className="text-sm text-muted-foreground">Message unique : Tawhid</p>
+            <p className="text-sm text-muted-foreground">Message : Tawhid</p>
           </div>
           <div className="glass-card p-4 text-center">
             <p className="text-3xl font-display text-accent">~6000</p>
@@ -629,54 +439,135 @@ export const ProphetTimeline = () => {
           </div>
         </div>
 
-        {/* Timeline */}
-        <GlassCard glow className="mb-8 overflow-x-auto">
-          <div className="min-w-[1200px] relative py-32 px-8">
+        {/* Era Navigation */}
+        <div className="flex items-center justify-center gap-4 mb-6">
+          <button
+            onClick={() => navigateEra('prev')}
+            disabled={currentEra === 0}
+            className={cn(
+              "p-2 rounded-lg transition-all",
+              currentEra === 0 ? "opacity-30 cursor-not-allowed" : "hover:bg-secondary"
+            )}
+          >
+            <ChevronLeft className="w-6 h-6" />
+          </button>
+          <div className="flex gap-2">
+            {eras.map((era, idx) => (
+              <button
+                key={era.name}
+                onClick={() => setCurrentEra(idx)}
+                className={cn(
+                  "px-4 py-2 rounded-lg text-sm font-medium transition-all",
+                  currentEra === idx 
+                    ? "bg-primary text-primary-foreground" 
+                    : "bg-secondary/50 text-muted-foreground hover:text-foreground"
+                )}
+              >
+                {era.name}
+              </button>
+            ))}
+          </div>
+          <button
+            onClick={() => navigateEra('next')}
+            disabled={currentEra === eras.length - 1}
+            className={cn(
+              "p-2 rounded-lg transition-all",
+              currentEra === eras.length - 1 ? "opacity-30 cursor-not-allowed" : "hover:bg-secondary"
+            )}
+          >
+            <ChevronRight className="w-6 h-6" />
+          </button>
+        </div>
+
+        {/* Large Horizontal Timeline - School Style */}
+        <GlassCard glow className="mb-8 overflow-hidden">
+          <div className="p-6">
+            {/* Era Title */}
+            <div className="text-center mb-8">
+              <h3 className="font-display text-2xl text-gradient-gold">{eras[currentEra].name}</h3>
+              <p className="text-sm text-muted-foreground mt-1">
+                {eras[currentEra].start < 0 ? `${Math.abs(eras[currentEra].start)} av. J.-C.` : `${eras[currentEra].start} apr. J.-C.`} 
+                {' → '}
+                {eras[currentEra].end < 0 ? `${Math.abs(eras[currentEra].end)} av. J.-C.` : `${eras[currentEra].end} apr. J.-C.`}
+              </p>
+            </div>
+
             {/* Timeline Line */}
-            <div className="absolute top-1/2 left-8 right-8 h-1 bg-gradient-to-r from-primary via-primary/50 to-primary rounded-full -translate-y-1/2" />
+            <div className="relative">
+              <div className="absolute top-1/2 left-0 right-0 h-2 bg-gradient-to-r from-primary/30 via-primary to-primary/30 rounded-full -translate-y-1/2" />
+              
+              {/* Prophet Cards on Timeline */}
+              <div className="relative flex justify-around items-center min-h-[300px] py-8">
+                {eras[currentEra].prophets.map((prophet, idx) => (
+                  <div
+                    key={prophet.name}
+                    className="flex flex-col items-center cursor-pointer group"
+                    onClick={() => { setSelectedProphet(prophet); setSelectedMyth(null); }}
+                  >
+                    {/* Card above or below line alternating */}
+                    <div className={cn(
+                      "flex flex-col items-center",
+                      idx % 2 === 0 ? "flex-col" : "flex-col-reverse"
+                    )}>
+                      {/* Connector Line */}
+                      <div className={cn(
+                        "w-0.5 bg-primary transition-all",
+                        idx % 2 === 0 ? "h-8" : "h-8",
+                        selectedProphet?.name === prophet.name && "bg-gradient-gold"
+                      )} />
+                      
+                      {/* Prophet Card */}
+                      <div className={cn(
+                        "glass-card p-4 rounded-xl text-center transition-all hover:scale-105 w-32 md:w-40",
+                        selectedProphet?.name === prophet.name && "ring-2 ring-primary shadow-lg shadow-primary/20"
+                      )}>
+                        <p className="text-2xl md:text-3xl font-arabic text-gradient-gold mb-1">{prophet.arabic}</p>
+                        <p className="font-display text-sm md:text-base text-foreground">{prophet.name.split(' ')[0]}</p>
+                        <p className="text-xs text-muted-foreground mt-1">{prophet.yearLabel}</p>
+                        <p className="text-xs text-primary mt-2">📍 {prophet.location.split(' ')[0]}</p>
+                      </div>
+                    </div>
+                    
+                    {/* Dot on timeline */}
+                    <div className={cn(
+                      "absolute top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-primary border-4 border-background transition-all",
+                      selectedProphet?.name === prophet.name && "scale-150 ring-4 ring-primary/30"
+                    )} />
+                  </div>
+                ))}
+              </div>
+            </div>
 
-            {/* Prophets */}
-            {prophets.map((prophet, idx) => (
-              <div
-                key={prophet.name}
-                className="absolute -translate-x-1/2 cursor-pointer group"
-                style={{ left: `${getPosition(prophet.year)}%`, top: "50%" }}
-                onClick={() => { setSelectedProphet(prophet); setSelectedMyth(null); }}
-              >
-                <div className={cn(
-                  "w-4 h-4 rounded-full bg-primary border-2 border-background transition-all group-hover:scale-150",
-                  selectedProphet?.name === prophet.name && "scale-150 ring-4 ring-primary/30"
-                )} />
-                <div className={cn(
-                  "absolute whitespace-nowrap text-center transition-all group-hover:scale-110",
-                  idx % 2 === 0 ? "bottom-6" : "top-6"
-                )}>
-                  <p className="text-sm font-display text-gradient-gold">{prophet.arabic}</p>
-                  <p className="text-xs text-foreground">{prophet.name.split(' ')[0]}</p>
+            {/* Myths overlay */}
+            {showMyths && (
+              <div className="mt-8 pt-6 border-t border-glass">
+                <h4 className="text-sm font-medium text-muted-foreground mb-4 text-center">
+                  Traditions ésotériques de cette période
+                </h4>
+                <div className="flex flex-wrap justify-center gap-3">
+                  {myths
+                    .filter(m => m.year >= eras[currentEra].start && m.year < eras[currentEra].end)
+                    .map((myth) => (
+                      <button
+                        key={myth.name}
+                        onClick={() => { setSelectedMyth(myth); setSelectedProphet(null); }}
+                        className={cn(
+                          "px-4 py-2 rounded-lg text-sm transition-all",
+                          selectedMyth?.name === myth.name 
+                            ? "bg-destructive/20 border border-destructive/50 text-foreground" 
+                            : "bg-secondary/30 text-muted-foreground hover:bg-destructive/10"
+                        )}
+                      >
+                        <span className="text-destructive/70 mr-2">☿</span>
+                        {myth.name}
+                      </button>
+                    ))}
+                  {myths.filter(m => m.year >= eras[currentEra].start && m.year < eras[currentEra].end).length === 0 && (
+                    <p className="text-sm text-muted-foreground">Aucune tradition ésotérique majeure pour cette période</p>
+                  )}
                 </div>
               </div>
-            ))}
-
-            {/* Myths (when toggled) */}
-            {showMyths && myths.map((myth, idx) => (
-              <div
-                key={myth.name}
-                className="absolute -translate-x-1/2 cursor-pointer group"
-                style={{ left: `${getPosition(myth.year)}%`, top: "50%" }}
-                onClick={() => { setSelectedMyth(myth); setSelectedProphet(null); }}
-              >
-                <div className={cn(
-                  "w-3 h-3 rounded-full bg-destructive/70 border-2 border-background -translate-y-1/2 transition-all group-hover:scale-150",
-                  selectedMyth?.name === myth.name && "scale-150 ring-4 ring-destructive/30"
-                )} />
-                <div className={cn(
-                  "absolute whitespace-nowrap text-center transition-all group-hover:scale-110 max-w-[100px]",
-                  idx % 3 === 0 ? "top-10" : idx % 3 === 1 ? "bottom-10" : "top-16"
-                )}>
-                  <p className="text-xs text-destructive/80 truncate">{myth.name.split(' ').slice(0, 2).join(' ')}</p>
-                </div>
-              </div>
-            ))}
+            )}
           </div>
         </GlassCard>
 
@@ -716,12 +607,12 @@ export const ProphetTimeline = () => {
                 
                 <div className="p-3 rounded-lg bg-accent/10 border border-accent/20">
                   <p className="text-sm text-foreground">
-                    <strong>Message constant :</strong> Tous les prophètes ont appelé au Tawhid — l'adoration exclusive d'Allah, sans intermédiaire ni associé.
+                    <strong>Message constant :</strong> Tous les prophètes ont appelé au Tawhid — l'adoration exclusive d'Allah.
                   </p>
                 </div>
               </div>
             ) : (
-              <p className="text-muted-foreground">Cliquez sur un prophète dans la chronologie pour voir les détails.</p>
+              <p className="text-muted-foreground">Cliquez sur un prophète pour voir les détails.</p>
             )}
           </GlassCard>
 
@@ -765,8 +656,8 @@ export const ProphetTimeline = () => {
             ) : (
               <p className="text-muted-foreground">
                 {showMyths 
-                  ? "Cliquez sur un point rouge pour voir les détails de la tradition ésotérique."
-                  : "Activez 'Superposer Mythologies' pour comparer avec les traditions ésotériques."}
+                  ? "Cliquez sur une tradition pour voir les détails."
+                  : "Activez '+ Mythologies' pour comparer."}
               </p>
             )}
           </GlassCard>
