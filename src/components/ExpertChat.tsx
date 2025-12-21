@@ -324,22 +324,22 @@ export const ExpertChat = () => {
 
   return (
     <section id="expert" className="relative py-24 px-4">
-      <div className="absolute top-0 right-1/4 w-80 h-80 bg-primary/10 rounded-full blur-3xl animate-glow-pulse" />
+      <div className="absolute top-0 right-1/4 w-80 h-80 bg-primary/10 rounded-full blur-3xl" />
       <div className="absolute bottom-1/4 left-0 w-64 h-64 bg-accent/10 rounded-full blur-3xl" />
 
       <div className="container max-w-5xl relative z-10">
         <SectionTitle
           arabicTitle="الفرقان"
           title="Al-Furqan : Le Discriminateur"
-          subtitle="Théologie comparée entre Islam, Christianisme, Judaïsme, Occultisme et Agnosticisme. L'IA analyse chaque question sous 6 prismes différents."
+          subtitle="Théologie comparée entre Islam, Christianisme, Judaïsme, Occultisme et Agnosticisme. L'IA analyse chaque question sous 5 prismes différents."
         />
 
         <GlassCard glow className="p-6 md:p-8">
-          {/* Header with 4 pillars */}
+          {/* Header with 5 pillars */}
           <div className="text-center mb-8">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm mb-4">
               <Sparkles size={16} />
-              <span>Mode Confrontation à 6 Piliers</span>
+              <span>Mode Confrontation à 5 Prismes</span>
             </div>
             
             <div className="grid grid-cols-3 md:grid-cols-5 gap-3 mt-6">
