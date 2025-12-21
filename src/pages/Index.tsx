@@ -4,6 +4,7 @@ import { ExpertChat } from "@/components/ExpertChat";
 import { ReligionComparator } from "@/components/ReligionComparator";
 import { IjazModule } from "@/components/IjazModule";
 import { ProphetTimeline } from "@/components/ProphetTimeline";
+import { PropheciesModule } from "@/components/PropheciesModule";
 import { ScienceLab } from "@/components/ScienceLab";
 import { TawhidSection } from "@/components/TawhidSection";
 import { FitraTest } from "@/components/FitraTest";
@@ -24,6 +25,7 @@ const Index = () => {
       </div>
       <IjazModule />
       <ScienceLab />
+      <PropheciesModule />
       <ProphetTimeline />
       <SymbolScanner />
       <FitraTest />

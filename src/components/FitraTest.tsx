@@ -132,6 +132,127 @@ const allQuestions: Question[] = [
     optionB: { text: "Par l'intuition des initiés et les visions mystiques", isIslam: false },
     explanation: "Le Coran appelle à la réflexion rationnelle et offre des preuves claires, pas des révélations secrètes.",
   },
+  // Nouvelles questions ajoutées
+  {
+    question: "Peut-on vraiment savoir si Dieu existe ?",
+    optionA: { text: "Non, c'est impossible à prouver ou infirmer", isIslam: false },
+    optionB: { text: "Oui, par l'observation de l'univers et la réflexion", isIslam: true },
+    explanation: "Le Coran répond à l'agnosticisme : 'Ont-ils été créés de rien ? Se sont-ils créés eux-mêmes ?' (52:35-36).",
+  },
+  {
+    question: "Que se passe-t-il après la mort ?",
+    optionA: { text: "Nul ne peut savoir, c'est le mystère absolu", isIslam: false },
+    optionB: { text: "Chaque âme sera jugée selon ses actes", isIslam: true },
+    explanation: "Le Coran détaille clairement le Jour du Jugement. Ce n'est pas un mystère mais une réalité annoncée.",
+  },
+  {
+    question: "Pourquoi existe-t-il le mal et la souffrance ?",
+    optionA: { text: "C'est une épreuve d'Allah pour purifier et élever", isIslam: true },
+    optionB: { text: "Cela prouve l'absence ou l'indifférence de Dieu", isIslam: false },
+    explanation: "Les épreuves expient les péchés et élèvent le rang du croyant. Allah est Al-Hakîm (Le Sage).",
+  },
+  {
+    question: "Toutes les religions mènent-elles au même but ?",
+    optionA: { text: "Oui, ce sont des chemins différents vers la même vérité", isIslam: false },
+    optionB: { text: "Non, la vérité est objective et le Tawhid est le critère", isIslam: true },
+    explanation: "Le relativisme spirituel nie la notion de vérité. L'Islam affirme que le Tawhid est le message de tous les prophètes.",
+  },
+  {
+    question: "Quelle preuve avons-nous de la prophétie ?",
+    optionA: { text: "Aucune preuve tangible, seulement la foi aveugle", isIslam: false },
+    optionB: { text: "Les miracles, les prophéties accomplies, et la préservation du Coran", isIslam: true },
+    explanation: "L'Islam est une religion de preuves (Burhan), pas de mystères insondables.",
+  },
+  {
+    question: "L'homme peut-il contacter les esprits des morts ?",
+    optionA: { text: "Non, les âmes sont dans le Barzakh jusqu'au Jour Dernier", isIslam: true },
+    optionB: { text: "Oui, par des médiums et des séances spirites", isIslam: false },
+    explanation: "Le spiritisme est interdit en Islam. Les 'esprits' contactés sont en réalité des djinns trompeurs.",
+  },
+  {
+    question: "Quelle est la source de la moralité ?",
+    optionA: { text: "La révélation divine qui transcende les époques", isIslam: true },
+    optionB: { text: "La société qui évolue et définit le bien et le mal", isIslam: false },
+    explanation: "Sans référence transcendante, la moralité devient relative et arbitraire.",
+  },
+  {
+    question: "Comment connaître la volonté de Dieu ?",
+    optionA: { text: "Par des révélations personnelles et des signes mystiques", isIslam: false },
+    optionB: { text: "Par le Coran et la Sunnah, clairs et préservés", isIslam: true },
+    explanation: "La révélation est close avec Muhammad ﷺ. La guidance est dans les textes, pas dans des visions personnelles.",
+  },
+  {
+    question: "L'astrologie peut-elle prédire l'avenir ?",
+    optionA: { text: "Oui, les astres influencent nos destinées", isIslam: false },
+    optionB: { text: "Non, seul Allah connaît le Ghayb (l'Invisible)", isIslam: true },
+    explanation: "L'astrologie est une forme de shirk car elle attribue le pouvoir de l'Invisible à des créatures.",
+  },
+  {
+    question: "La méditation peut-elle remplacer la prière ?",
+    optionA: { text: "Non, la Salat est un acte d'adoration prescrit", isIslam: true },
+    optionB: { text: "Oui, toutes les formes de spiritualité se valent", isIslam: false },
+    explanation: "La méditation sans direction vers Allah est un exercice mental, pas une adoration.",
+  },
+  {
+    question: "Qui a le droit de pardonner les péchés ?",
+    optionA: { text: "Des prêtres ou des saints peuvent absoudre", isIslam: false },
+    optionB: { text: "Allah seul pardonne, directement, sans intermédiaire", isIslam: true },
+    explanation: "Le Tawbah (repentir) se fait directement entre l'homme et Allah. Nul humain ne peut absoudre.",
+  },
+  {
+    question: "La trinité est-elle compatible avec le monothéisme ?",
+    optionA: { text: "Non, 3 personnes divines = polytheisme déguisé", isIslam: true },
+    optionB: { text: "Oui, c'est un mystère au-delà de la raison", isIslam: false },
+    explanation: "Le Coran rejette clairement la trinité : 'Ne dites pas trois... Allah est un Dieu unique' (4:171).",
+  },
+  {
+    question: "Peut-on adorer Dieu à travers des statues ou images ?",
+    optionA: { text: "Oui, ce sont des supports pour la dévotion", isIslam: false },
+    optionB: { text: "Non, c'est de l'idolâtrie interdite", isIslam: true },
+    explanation: "L'Islam interdit toute représentation du divin et toute adoration par des intermédiaires matériels.",
+  },
+  {
+    question: "La science contredit-elle la foi ?",
+    optionA: { text: "Non, le Coran encourage la recherche scientifique", isIslam: true },
+    optionB: { text: "Oui, il faut choisir entre raison et religion", isIslam: false },
+    explanation: "Le premier mot révélé fut 'Iqra' (Lis). L'Islam intègre science et foi.",
+  },
+  {
+    question: "Que penser des 'miracles' des saints ?",
+    optionA: { text: "Ils prouvent leur sainteté et leur intercession", isIslam: false },
+    optionB: { text: "Seuls les miracles des prophètes sont des preuves", isIslam: true },
+    explanation: "Les karamat (prodiges) peuvent exister mais ne sont pas des preuves de sainteté ni de pouvoir d'intercession.",
+  },
+  {
+    question: "L'évolution contredit-elle la création ?",
+    optionA: { text: "Allah est le Créateur, Il crée comme Il veut", isIslam: true },
+    optionB: { text: "La vie est apparue par hasard sans Créateur", isIslam: false },
+    explanation: "L'Islam affirme qu'Allah est le Créateur. Les mécanismes de la création sont Ses outils.",
+  },
+  {
+    question: "Pourquoi tant de religions différentes ?",
+    optionA: { text: "Les hommes ont altéré le message unique du Tawhid", isIslam: true },
+    optionB: { text: "Chaque peuple crée ses propres dieux", isIslam: false },
+    explanation: "Tous les prophètes ont prêché le Tawhid. Les différences viennent des altérations humaines.",
+  },
+  {
+    question: "La Kabbale révèle-t-elle des vérités cachées ?",
+    optionA: { text: "C'est une tradition ésotérique altérée", isIslam: true },
+    optionB: { text: "Elle contient des secrets divins", isIslam: false },
+    explanation: "La Kabbale mélange des éléments du monothéisme avec du paganisme et de la magie.",
+  },
+  {
+    question: "Les anges peuvent-ils désobéir à Allah ?",
+    optionA: { text: "Non, ils sont programmés pour obéir", isIslam: true },
+    optionB: { text: "Oui, certains sont 'déchus'", isIslam: false },
+    explanation: "En Islam, les anges n'ont pas de libre arbitre. Iblis était un djinn, pas un ange.",
+  },
+  {
+    question: "Le yoga spirituel est-il compatible avec l'Islam ?",
+    optionA: { text: "Oui, c'est juste de l'exercice", isIslam: false },
+    optionB: { text: "Ses aspects spirituels contiennent du shirk", isIslam: true },
+    explanation: "Le yoga traditionnel inclut des invocations de divinités hindoues et des concepts incompatibles avec le Tawhid.",
+  },
 ];
 
 function shuffleArray<T>(array: T[]): T[] {
