@@ -1,7 +1,7 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { GlassCard } from "./GlassCard";
 import { SectionTitle } from "./SectionTitle";
-import { Send, Loader2, Sparkles, BookOpen, ShieldAlert, Lightbulb } from "lucide-react";
+import { Send, Loader2, Sparkles, BookOpen, ShieldAlert, Lightbulb, RefreshCw } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type Message = {
@@ -11,19 +11,63 @@ type Message = {
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/theology-chat`;
 
-const suggestedQuestions = [
+const allSuggestedQuestions = [
   "Qu'est-ce que l'I'jaz et pourquoi le Coran est-il considéré inimitable ?",
   "Comment le Tawhid s'oppose-t-il au symbolisme du Baphomet ?",
   "Quelle est la différence entre 'Ilm et Gnose ?",
   "Analysez le verset sur l'embryologie et comparez avec Aristote.",
+  "Qui était Hermès Trismégiste et comment le Coran réfute-t-il l'hermétisme ?",
+  "Expliquez le miracle de l'expansion de l'univers dans le Coran.",
+  "Comment le Coran traite-t-il la magie et la sorcellerie ?",
+  "Quelle est la différence entre le prophétisme et l'occultisme ?",
+  "Pourquoi l'Islam rejette-t-il l'astrologie ?",
+  "Comment comprendre les 'Huruf Muqatta'at' (lettres mystérieuses) du Coran ?",
+  "Quelle est la position islamique sur la Kabbale ?",
+  "Comment le Coran décrit-il la création de l'univers ?",
+  "Qu'est-ce que le Nazm coranique et pourquoi est-il unique ?",
+  "Comment le Tawhid libère-t-il de la superstition ?",
+  "Analysez la sourate Al-Falaq et sa protection contre l'occultisme.",
+  "Quelle est la différence entre Shirk et Tawhid ?",
+  "Comment le Coran réfute-t-il le dualisme zoroastrien ?",
+  "Pourquoi les Tafsirs classiques sont-ils importants ?",
+  "Comment le Coran décrit-il le développement fœtal ?",
+  "Quelle est la position islamique sur les sociétés secrètes ?",
+  "Comment le Coran prouve-t-il son origine divine ?",
+  "Qu'est-ce que la Fitra et comment la préserver ?",
+  "Comment le Coran traite-t-il la question des djinns ?",
+  "Quelle est la différence entre révélation et inspiration mystique ?",
+  "Comment comprendre le concept de 'Barakah' vs magie ?",
+  "Pourquoi le Coran utilise-t-il le terme 'Ayat' (signes) ?",
+  "Comment le Tafsir Ibn Kathir explique-t-il les versets scientifiques ?",
+  "Quelle est la position islamique sur les symboles occultes ?",
+  "Comment le Coran réfute-t-il l'idolâtrie ?",
+  "Qu'est-ce que le 'Ilm al-Ghayb' (connaissance de l'invisible) ?",
 ];
+
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
 
 export const ExpertChat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<"response" | "sources" | "refutation">("response");
+  const [questionSeed, setQuestionSeed] = useState(() => Math.random());
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const suggestedQuestions = useMemo(() => {
+    return shuffleArray(allSuggestedQuestions).slice(0, 4);
+  }, [questionSeed]);
+
+  const refreshQuestions = () => {
+    setQuestionSeed(Math.random());
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -174,7 +218,16 @@ export const ExpertChat = () => {
           {/* Suggested Questions */}
           {messages.length === 0 && (
             <div className="mb-8">
-              <p className="text-sm text-muted-foreground text-center mb-4">Questions suggérées :</p>
+              <div className="flex items-center justify-between mb-4">
+                <p className="text-sm text-muted-foreground">Questions suggérées :</p>
+                <button
+                  onClick={refreshQuestions}
+                  className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors"
+                >
+                  <RefreshCw size={14} />
+                  Autres questions
+                </button>
+              </div>
               <div className="grid sm:grid-cols-2 gap-3">
                 {suggestedQuestions.map((question, index) => (
                   <button

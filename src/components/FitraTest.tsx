@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { GlassCard } from "./GlassCard";
 import { SectionTitle } from "./SectionTitle";
-import { Check, X, ArrowRight, RotateCcw } from "lucide-react";
+import { Check, X, ArrowRight, RotateCcw, Shuffle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Question {
@@ -11,7 +11,7 @@ interface Question {
   explanation: string;
 }
 
-const questions: Question[] = [
+const allQuestions: Question[] = [
   {
     question: "Comment accéder à la vérité spirituelle ?",
     optionA: { text: "Par la raison et la réflexion, accessible à tous", isIslam: true },
@@ -42,9 +42,116 @@ const questions: Question[] = [
     optionB: { text: "Acquérir des pouvoirs et une élévation personnelle", isIslam: false },
     explanation: "L'Islam lie le 'Ilm (connaissance) à l'action vertueuse et au service de l'humanité, non à la quête de pouvoir.",
   },
+  {
+    question: "Quelle est la source de la guidance spirituelle ?",
+    optionA: { text: "Les textes révélés clairs et accessibles à tous", isIslam: true },
+    optionB: { text: "Des symboles cachés à décoder par des initiés", isIslam: false },
+    explanation: "Le Coran se décrit comme 'Kitab Mubin' (كتاب مبين) - un Livre clair. Sa guidance n'est pas cryptée.",
+  },
+  {
+    question: "Comment atteindre l'élévation spirituelle ?",
+    optionA: { text: "Par des grades initiatiques et des degrés secrets", isIslam: false },
+    optionB: { text: "Par la foi, les bonnes actions et la piété (Taqwa)", isIslam: true },
+    explanation: "En Islam, c'est la Taqwa (conscience de Dieu) qui élève l'individu, pas des grades rituels.",
+  },
+  {
+    question: "Quelle est la nature de Dieu ?",
+    optionA: { text: "Allah est Un, sans associé, sans image ni représentation", isIslam: true },
+    optionB: { text: "Le divin s'exprime à travers des émanations et des dualités", isIslam: false },
+    explanation: "La Sourate Al-Ikhlas (112) résume le Tawhid : Allah est Un, Il n'engendre pas et n'est pas engendré.",
+  },
+  {
+    question: "Quel rôle jouent les symboles dans la spiritualité ?",
+    optionA: { text: "Les symboles ont des pouvoirs magiques et protecteurs", isIslam: false },
+    optionB: { text: "Seul Allah protège, les symboles n'ont aucun pouvoir", isIslam: true },
+    explanation: "Le Coran rejette les amulettes et talismans (tamima) comme formes de shirk.",
+  },
+  {
+    question: "Qui détient la connaissance ultime ?",
+    optionA: { text: "Allah seul connaît l'Invisible (Ghayb)", isIslam: true },
+    optionB: { text: "Les maîtres secrets accèdent aux mystères cachés", isIslam: false },
+    explanation: "Le Coran affirme que seul Allah connaît le Ghayb (5:109). Prétendre le contraire est du kufr.",
+  },
+  {
+    question: "Comment interpréter les textes sacrés ?",
+    optionA: { text: "Par plusieurs niveaux de sens, réservés aux élus", isIslam: false },
+    optionB: { text: "Par le sens apparent et le contexte, accessible à tous", isIslam: true },
+    explanation: "L'exégèse islamique (Tafsir) utilise des méthodes claires, pas des interprétations secrètes.",
+  },
+  {
+    question: "Quelle est la relation entre l'homme et le cosmos ?",
+    optionA: { text: "L'homme doit soumettre le cosmos par la magie", isIslam: false },
+    optionB: { text: "L'homme est vicaire (khalifa) responsable sur Terre", isIslam: true },
+    explanation: "Le Coran établit l'homme comme khalifa (2:30), non comme magicien manipulant des forces occultes.",
+  },
+  {
+    question: "Quelle est la voie vers le salut ?",
+    optionA: { text: "La foi en Allah, les bonnes œuvres et le repentir sincère", isIslam: true },
+    optionB: { text: "L'illumination par des rituels et des connaissances secrètes", isIslam: false },
+    explanation: "Le salut en Islam passe par la foi et les œuvres, pas par des rituels ésotériques.",
+  },
+  {
+    question: "Comment traiter les forces du mal ?",
+    optionA: { text: "Par des invocations magiques et des talismans", isIslam: false },
+    optionB: { text: "Par le refuge en Allah et la récitation du Coran", isIslam: true },
+    explanation: "Le Prophète ﷺ enseignait de chercher refuge en Allah (Sourates Al-Falaq et An-Nas), pas par la magie.",
+  },
+  {
+    question: "Quel est le statut des prophètes ?",
+    optionA: { text: "Des hommes choisis par Allah pour transmettre Son message", isIslam: true },
+    optionB: { text: "Des initiés parmi d'autres maîtres de sagesse", isIslam: false },
+    explanation: "Les prophètes sont élus par Allah (اصْطَفَى), non des initiés parmi d'autres 'maîtres' humains.",
+  },
+  {
+    question: "Comment acquérir la sagesse ?",
+    optionA: { text: "Par l'étude, la réflexion et l'action vertueuse", isIslam: true },
+    optionB: { text: "Par des épreuves initiatiques et des serments secrets", isIslam: false },
+    explanation: "La sagesse (Hikma) en Islam vient d'Allah et s'acquiert par l'étude et la pratique, pas par des rites secrets.",
+  },
+  {
+    question: "Quelle est la nature de la création ?",
+    optionA: { text: "Le monde est une illusion à transcender", isIslam: false },
+    optionB: { text: "La création est un signe (Ayat) d'Allah à étudier", isIslam: true },
+    explanation: "Le Coran invite à observer la création comme signes d'Allah, pas à la rejeter comme illusion.",
+  },
+  {
+    question: "Comment atteindre la paix intérieure ?",
+    optionA: { text: "Par la soumission à Allah et le dhikr (rappel)", isIslam: true },
+    optionB: { text: "Par la maîtrise des forces cosmiques et astrales", isIslam: false },
+    explanation: "'C'est par le rappel d'Allah que les cœurs s'apaisent' (13:28), pas par des pratiques occultes.",
+  },
+  {
+    question: "Quel est le but de la vie humaine ?",
+    optionA: { text: "Atteindre des pouvoirs supranaturels", isIslam: false },
+    optionB: { text: "Adorer Allah et faire le bien sur Terre", isIslam: true },
+    explanation: "'Je n'ai créé les djinns et les hommes que pour qu'ils M'adorent' (51:56).",
+  },
+  {
+    question: "Comment distinguer le vrai du faux ?",
+    optionA: { text: "Par la raison, la révélation et la cohérence", isIslam: true },
+    optionB: { text: "Par l'intuition des initiés et les visions mystiques", isIslam: false },
+    explanation: "Le Coran appelle à la réflexion rationnelle et offre des preuves claires, pas des révélations secrètes.",
+  },
 ];
 
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
+const NUM_QUESTIONS = 7;
+
 export const FitraTest = () => {
+  const [sessionSeed, setSessionSeed] = useState(() => Math.random());
+  
+  const questions = useMemo(() => {
+    return shuffleArray(allQuestions).slice(0, NUM_QUESTIONS);
+  }, [sessionSeed]);
+
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState({ islam: 0, occult: 0 });
   const [answered, setAnswered] = useState<boolean | null>(null);
@@ -71,6 +178,7 @@ export const FitraTest = () => {
   };
 
   const restart = () => {
+    setSessionSeed(Math.random());
     setCurrentQuestion(0);
     setScore({ islam: 0, occult: 0 });
     setAnswered(null);
@@ -97,20 +205,22 @@ export const FitraTest = () => {
               <span className="text-sm text-muted-foreground">
                 Question {currentQuestion + 1} / {questions.length}
               </span>
-              <div className="flex gap-1">
-                {questions.map((_, idx) => (
-                  <div
-                    key={idx}
-                    className={cn(
-                      "w-8 h-1 rounded-full transition-colors",
-                      idx < currentQuestion
-                        ? "bg-primary"
-                        : idx === currentQuestion
-                        ? "bg-primary/50"
-                        : "bg-secondary"
-                    )}
-                  />
-                ))}
+              <div className="flex items-center gap-3">
+                <div className="flex gap-1">
+                  {questions.map((_, idx) => (
+                    <div
+                      key={idx}
+                      className={cn(
+                        "w-8 h-1 rounded-full transition-colors",
+                        idx < currentQuestion
+                          ? "bg-primary"
+                          : idx === currentQuestion
+                          ? "bg-primary/50"
+                          : "bg-secondary"
+                      )}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
 
@@ -194,7 +304,7 @@ export const FitraTest = () => {
 
             {/* Explanation */}
             {answered !== null && (
-              <div className="p-5 rounded-xl bg-secondary/30 mb-6 animate-fade-up">
+              <div className="p-5 rounded-xl bg-secondary/30 mb-6 animate-fade-in">
                 <p className="text-foreground">{q.explanation}</p>
               </div>
             )}
@@ -235,8 +345,10 @@ export const FitraTest = () => {
 
             <div className="p-6 rounded-xl bg-secondary/30 mb-8">
               <p className="text-foreground leading-relaxed">
-                {score.islam >= 4
+                {score.islam >= 6
                   ? "Votre Fitra (nature innée) penche fortement vers la clarté du Tawhid. Le message coranique résonne avec votre raison naturelle."
+                  : score.islam >= 4
+                  ? "Vous avez une bonne compréhension du Tawhid. Continuez à approfondir pour renforcer votre Fitra."
                   : score.islam >= 2
                   ? "Vous oscillez entre les deux visions. Le Coran vous invite à approfondir votre réflexion pour revenir à la clarté de la Fitra."
                   : "Les traditions ésotériques ont peut-être influencé votre pensée. Le Coran vous invite à redécouvrir la simplicité du lien direct avec le Créateur."}
@@ -247,8 +359,8 @@ export const FitraTest = () => {
               onClick={restart}
               className="flex items-center gap-2 px-6 py-3 rounded-xl bg-secondary text-foreground font-medium hover:bg-secondary/80 transition-colors mx-auto"
             >
-              <RotateCcw size={18} />
-              Recommencer le test
+              <Shuffle size={18} />
+              Nouvelles questions
             </button>
           </GlassCard>
         )}

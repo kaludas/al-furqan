@@ -6,6 +6,7 @@ import { ProphetTimeline } from "@/components/ProphetTimeline";
 import { ScienceLab } from "@/components/ScienceLab";
 import { TawhidSection } from "@/components/TawhidSection";
 import { FitraTest } from "@/components/FitraTest";
+import { SymbolScanner } from "@/components/SymbolScanner";
 import { Footer } from "@/components/Footer";
 
 const Index = () => {
@@ -19,6 +20,7 @@ const Index = () => {
       <IjazModule />
       <ProphetTimeline />
       <ScienceLab />
+      <SymbolScanner />
       <div id="tawhid">
         <TawhidSection />
       </div>
