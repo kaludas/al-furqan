@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { GlassCard } from "./GlassCard";
 import { SectionTitle } from "./SectionTitle";
-import { Send, Loader2, Sparkles, BookOpen, ShieldAlert, Lightbulb, RefreshCw } from "lucide-react";
+import { Send, Loader2, Sparkles, BookOpen, ShieldAlert, Lightbulb, RefreshCw, Cross, Star, Moon, Eye } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type Message = {
@@ -12,36 +12,55 @@ type Message = {
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/theology-chat`;
 
 const allSuggestedQuestions = [
-  "Qu'est-ce que l'I'jaz et pourquoi le Coran est-il considéré inimitable ?",
+  // Questions sur Jésus et le Christianisme
+  "Qui est Jésus selon le Coran vs la Bible ?",
+  "Comment la Trinité contredit-elle le Tawhid ?",
+  "Le péché originel existe-t-il en Islam ?",
+  "Jésus est-il mort sur la croix ?",
+  "Qu'est-ce que le Paraclet annoncé dans l'Évangile ?",
+  "Comment les Conciles ont-ils modifié le message de Jésus ?",
+  "Pourquoi le Coran rejette-t-il la divinité de Jésus ?",
+  "Quelle est la différence entre l'Injil et les Évangiles actuels ?",
+  
+  // Questions sur le Judaïsme et le Sionisme
+  "Quelle est la différence entre Torah et Talmud ?",
+  "Le peuple élu : vision juive vs vision coranique ?",
+  "À qui appartient la Terre Sainte selon le Coran ?",
+  "Comment le Coran critique-t-il les altérations de la Torah ?",
+  "Qu'est-ce que la Kabbale et pourquoi l'Islam la rejette ?",
+  "Le sionisme est-il religieux ou politique ?",
+  "Pourquoi le Coran dit 'Roi' pour Joseph et 'Pharaon' pour Moïse ?",
+  "Comment le Talmud diffère-t-il de la révélation originelle ?",
+  
+  // Questions sur l'Occultisme
   "Comment le Tawhid s'oppose-t-il au symbolisme du Baphomet ?",
   "Quelle est la différence entre 'Ilm et Gnose ?",
-  "Analysez le verset sur l'embryologie et comparez avec Aristote.",
-  "Qui était Hermès Trismégiste et comment le Coran réfute-t-il l'hermétisme ?",
-  "Expliquez le miracle de l'expansion de l'univers dans le Coran.",
+  "Qui était Hermès Trismégiste et pourquoi est-ce une illusion ?",
   "Comment le Coran traite-t-il la magie et la sorcellerie ?",
-  "Quelle est la différence entre le prophétisme et l'occultisme ?",
-  "Pourquoi l'Islam rejette-t-il l'astrologie ?",
-  "Comment comprendre les 'Huruf Muqatta'at' (lettres mystérieuses) du Coran ?",
-  "Quelle est la position islamique sur la Kabbale ?",
-  "Comment le Coran décrit-il la création de l'univers ?",
-  "Qu'est-ce que le Nazm coranique et pourquoi est-il unique ?",
-  "Comment le Tawhid libère-t-il de la superstition ?",
-  "Analysez la sourate Al-Falaq et sa protection contre l'occultisme.",
-  "Quelle est la différence entre Shirk et Tawhid ?",
-  "Comment le Coran réfute-t-il le dualisme zoroastrien ?",
-  "Pourquoi les Tafsirs classiques sont-ils importants ?",
-  "Comment le Coran décrit-il le développement fœtal ?",
   "Quelle est la position islamique sur les sociétés secrètes ?",
+  "Pourquoi l'Islam rejette-t-il l'astrologie ?",
+  "Qu'est-ce que le shirk et comment se manifeste-t-il dans l'occultisme ?",
+  "Comment le Tawhid libère-t-il de la superstition ?",
+  
+  // Questions sur le Coran et l'I'jaz
+  "Qu'est-ce que l'I'jaz et pourquoi le Coran est-il inimitable ?",
+  "Comment le Coran décrit-il le développement embryonnaire ?",
+  "Expliquez le miracle de l'expansion de l'univers dans le Coran.",
+  "Qu'est-ce que le Nazm coranique et pourquoi est-il unique ?",
   "Comment le Coran prouve-t-il son origine divine ?",
+  "Pourquoi le Coran est-il resté préservé contrairement à la Bible ?",
+  "Comment le Coran corrige-t-il les erreurs de la Bible ?",
+  "Qu'est-ce que Al-Furqan (le Discriminateur) ?",
+  
+  // Questions comparatives générales
+  "Comment obtenir le salut : Islam vs Christianisme vs Judaïsme ?",
+  "Dieu peut-il avoir un fils ou un égal ?",
+  "Quelle est la vraie nature du Messie ?",
+  "Pourquoi l'Islam est-il la voie du milieu ?",
+  "Comment le Coran restaure-t-il le message original des prophètes ?",
   "Qu'est-ce que la Fitra et comment la préserver ?",
-  "Comment le Coran traite-t-il la question des djinns ?",
-  "Quelle est la différence entre révélation et inspiration mystique ?",
-  "Comment comprendre le concept de 'Barakah' vs magie ?",
-  "Pourquoi le Coran utilise-t-il le terme 'Ayat' (signes) ?",
-  "Comment le Tafsir Ibn Kathir explique-t-il les versets scientifiques ?",
-  "Quelle est la position islamique sur les symboles occultes ?",
-  "Comment le Coran réfute-t-il l'idolâtrie ?",
-  "Qu'est-ce que le 'Ilm al-Ghayb' (connaissance de l'invisible) ?",
+  "Pourquoi le monothéisme pur est-il la seule logique ?",
+  "Comment distinguer révélation divine et tradition humaine ?",
 ];
 
 function shuffleArray<T>(array: T[]): T[] {
@@ -57,7 +76,7 @@ export const ExpertChat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState<"response" | "sources" | "refutation">("response");
+  const [activeTab, setActiveTab] = useState<"response" | "sources" | "comparison">("response");
   const [questionSeed, setQuestionSeed] = useState(() => Math.random());
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -198,21 +217,37 @@ export const ExpertChat = () => {
 
       <div className="container max-w-5xl relative z-10">
         <SectionTitle
-          arabicTitle="بوصلة الحقيقة"
-          title="Boussole de la Vérité"
-          subtitle="Posez vos questions sur la théologie comparée. L'IA répond avec des sources vérifiables et des réfutations argumentées."
+          arabicTitle="الفرقان"
+          title="Al-Furqan : Le Discriminateur"
+          subtitle="Théologie comparée entre Islam, Christianisme, Judaïsme et Occultisme. L'IA analyse chaque question sous 5 prismes différents."
         />
 
         <GlassCard glow className="p-6 md:p-8">
-          {/* Header */}
+          {/* Header with 4 pillars */}
           <div className="text-center mb-8">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm mb-4">
               <Sparkles size={16} />
-              <span>Mode Preuve Activé</span>
+              <span>Mode Confrontation à 5 Piliers</span>
             </div>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Chaque réponse inclut des références aux Tafsir classiques et une analyse comparative avec les traditions ésotériques.
-            </p>
+            
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-6">
+              <div className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-center">
+                <Cross className="w-5 h-5 mx-auto mb-1 text-blue-400" />
+                <p className="text-xs text-blue-400 font-medium">Christianisme</p>
+              </div>
+              <div className="p-3 rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-center">
+                <Star className="w-5 h-5 mx-auto mb-1 text-yellow-400" />
+                <p className="text-xs text-yellow-400 font-medium">Judaïsme</p>
+              </div>
+              <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 text-center">
+                <Eye className="w-5 h-5 mx-auto mb-1 text-purple-400" />
+                <p className="text-xs text-purple-400 font-medium">Occultisme</p>
+              </div>
+              <div className="p-3 rounded-xl bg-primary/10 border border-primary/20 text-center">
+                <Moon className="w-5 h-5 mx-auto mb-1 text-primary" />
+                <p className="text-xs text-primary font-medium">Coran</p>
+              </div>
+            </div>
           </div>
 
           {/* Suggested Questions */}
@@ -246,7 +281,7 @@ export const ExpertChat = () => {
           {messages.length > 0 && (
             <div className="mb-6">
               {/* Conversation */}
-              <div className="max-h-[300px] overflow-y-auto space-y-4 p-4 rounded-xl bg-secondary/20 mb-4">
+              <div className="max-h-[400px] overflow-y-auto space-y-4 p-4 rounded-xl bg-secondary/20 mb-4">
                 {messages.map((message, index) => (
                   <div
                     key={index}
@@ -257,7 +292,7 @@ export const ExpertChat = () => {
                   >
                     <div
                       className={cn(
-                        "max-w-[85%] rounded-2xl px-5 py-4",
+                        "max-w-[90%] rounded-2xl px-5 py-4",
                         message.role === "user"
                           ? "bg-primary text-primary-foreground rounded-br-md"
                           : "bg-card/80 text-foreground rounded-bl-md border border-glass"
@@ -272,7 +307,7 @@ export const ExpertChat = () => {
                     <div className="bg-card/80 border border-glass rounded-2xl rounded-bl-md px-5 py-4">
                       <div className="flex items-center gap-2 text-muted-foreground">
                         <Loader2 className="w-4 h-4 animate-spin" />
-                        <span className="text-sm">Analyse en cours...</span>
+                        <span className="text-sm">Analyse comparative en cours...</span>
                       </div>
                     </div>
                   </div>
@@ -309,58 +344,85 @@ export const ExpertChat = () => {
                       Sources
                     </button>
                     <button
-                      onClick={() => setActiveTab("refutation")}
+                      onClick={() => setActiveTab("comparison")}
                       className={cn(
                         "flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-colors",
-                        activeTab === "refutation"
+                        activeTab === "comparison"
                           ? "bg-primary/10 text-primary border-b-2 border-primary"
                           : "text-muted-foreground hover:text-foreground"
                       )}
                     >
                       <ShieldAlert size={16} />
-                      Réfutation
+                      Verdict
                     </button>
                   </div>
 
                   <div className="p-5">
                     {activeTab === "response" && (
                       <div className="text-muted-foreground text-sm leading-relaxed">
-                        <p className="mb-4">{lastAssistantMessage.content}</p>
+                        <p className="whitespace-pre-wrap">{lastAssistantMessage.content}</p>
                       </div>
                     )}
                     {activeTab === "sources" && (
                       <div className="space-y-3">
                         <p className="text-sm text-muted-foreground">
-                          Sources utilisées pour cette réponse :
+                          Sources utilisées pour l'analyse comparative :
                         </p>
-                        <div className="grid gap-2">
-                          <div className="p-3 rounded-lg bg-secondary/30 text-sm">
+                        <div className="grid md:grid-cols-2 gap-2">
+                          <div className="p-3 rounded-lg bg-primary/10 text-sm">
                             <span className="text-primary font-medium">📖 Tafsir Ibn Kathir</span>
-                            <p className="text-muted-foreground text-xs mt-1">Exégèse classique du 14ème siècle</p>
+                            <p className="text-muted-foreground text-xs mt-1">Exégèse classique du Coran</p>
                           </div>
-                          <div className="p-3 rounded-lg bg-secondary/30 text-sm">
+                          <div className="p-3 rounded-lg bg-primary/10 text-sm">
                             <span className="text-primary font-medium">📖 Tafsir Al-Qurtubi</span>
                             <p className="text-muted-foreground text-xs mt-1">Exégèse juridique et linguistique</p>
                           </div>
-                          <div className="p-3 rounded-lg bg-secondary/30 text-sm">
-                            <span className="text-primary font-medium">📖 Tafsir At-Tabari</span>
-                            <p className="text-muted-foreground text-xs mt-1">Exégèse historique la plus ancienne</p>
+                          <div className="p-3 rounded-lg bg-blue-500/10 text-sm">
+                            <span className="text-blue-400 font-medium">✝️ Bible (AT & NT)</span>
+                            <p className="text-muted-foreground text-xs mt-1">Ancien et Nouveau Testament</p>
+                          </div>
+                          <div className="p-3 rounded-lg bg-yellow-500/10 text-sm">
+                            <span className="text-yellow-400 font-medium">✡️ Talmud & Mishna</span>
+                            <p className="text-muted-foreground text-xs mt-1">Tradition rabbinique</p>
+                          </div>
+                          <div className="p-3 rounded-lg bg-purple-500/10 text-sm">
+                            <span className="text-purple-400 font-medium">🔮 Corpus Hermeticum</span>
+                            <p className="text-muted-foreground text-xs mt-1">Textes hermétiques</p>
+                          </div>
+                          <div className="p-3 rounded-lg bg-purple-500/10 text-sm">
+                            <span className="text-purple-400 font-medium">🔮 Sefer ha-Zohar</span>
+                            <p className="text-muted-foreground text-xs mt-1">Texte central de la Kabbale</p>
                           </div>
                         </div>
                       </div>
                     )}
-                    {activeTab === "refutation" && (
-                      <div className="space-y-3">
+                    {activeTab === "comparison" && (
+                      <div className="space-y-4">
                         <p className="text-sm text-muted-foreground">
-                          Pourquoi l'interprétation ésotérique est incorrecte :
+                          Pourquoi le Coran est Al-Furqan (Le Discriminateur) :
                         </p>
-                        <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/20">
-                          <p className="text-sm text-foreground">
-                            Les traditions occultes présentent souvent une "vérité cachée" réservée aux initiés. 
-                            Le Coran, au contraire, est un Livre clair (<span className="text-primary">كتاب مبين</span>) 
-                            dont le message est accessible à tous. L'ésotérisme contredit le principe coranique 
-                            de clarté et d'universalité du message divin.
-                          </p>
+                        
+                        <div className="grid gap-3">
+                          <div className="p-4 rounded-lg bg-primary/10 border border-primary/20">
+                            <h4 className="text-sm font-medium text-primary mb-2">☀️ Préservation Textuelle</h4>
+                            <p className="text-xs text-muted-foreground">
+                              Le Coran est resté lettre pour lettre identique depuis 1400 ans, contrairement aux multiples versions de la Bible et aux débats talmudiques contradictoires.
+                            </p>
+                          </div>
+                          
+                          <div className="p-4 rounded-lg bg-primary/10 border border-primary/20">
+                            <h4 className="text-sm font-medium text-primary mb-2">⚖️ Arbitrage Divin</h4>
+                            <p className="text-xs text-muted-foreground">
+                              "Ce Coran raconte aux Enfants d'Israël la plupart des sujets sur lesquels ils divergent." (Sourate An-Naml, 27:76)
+                            </p>
+                          </div>
+                          
+                          <div className="p-4 rounded-lg bg-primary/10 border border-primary/20">
+                            <h4 className="text-sm font-medium text-primary mb-2">🎯 Précision Historique</h4>
+                            <p className="text-xs text-muted-foreground">
+                              Le Coran utilise "Malik" (Roi) pour l'Égypte de Joseph et "Fir'awn" (Pharaon) pour celle de Moïse - précision que la Bible ne fait pas.
+                            </p>
+                          </div>
                         </div>
                       </div>
                     )}
@@ -377,7 +439,7 @@ export const ExpertChat = () => {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyPress}
-              placeholder="Posez votre question sur le Coran, le Tawhid, l'occultisme..."
+              placeholder="Posez votre question comparative : Coran, Bible, Talmud, Occultisme..."
               className="flex-1 bg-secondary/30 border border-glass rounded-xl px-5 py-4 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
               disabled={isLoading}
             />
