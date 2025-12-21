@@ -4,6 +4,7 @@ import { TawhidSection } from "@/components/TawhidSection";
 import { ScienceSection } from "@/components/ScienceSection";
 import { IlmGnoseSection } from "@/components/IlmGnoseSection";
 import { Footer } from "@/components/Footer";
+import { ChatInterface } from "@/components/ChatInterface";
 
 const Index = () => {
   return (
@@ -14,6 +15,7 @@ const Index = () => {
       <ScienceSection />
       <IlmGnoseSection />
       <Footer />
+      <ChatInterface />
     </main>
   );
 };

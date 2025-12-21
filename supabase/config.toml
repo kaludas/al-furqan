@@ -1,0 +1,4 @@
+project_id = "krzqurlpqdvjvtjktgzi"
+
+[functions.theology-chat]
+verify_jwt = false
