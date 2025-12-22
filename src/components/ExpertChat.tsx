@@ -64,14 +64,16 @@ const formatDoctrineContent = (content: string) => {
 const parseResponseSections = (content: string) => {
   const sections: { id: string; title: string; content: string; color: string; icon: string }[] = [];
   
-  // Split by numbered sections
+  // Split by numbered sections - improved regex to match various formats including ##
   const sectionPatterns = [
-    { regex: /(?:^|\n)\s*\*?\*?1\.\s*(?:✝️\s*)?LE PRISME CHRÉTIEN\*?\*?/i, id: 'chretien', title: 'Le Prisme Chrétien', color: 'blue', icon: '✝️' },
-    { regex: /(?:^|\n)\s*\*?\*?2\.\s*(?:✡️\s*)?LE PRISME JUDAÏQUE\*?\*?/i, id: 'judaique', title: 'Le Prisme Judaïque', color: 'yellow', icon: '✡️' },
-    { regex: /(?:^|\n)\s*\*?\*?3\.\s*(?:🌑\s*)?L['']ILLUSION OCCULTE\*?\*?/i, id: 'occulte', title: "L'Illusion Occulte", color: 'purple', icon: '🌑' },
-    { regex: /(?:^|\n)\s*\*?\*?4\.\s*(?:❔\s*)?LE PRISME AGNOSTIQUE\*?\*?/i, id: 'agnostique', title: 'Le Prisme Agnostique', color: 'slate', icon: '❔' },
-    { regex: /(?:^|\n)\s*\*?\*?5\.\s*(?:☀️\s*)?LA LUMIÈRE DE LA RÉVÉLATION\*?\*?/i, id: 'revelation', title: 'La Lumière de la Révélation', color: 'emerald', icon: '☀️' },
-    { regex: /(?:^|\n)\s*\*?\*?6\.\s*(?:⚖️\s*)?LE VERDICT DE LA RAISON\*?\*?/i, id: 'verdict', title: 'Le Verdict de la Raison', color: 'primary', icon: '⚖️' },
+    { regex: /(?:^|\n)\s*(?:#{1,3}\s*)?\*?\*?\s*1\.?\s*(?:✝️\s*)?(?:LE\s+)?PRISME\s+CHRÉTIEN[^\n]*/i, id: 'chretien', title: 'Le Prisme Chrétien', color: 'blue', icon: '✝️' },
+    { regex: /(?:^|\n)\s*(?:#{1,3}\s*)?\*?\*?\s*2\.?\s*(?:✡️\s*)?(?:LE\s+)?PRISME\s+JUDAÏQUE[^\n]*/i, id: 'judaique', title: 'Le Prisme Judaïque', color: 'yellow', icon: '✡️' },
+    { regex: /(?:^|\n)\s*(?:#{1,3}\s*)?\*?\*?\s*3\.?\s*(?:🌑\s*)?(?:L['\u2019]?\s*)?ILLUSION\s+OCCULTE[^\n]*/i, id: 'occulte', title: "L'Illusion Occulte", color: 'purple', icon: '🌑' },
+    { regex: /(?:^|\n)\s*(?:#{1,3}\s*)?\*?\*?\s*4\.?\s*(?:❔\s*)?(?:LE\s+)?PRISME\s+AGNOSTIQUE[^\n]*/i, id: 'agnostique', title: 'Le Prisme Agnostique', color: 'slate', icon: '❔' },
+    { regex: /(?:^|\n)\s*(?:#{1,3}\s*)?\*?\*?\s*5\.?\s*(?:☀️\s*)?(?:LA\s+)?LUMIÈRE\s+DE\s+LA\s+RÉVÉLATION[^\n]*/i, id: 'revelation', title: 'La Lumière de la Révélation', color: 'emerald', icon: '☀️' },
+    { regex: /(?:^|\n)\s*(?:#{1,3}\s*)?\*?\*?\s*(?:6\.?\s*)?(?:⚖️\s*)?(?:LE\s+)?VERDICT\s+DE\s+LA\s+RAISON[^\n]*/i, id: 'verdict', title: 'Le Verdict de la Raison', color: 'primary', icon: '⚖️' },
+    // Fallback patterns for simpler formats
+    { regex: /(?:^|\n)\s*(?:#{1,3}\s*)?\*?\*?\s*CONCLUSION[^\n]*/i, id: 'conclusion', title: 'Conclusion', color: 'primary', icon: '⚖️' },
   ];
 
   let positions: { start: number; end: number; pattern: typeof sectionPatterns[0] }[] = [];
@@ -79,7 +81,11 @@ const parseResponseSections = (content: string) => {
   sectionPatterns.forEach((pattern) => {
     const match = content.match(pattern.regex);
     if (match && match.index !== undefined) {
-      positions.push({ start: match.index, end: match.index + match[0].length, pattern });
+      // Check if this position is not already taken by another pattern
+      const alreadyExists = positions.some(p => Math.abs(p.start - match.index!) < 10);
+      if (!alreadyExists) {
+        positions.push({ start: match.index, end: match.index + match[0].length, pattern });
+      }
     }
   });
 
@@ -90,13 +96,15 @@ const parseResponseSections = (content: string) => {
     const nextStart = positions[i + 1]?.start || content.length;
     const sectionContent = content.slice(current.end, nextStart).trim();
     
-    sections.push({
-      id: current.pattern.id,
-      title: current.pattern.title,
-      content: sectionContent,
-      color: current.pattern.color,
-      icon: current.pattern.icon
-    });
+    if (sectionContent.length > 10) { // Only add sections with meaningful content
+      sections.push({
+        id: current.pattern.id,
+        title: current.pattern.title,
+        content: sectionContent,
+        color: current.pattern.color,
+        icon: current.pattern.icon
+      });
+    }
   }
 
   return sections;
