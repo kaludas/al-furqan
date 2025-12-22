@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { GlassCard } from "./GlassCard";
 import { SectionTitle } from "./SectionTitle";
-import { Send, Loader2, Sparkles, BookOpen, ShieldAlert, Lightbulb, RefreshCw, Cross, Star, Moon, Eye, HelpCircle, Volume2, VolumeX, Square } from "lucide-react";
+import { Send, Loader2, Sparkles, BookOpen, ShieldAlert, Lightbulb, RefreshCw, Cross, Star, Moon, Eye, HelpCircle, Volume2, Pause, Play, Square } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 
@@ -105,43 +105,51 @@ const parseResponseSections = (content: string) => {
 // Component to render formatted message content
 const FormattedMessage = ({ 
   content, 
-  onSpeakSection 
+  onSpeakSection,
+  speakingSection,
+  isPaused
 }: { 
   content: string; 
   onSpeakSection?: (text: string, sectionId: string) => void;
+  speakingSection?: string | null;
+  isPaused?: boolean;
 }) => {
   const sections = parseResponseSections(content);
   
-  const colorClasses: Record<string, { text: string; bg: string; border: string }> = {
-    blue: { text: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/30' },
-    yellow: { text: 'text-yellow-400', bg: 'bg-yellow-500/10', border: 'border-yellow-500/30' },
-    purple: { text: 'text-purple-400', bg: 'bg-purple-500/10', border: 'border-purple-500/30' },
-    slate: { text: 'text-slate-400', bg: 'bg-slate-500/10', border: 'border-slate-500/30' },
-    emerald: { text: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/30' },
-    primary: { text: 'text-primary', bg: 'bg-primary/10', border: 'border-primary/30' },
+  const colorClasses: Record<string, { text: string; bg: string; border: string; headerBg: string }> = {
+    blue: { text: 'text-blue-300', bg: 'bg-gradient-to-br from-blue-950/60 to-blue-900/40', border: 'border-blue-400/40', headerBg: 'bg-blue-500/20' },
+    yellow: { text: 'text-yellow-300', bg: 'bg-gradient-to-br from-yellow-950/60 to-amber-900/40', border: 'border-yellow-400/40', headerBg: 'bg-yellow-500/20' },
+    purple: { text: 'text-purple-300', bg: 'bg-gradient-to-br from-purple-950/60 to-violet-900/40', border: 'border-purple-400/40', headerBg: 'bg-purple-500/20' },
+    slate: { text: 'text-slate-300', bg: 'bg-gradient-to-br from-slate-800/60 to-slate-700/40', border: 'border-slate-400/40', headerBg: 'bg-slate-500/20' },
+    emerald: { text: 'text-emerald-300', bg: 'bg-gradient-to-br from-emerald-950/60 to-green-900/40', border: 'border-emerald-400/40', headerBg: 'bg-emerald-500/20' },
+    primary: { text: 'text-primary', bg: 'bg-gradient-to-br from-primary/20 to-primary/10', border: 'border-primary/40', headerBg: 'bg-primary/20' },
   };
 
-  const formatSectionContent = (text: string) => {
+  const formatSectionContent = (text: string, textColor: string) => {
     const lines = text.split('\n');
     return lines.map((line, idx) => {
       // Quran verses in quotes
       if (line.match(/«.*»/) || line.match(/".*"/)) {
-        return <p key={idx} className="text-emerald-300 italic my-2 pl-3 border-l-2 border-emerald-500/40">{line}</p>;
+        return <p key={idx} className="text-emerald-300 italic my-3 pl-4 border-l-2 border-emerald-400/60 text-base">{line}</p>;
       }
       // Sourate references
       if (line.match(/Sourate|Coran\s+\d+:\d+/i)) {
-        return <p key={idx} className="text-emerald-400/80 text-xs my-1">{line}</p>;
+        return <p key={idx} className="text-emerald-400/90 text-sm my-1 font-medium">{line}</p>;
       }
-      // Bold text
+      // Bold text - key arguments
       if (line.match(/\*\*[^*]+\*\*/)) {
-        const formatted = line.replace(/\*\*([^*]+)\*\*/g, '<strong class="text-foreground">$1</strong>');
-        return <p key={idx} className="my-1" dangerouslySetInnerHTML={{ __html: formatted }} />;
+        const formatted = line.replace(/\*\*([^*]+)\*\*/g, `<strong class="${textColor} font-bold">$1</strong>`);
+        return <p key={idx} className="my-2 text-foreground/90" dangerouslySetInnerHTML={{ __html: formatted }} />;
       }
       // Table header detection - skip markdown tables
       if (line.match(/^\|.*\|$/) || line.match(/^[\-:|\s]+$/)) {
-        return null; // Skip table rows, we'll handle them differently
+        return null;
       }
-      return line.trim() ? <p key={idx} className="my-1">{line}</p> : null;
+      // Bullet points
+      if (line.match(/^[-•*]\s+/)) {
+        return <p key={idx} className="my-1.5 pl-3 text-foreground/80">• {line.replace(/^[-•*]\s+/, '')}</p>;
+      }
+      return line.trim() ? <p key={idx} className="my-1.5 text-foreground/80">{line}</p> : null;
     });
   };
 
@@ -155,7 +163,7 @@ const FormattedMessage = ({
             return <p key={index} className="text-emerald-300 italic my-1">{line}</p>;
           }
           if (line.match(/\*\*[^*]+\*\*/)) {
-            const formatted = line.replace(/\*\*([^*]+)\*\*/g, '<strong class="text-foreground">$1</strong>');
+            const formatted = line.replace(/\*\*([^*]+)\*\*/g, '<strong class="text-foreground font-bold">$1</strong>');
             return <p key={index} className="my-1" dangerouslySetInnerHTML={{ __html: formatted }} />;
           }
           return <p key={index} className="my-1">{line}</p>;
@@ -165,41 +173,63 @@ const FormattedMessage = ({
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       {sections.map((section) => {
         const colors = colorClasses[section.color] || colorClasses.primary;
+        const isCurrentlySpeaking = speakingSection === section.id;
+        
         return (
           <div 
             key={section.id} 
             className={cn(
-              "rounded-xl border p-4 transition-all",
+              "rounded-2xl border-2 overflow-hidden transition-all shadow-lg",
               colors.bg,
-              colors.border
+              colors.border,
+              isCurrentlySpeaking && "ring-2 ring-primary/50"
             )}
           >
-            <div className="flex items-center justify-between mb-3">
-              <h4 className={cn("font-semibold flex items-center gap-2", colors.text)}>
-                <span>{section.icon}</span>
+            {/* Header with gradient */}
+            <div className={cn("px-5 py-4 flex items-center justify-between", colors.headerBg)}>
+              <h4 className={cn("text-lg font-bold flex items-center gap-3", colors.text)}>
+                <span className="text-2xl">{section.icon}</span>
                 {section.title}
               </h4>
               {onSpeakSection && (
                 <button
                   onClick={() => onSpeakSection(section.content, section.id)}
                   className={cn(
-                    "flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs transition-colors",
-                    colors.bg,
-                    colors.text,
-                    "hover:opacity-80"
+                    "flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all",
+                    isCurrentlySpeaking 
+                      ? "bg-primary text-primary-foreground shadow-md" 
+                      : "bg-background/30 hover:bg-background/50",
+                    colors.text
                   )}
-                  title={`Écouter ${section.title}`}
+                  title={isCurrentlySpeaking ? (isPaused ? "Reprendre" : "Pause") : `Écouter ${section.title}`}
                 >
-                  <Volume2 className="w-3 h-3" />
-                  Écouter
+                  {isCurrentlySpeaking ? (
+                    isPaused ? (
+                      <>
+                        <Play className="w-4 h-4" />
+                        Reprendre
+                      </>
+                    ) : (
+                      <>
+                        <Pause className="w-4 h-4" />
+                        Pause
+                      </>
+                    )
+                  ) : (
+                    <>
+                      <Volume2 className="w-4 h-4" />
+                      Écouter
+                    </>
+                  )}
                 </button>
               )}
             </div>
-            <div className="text-sm text-muted-foreground leading-relaxed">
-              {formatSectionContent(section.content)}
+            {/* Content */}
+            <div className="px-5 py-4 text-sm leading-relaxed">
+              {formatSectionContent(section.content, colors.text)}
             </div>
           </div>
         );
@@ -288,6 +318,7 @@ export const ExpertChat = () => {
   const [activeTab, setActiveTab] = useState<"response" | "sources" | "comparison">("response");
   const [questionSeed, setQuestionSeed] = useState(() => Math.random());
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
   const [speakingSection, setSpeakingSection] = useState<string | null>(null);
   const [currentVoice, setCurrentVoice] = useState<SpeechSynthesisVoice | null>(null);
   const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
@@ -312,15 +343,22 @@ export const ExpertChat = () => {
       return;
     }
     
-    // If already speaking this section, stop it
+    // If already speaking this section, toggle pause/resume
     if (isSpeaking && speakingSection === sectionId) {
-      speechSynthesis.cancel();
-      setIsSpeaking(false);
-      setSpeakingSection(null);
+      if (isPaused) {
+        speechSynthesis.resume();
+        setIsPaused(false);
+      } else {
+        speechSynthesis.pause();
+        setIsPaused(true);
+      }
       return;
     }
     
+    // If speaking another section, stop it first
     speechSynthesis.cancel();
+    setIsPaused(false);
+    
     const cleanText = text.replace(/\*\*/g, '').replace(/[☀️✝️✡️🌑❔⚖️📖|:\-]/g, '').replace(/\n+/g, '. ');
     const utterance = new SpeechSynthesisUtterance(cleanText);
     if (currentVoice) utterance.voice = currentVoice;
@@ -328,22 +366,26 @@ export const ExpertChat = () => {
     utterance.pitch = 1;
     utterance.onstart = () => {
       setIsSpeaking(true);
+      setIsPaused(false);
       setSpeakingSection(sectionId);
     };
     utterance.onend = () => {
       setIsSpeaking(false);
+      setIsPaused(false);
       setSpeakingSection(null);
     };
     utterance.onerror = () => {
       setIsSpeaking(false);
+      setIsPaused(false);
       setSpeakingSection(null);
     };
     speechSynthesis.speak(utterance);
-  }, [currentVoice, toast, isSpeaking, speakingSection]);
+  }, [currentVoice, toast, isSpeaking, isPaused, speakingSection]);
 
   const stopSpeaking = useCallback(() => {
     speechSynthesis.cancel();
     setIsSpeaking(false);
+    setIsPaused(false);
     setSpeakingSection(null);
   }, []);
 
@@ -570,7 +612,12 @@ export const ExpertChat = () => {
                       )}
                     >
                       {message.role === "assistant" ? (
-                        <FormattedMessage content={message.content} />
+                        <FormattedMessage 
+                          content={message.content} 
+                          onSpeakSection={speakSection}
+                          speakingSection={speakingSection}
+                          isPaused={isPaused}
+                        />
                       ) : (
                         <p className="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</p>
                       )}
@@ -661,6 +708,8 @@ export const ExpertChat = () => {
                         <FormattedMessage 
                           content={lastAssistantMessage.content} 
                           onSpeakSection={speakSection}
+                          speakingSection={speakingSection}
+                          isPaused={isPaused}
                         />
                       </div>
                     )}
