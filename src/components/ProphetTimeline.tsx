@@ -538,13 +538,18 @@ export const ProphetTimeline = () => {
               </div>
             </div>
 
-            {/* Myths overlay */}
+            {/* Myths overlay - More visible */}
             {showMyths && (
-              <div className="mt-8 pt-6 border-t border-glass">
-                <h4 className="text-sm font-medium text-muted-foreground mb-4 text-center">
-                  Traditions ésotériques de cette période
-                </h4>
-                <div className="flex flex-wrap justify-center gap-3">
+              <div className="mt-8 pt-6 border-t-2 border-destructive/30">
+                <div className="flex items-center justify-center gap-3 mb-6">
+                  <div className="h-px flex-1 bg-gradient-to-r from-transparent to-destructive/50" />
+                  <h4 className="text-lg font-display text-destructive flex items-center gap-2">
+                    <span className="text-2xl">☿</span>
+                    Traditions Ésotériques de cette Période
+                  </h4>
+                  <div className="h-px flex-1 bg-gradient-to-l from-transparent to-destructive/50" />
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {myths
                     .filter(m => m.year >= eras[currentEra].start && m.year < eras[currentEra].end)
                     .map((myth) => (
@@ -552,18 +557,23 @@ export const ProphetTimeline = () => {
                         key={myth.name}
                         onClick={() => { setSelectedMyth(myth); setSelectedProphet(null); }}
                         className={cn(
-                          "px-4 py-2 rounded-lg text-sm transition-all",
+                          "p-4 rounded-xl text-center transition-all border-2",
                           selectedMyth?.name === myth.name 
-                            ? "bg-destructive/20 border border-destructive/50 text-foreground" 
-                            : "bg-secondary/30 text-muted-foreground hover:bg-destructive/10"
+                            ? "bg-destructive/20 border-destructive text-foreground shadow-lg shadow-destructive/20" 
+                            : "bg-destructive/5 border-destructive/30 text-foreground hover:bg-destructive/10 hover:border-destructive/50"
                         )}
                       >
-                        <span className="text-destructive/70 mr-2">☿</span>
-                        {myth.name}
+                        <span className="text-3xl block mb-2">☿</span>
+                        <p className="font-medium text-sm">{myth.name}</p>
+                        <p className="text-xs text-muted-foreground mt-1">{myth.yearLabel}</p>
+                        <p className="text-xs text-destructive/70 mt-1">{myth.civilization}</p>
                       </button>
                     ))}
                   {myths.filter(m => m.year >= eras[currentEra].start && m.year < eras[currentEra].end).length === 0 && (
-                    <p className="text-sm text-muted-foreground">Aucune tradition ésotérique majeure pour cette période</p>
+                    <div className="col-span-full text-center py-8">
+                      <p className="text-muted-foreground">Aucune tradition ésotérique majeure enregistrée pour cette période</p>
+                      <p className="text-xs text-muted-foreground mt-2">Le Tawhid des prophètes prédominait</p>
+                    </div>
                   )}
                 </div>
               </div>

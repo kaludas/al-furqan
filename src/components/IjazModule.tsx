@@ -1,8 +1,111 @@
 import { useState } from "react";
 import { GlassCard } from "./GlassCard";
 import { SectionTitle } from "./SectionTitle";
-import { Search, BookOpen, Zap, ArrowRight, Calculator, Scale, Sparkles } from "lucide-react";
+import { Search, BookOpen, Zap, ArrowRight, Calculator, Scale, Sparkles, Crown, Heart, Shield } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+// 99 Names of Allah with meanings and contrasts
+const namesOfAllah = [
+  { arabic: "الرحمن", name: "Ar-Rahman", meaning: "Le Tout Miséricordieux", description: "Miséricorde universelle englobant toute la création.", contrast: "Dieu vengeur de l'AT / Karma impersonnel du New Age" },
+  { arabic: "الرحيم", name: "Ar-Rahim", meaning: "Le Très Miséricordieux", description: "Miséricorde spéciale pour les croyants.", contrast: "Grâce conditionnelle chrétienne (foi + œuvres incertaines)" },
+  { arabic: "الملك", name: "Al-Malik", meaning: "Le Roi", description: "Souverain absolu de l'univers.", contrast: "Zeus/Jupiter soumis au Destin / Roi terrestre divinisé" },
+  { arabic: "القدوس", name: "Al-Quddus", meaning: "Le Saint", description: "Pur de toute imperfection.", contrast: "Dieux grecs immoraux / Émanations gnostiques" },
+  { arabic: "السلام", name: "As-Salam", meaning: "La Paix", description: "Source de toute paix et sécurité.", contrast: "Dualisme zoroastrien du conflit éternel" },
+  { arabic: "المؤمن", name: "Al-Mu'min", meaning: "Le Garant", description: "Qui accorde la sécurité et confirme la foi.", contrast: "Dieu caché de la gnose inaccessible" },
+  { arabic: "المهيمن", name: "Al-Muhaymin", meaning: "Le Surveillant", description: "Gardien et protecteur de tout.", contrast: "Démiurge gnostique ignorant le Bien" },
+  { arabic: "العزيز", name: "Al-Aziz", meaning: "Le Tout Puissant", description: "Puissance invincible.", contrast: "Dieu limité par le libre arbitre (théisme ouvert)" },
+  { arabic: "الجبار", name: "Al-Jabbar", meaning: "Le Contraignant", description: "Qui restaure et répare.", contrast: "Dieu passif du déisme" },
+  { arabic: "المتكبر", name: "Al-Mutakabbir", meaning: "Le Suprême", description: "Grandeur exclusive à Lui.", contrast: "Panthéisme: 'Tout est Dieu'" },
+  { arabic: "الخالق", name: "Al-Khaliq", meaning: "Le Créateur", description: "Qui crée du néant.", contrast: "Émanation néoplatonicienne (création involontaire)" },
+  { arabic: "البارئ", name: "Al-Bari", meaning: "Le Producteur", description: "Qui façonne sans modèle préexistant.", contrast: "Démiurge de Platon copiant les Idées" },
+  { arabic: "المصور", name: "Al-Musawwir", meaning: "Le Formateur", description: "Qui donne forme à la création.", contrast: "Hasard darwinien sans dessein" },
+  { arabic: "الغفار", name: "Al-Ghaffar", meaning: "Le Grand Pardonneur", description: "Pardonne sans cesse les péchés.", contrast: "Karma inexorable / Justice divine sans pardon" },
+  { arabic: "القهار", name: "Al-Qahhar", meaning: "Le Dominateur Suprême", description: "Soumet tout à Sa volonté.", contrast: "Dualisme manichéen (Bien/Mal égaux)" },
+  { arabic: "الوهاب", name: "Al-Wahhab", meaning: "Le Donateur", description: "Donne sans contrepartie.", contrast: "Do ut des païen (je donne pour recevoir)" },
+  { arabic: "الرزاق", name: "Ar-Razzaq", meaning: "Le Pourvoyeur", description: "Pourvoit à tous les besoins.", contrast: "Dieu indifférent du déisme" },
+  { arabic: "الفتاح", name: "Al-Fattah", meaning: "Le Juge Suprême", description: "Ouvre les portes du bien.", contrast: "Destin aveugle du stoïcisme" },
+  { arabic: "العليم", name: "Al-Alim", meaning: "L'Omniscient", description: "Connaît toute chose.", contrast: "Dieu qui 'apprend' du théisme ouvert" },
+  { arabic: "القابض", name: "Al-Qabid", meaning: "Celui qui retient", description: "Retient et resserre.", contrast: "Abondance automatique du New Age" },
+  { arabic: "الباسط", name: "Al-Basit", meaning: "Celui qui étend", description: "Étend et libère.", contrast: "Ascétisme extrême (matière = mal)" },
+  { arabic: "الخافض", name: "Al-Khafid", meaning: "Celui qui abaisse", description: "Humilie les arrogants.", contrast: "Dieu qui ne juge pas (modernisme)" },
+  { arabic: "الرافع", name: "Ar-Rafi", meaning: "Celui qui élève", description: "Élève les humbles.", contrast: "Méritocratie spirituelle (gnose élitiste)" },
+  { arabic: "المعز", name: "Al-Mu'izz", meaning: "Celui qui honore", description: "Accorde l'honneur.", contrast: "Karma: honneur par mérite seul" },
+  { arabic: "المذل", name: "Al-Mudhill", meaning: "Celui qui humilie", description: "Humilie qui Il veut.", contrast: "Dieu qui n'intervient pas (déisme)" },
+  { arabic: "السميع", name: "As-Sami", meaning: "L'Audient", description: "Entend toutes choses.", contrast: "Dieu lointain des philosophes" },
+  { arabic: "البصير", name: "Al-Basir", meaning: "Le Clairvoyant", description: "Voit toutes choses.", contrast: "Dieu aveugle du hasard cosmique" },
+  { arabic: "الحكم", name: "Al-Hakam", meaning: "Le Juge", description: "Juge avec justice parfaite.", contrast: "Relativisme moral (pas de jugement)" },
+  { arabic: "العدل", name: "Al-Adl", meaning: "Le Juste", description: "Justice absolue.", contrast: "Injustice du péché originel collectif" },
+  { arabic: "اللطيف", name: "Al-Latif", meaning: "Le Subtil", description: "Bienveillance subtile et délicate.", contrast: "Dieu brutal de la théodicée pessimiste" },
+  { arabic: "الخبير", name: "Al-Khabir", meaning: "Le Bien-Informé", description: "Connaît les secrets.", contrast: "Dieu distant du déisme" },
+  { arabic: "الحليم", name: "Al-Halim", meaning: "Le Longanime", description: "Patient, ne précipite pas la punition.", contrast: "Colère divine instantanée (mythe)" },
+  { arabic: "العظيم", name: "Al-Azim", meaning: "L'Immense", description: "Grandeur incomparable.", contrast: "Dieu limité par l'espace (anthropomorphisme)" },
+  { arabic: "الغفور", name: "Al-Ghafur", meaning: "Le Pardonneur", description: "Couvre les péchés.", contrast: "Confession obligatoire à un prêtre" },
+  { arabic: "الشكور", name: "Ash-Shakur", meaning: "Le Reconnaissant", description: "Récompense généreusement.", contrast: "Dieu indifférent aux bonnes actions" },
+  { arabic: "العلي", name: "Al-Ali", meaning: "Le Très Haut", description: "Au-dessus de toute création.", contrast: "Panthéisme (Dieu = création)" },
+  { arabic: "الكبير", name: "Al-Kabir", meaning: "Le Grand", description: "Plus grand que tout.", contrast: "Dieu parmi d'autres (polythéisme)" },
+  { arabic: "الحفيظ", name: "Al-Hafiz", meaning: "Le Protecteur", description: "Préserve et garde.", contrast: "Destin impersonnel" },
+  { arabic: "المقيت", name: "Al-Muqit", meaning: "Le Nourricier", description: "Sustente toute vie.", contrast: "Nature auto-suffisante (matérialisme)" },
+  { arabic: "الحسيب", name: "Al-Hasib", meaning: "Le Comptable", description: "Compte toutes les actions.", contrast: "Pas de jugement dernier (annihilationnisme)" },
+  { arabic: "الجليل", name: "Al-Jalil", meaning: "Le Majestueux", description: "Majesté imposante.", contrast: "Dieu familier/copain (modernisme)" },
+  { arabic: "الكريم", name: "Al-Karim", meaning: "Le Généreux", description: "Générosité sans mesure.", contrast: "Dieu avare exigeant des sacrifices" },
+  { arabic: "الرقيب", name: "Ar-Raqib", meaning: "Le Vigilant", description: "Observe tout.", contrast: "Dieu absent du monde (déisme)" },
+  { arabic: "المجيب", name: "Al-Mujib", meaning: "Celui qui répond", description: "Répond aux invocations.", contrast: "Dieu sourd des philosophes" },
+  { arabic: "الواسع", name: "Al-Wasi", meaning: "L'Immense", description: "Vaste en miséricorde et science.", contrast: "Dieu limité dans sa connaissance" },
+  { arabic: "الحكيم", name: "Al-Hakim", meaning: "Le Sage", description: "Sagesse parfaite dans tout.", contrast: "Création par erreur (gnosticisme)" },
+  { arabic: "الودود", name: "Al-Wadud", meaning: "Le Bien-Aimant", description: "Aime Ses serviteurs.", contrast: "Dieu impassible (philosophie grecque)" },
+  { arabic: "المجيد", name: "Al-Majid", meaning: "Le Glorieux", description: "Gloire et noblesse suprêmes.", contrast: "Dieu humble (kénose extrême)" },
+  { arabic: "الباعث", name: "Al-Ba'ith", meaning: "Celui qui ressuscite", description: "Ressuscite les morts.", contrast: "Pas de résurrection (matérialisme)" },
+  { arabic: "الشهيد", name: "Ash-Shahid", meaning: "Le Témoin", description: "Témoin de toute chose.", contrast: "Dieu inconscient (panthéisme)" },
+  { arabic: "الحق", name: "Al-Haqq", meaning: "La Vérité", description: "Réalité absolue.", contrast: "Relativisme (pas de vérité absolue)" },
+  { arabic: "الوكيل", name: "Al-Wakil", meaning: "Le Gérant", description: "Prend en charge les affaires.", contrast: "Dieu non-interventionniste" },
+  { arabic: "القوي", name: "Al-Qawiy", meaning: "Le Fort", description: "Puissance infinie.", contrast: "Dieu faible/souffrant" },
+  { arabic: "المتين", name: "Al-Matin", meaning: "Le Ferme", description: "Solidité inébranlable.", contrast: "Dieu changeant (théisme processuel)" },
+  { arabic: "الولي", name: "Al-Wali", meaning: "Le Protecteur", description: "Ami et protecteur des croyants.", contrast: "Dieu ennemi de l'homme (gnosticisme)" },
+  { arabic: "الحميد", name: "Al-Hamid", meaning: "Le Louable", description: "Digne de toute louange.", contrast: "Dieu qui a besoin d'être loué (ego divin)" },
+  { arabic: "المحصي", name: "Al-Muhsi", meaning: "Celui qui compte", description: "Compte tout avec précision.", contrast: "Dieu négligent" },
+  { arabic: "المبدئ", name: "Al-Mubdi", meaning: "L'Initiateur", description: "Crée pour la première fois.", contrast: "Création éternelle (pas de début)" },
+  { arabic: "المعيد", name: "Al-Mu'id", meaning: "Le Restaurateur", description: "Recrée après la mort.", contrast: "Annihilation définitive" },
+  { arabic: "المحيي", name: "Al-Muhyi", meaning: "Celui qui donne la vie", description: "Donne la vie.", contrast: "Vie par hasard (abiogenèse)" },
+  { arabic: "المميت", name: "Al-Mumit", meaning: "Celui qui fait mourir", description: "Décrète la mort.", contrast: "Mort comme accident" },
+  { arabic: "الحي", name: "Al-Hayy", meaning: "Le Vivant", description: "Vie éternelle et parfaite.", contrast: "Dieu mort (Nietzsche)" },
+  { arabic: "القيوم", name: "Al-Qayyum", meaning: "L'Subsistant", description: "Subsiste par Lui-même.", contrast: "Dieu dépendant du monde (panenthéisme)" },
+  { arabic: "الواجد", name: "Al-Wajid", meaning: "Celui qui trouve", description: "Ne manque de rien.", contrast: "Dieu en quête (théisme processuel)" },
+  { arabic: "الماجد", name: "Al-Majid", meaning: "Le Noble", description: "Noblesse absolue.", contrast: "Dieu servant l'homme" },
+  { arabic: "الواحد", name: "Al-Wahid", meaning: "L'Unique", description: "Un sans associé.", contrast: "Trinité / Polythéisme" },
+  { arabic: "الأحد", name: "Al-Ahad", meaning: "L'Un", description: "Unicité absolue.", contrast: "Dualisme / Émanations multiples" },
+  { arabic: "الصمد", name: "As-Samad", meaning: "L'Absolu", description: "Vers qui tout se tourne.", contrast: "Dieu qui a des besoins" },
+  { arabic: "القادر", name: "Al-Qadir", meaning: "Le Capable", description: "Capable de tout.", contrast: "Dieu limité par la logique (certains philosophes)" },
+  { arabic: "المقتدر", name: "Al-Muqtadir", meaning: "Le Déterminant", description: "Pouvoir absolu.", contrast: "Dieu impuissant face au mal" },
+  { arabic: "المقدم", name: "Al-Muqaddim", meaning: "Celui qui avance", description: "Avance ce qu'Il veut.", contrast: "Destin figé (fatalisme)" },
+  { arabic: "المؤخر", name: "Al-Mu'akhkhir", meaning: "Celui qui retarde", description: "Retarde ce qu'Il veut.", contrast: "Dieu pressé (impatience divine)" },
+  { arabic: "الأول", name: "Al-Awwal", meaning: "Le Premier", description: "Sans début.", contrast: "Dieu créé (mythologies)" },
+  { arabic: "الآخر", name: "Al-Akhir", meaning: "Le Dernier", description: "Sans fin.", contrast: "Dieu mortel (mythologies nordiques)" },
+  { arabic: "الظاهر", name: "Az-Zahir", meaning: "L'Apparent", description: "Manifesté par Ses signes.", contrast: "Dieu totalement caché" },
+  { arabic: "الباطن", name: "Al-Batin", meaning: "Le Caché", description: "Essence inaccessible.", contrast: "Dieu totalement connaissable (rationalisme)" },
+  { arabic: "الوالي", name: "Al-Wali", meaning: "Le Gouverneur", description: "Gère toutes les affaires.", contrast: "Dieu non impliqué (déisme)" },
+  { arabic: "المتعالي", name: "Al-Muta'ali", meaning: "Le Très Élevé", description: "Au-delà de toute comparaison.", contrast: "Dieu comparable (anthropomorphisme)" },
+  { arabic: "البر", name: "Al-Barr", meaning: "Le Bienfaisant", description: "Source de tout bien.", contrast: "Dieu source du mal (dualisme)" },
+  { arabic: "التواب", name: "At-Tawwab", meaning: "L'Accueillant au repentir", description: "Accueille le repentir.", contrast: "Péché impardonnable (blasphème chrétien)" },
+  { arabic: "المنتقم", name: "Al-Muntaqim", meaning: "Le Vengeur", description: "Punit les oppresseurs.", contrast: "Dieu qui ne fait pas justice" },
+  { arabic: "العفو", name: "Al-Afuw", meaning: "L'Indulgent", description: "Efface les péchés.", contrast: "Karma inévitable" },
+  { arabic: "الرءوف", name: "Ar-Ra'uf", meaning: "Le Très Doux", description: "Douceur compatissante.", contrast: "Dieu courroucé permanent" },
+  { arabic: "مالك الملك", name: "Malik-ul-Mulk", meaning: "Maître de la Royauté", description: "Possède toute souveraineté.", contrast: "Souveraineté partagée (polythéisme)" },
+  { arabic: "ذو الجلال والإكرام", name: "Dhul-Jalali wal-Ikram", meaning: "Plein de Majesté et de Générosité", description: "Majesté et bonté suprêmes.", contrast: "Dieu soit majestueux soit bon (pas les deux)" },
+  { arabic: "المقسط", name: "Al-Muqsit", meaning: "L'Équitable", description: "Établit l'équité.", contrast: "Dieu partial (élection inconditionnelle)" },
+  { arabic: "الجامع", name: "Al-Jami", meaning: "Le Rassembleur", description: "Rassemble au Jour du Jugement.", contrast: "Pas de rassemblement (annihilationnisme)" },
+  { arabic: "الغني", name: "Al-Ghani", meaning: "Le Riche", description: "Indépendant de tous.", contrast: "Dieu qui a besoin d'adoration" },
+  { arabic: "المغني", name: "Al-Mughni", meaning: "L'Enrichisseur", description: "Enrichit qui Il veut.", contrast: "Prospérité automatique (Gospel de la prospérité)" },
+  { arabic: "المانع", name: "Al-Mani", meaning: "Celui qui empêche", description: "Empêche ce qui nuit.", contrast: "Dieu qui laisse faire (déisme)" },
+  { arabic: "الضار", name: "Ad-Darr", meaning: "Celui qui afflige", description: "Éprouve pour élever.", contrast: "Souffrance sans but (nihilisme)" },
+  { arabic: "النافع", name: "An-Nafi", meaning: "Celui qui profite", description: "Source de tout bienfait.", contrast: "Bienfait par hasard" },
+  { arabic: "النور", name: "An-Nur", meaning: "La Lumière", description: "Illumine les cœurs.", contrast: "Dieu des ténèbres (Demiurge gnostique)" },
+  { arabic: "الهادي", name: "Al-Hadi", meaning: "Le Guide", description: "Guide vers la vérité.", contrast: "Vérité inaccessible (agnosticisme)" },
+  { arabic: "البديع", name: "Al-Badi", meaning: "L'Inventeur", description: "Crée sans modèle.", contrast: "Dieu copiste (démiurge platonicien)" },
+  { arabic: "الباقي", name: "Al-Baqi", meaning: "L'Éternel", description: "Demeure à jamais.", contrast: "Dieu mortel (mythologie)" },
+  { arabic: "الوارث", name: "Al-Warith", meaning: "L'Héritier", description: "Hérite de tout.", contrast: "Fin définitive de tout" },
+  { arabic: "الرشيد", name: "Ar-Rashid", meaning: "Le Bien-Dirigeant", description: "Guide avec sagesse.", contrast: "Dieu capricieux (mythologie)" },
+  { arabic: "الصبور", name: "As-Sabur", meaning: "Le Patient", description: "Patience infinie.", contrast: "Dieu impatient qui détruit vite" },
+];
 
 const rootExamples = [
   {
@@ -72,7 +175,17 @@ export const IjazModule = () => {
   const [selectedRoot, setSelectedRoot] = useState(rootExamples[0]);
   const [challengeText, setChallengeText] = useState("");
   const [challengeResult, setChallengeResult] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"roots" | "symmetries" | "calculator">("roots");
+  const [activeTab, setActiveTab] = useState<"roots" | "symmetries" | "calculator" | "names">("roots");
+  const [selectedName, setSelectedName] = useState(namesOfAllah[0]);
+  const [nameSearch, setNameSearch] = useState("");
+  const [nameCategory, setNameCategory] = useState<"all" | "mercy" | "power" | "wisdom">("all");
+
+  const filteredNames = namesOfAllah.filter(name => {
+    const matchesSearch = name.name.toLowerCase().includes(nameSearch.toLowerCase()) ||
+      name.meaning.toLowerCase().includes(nameSearch.toLowerCase()) ||
+      name.arabic.includes(nameSearch);
+    return matchesSearch;
+  });
 
   const analyzeChallenge = () => {
     if (!challengeText.trim()) return;
@@ -138,6 +251,18 @@ export const IjazModule = () => {
           >
             <Calculator className="w-4 h-4" />
             Calculateur de Balances
+          </button>
+          <button
+            onClick={() => setActiveTab("names")}
+            className={cn(
+              "flex items-center gap-2 px-5 py-3 rounded-xl transition-all",
+              activeTab === "names"
+                ? "bg-gradient-to-r from-primary to-accent text-primary-foreground"
+                : "bg-secondary/30 text-muted-foreground hover:bg-secondary/50"
+            )}
+          >
+            <Crown className="w-4 h-4" />
+            99 Noms d'Allah
           </button>
         </div>
 
@@ -316,7 +441,103 @@ export const IjazModule = () => {
           </GlassCard>
         )}
 
-        {/* Surah Challenge */}
+        {/* 99 Names of Allah Tab */}
+        {activeTab === "names" && (
+          <GlassCard glow className="mb-8">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/30 to-accent/30 flex items-center justify-center">
+                <Crown className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h3 className="font-display text-xl text-foreground">Les 99 Noms d'Allah (الأسماء الحسنى)</h3>
+                <p className="text-sm text-muted-foreground">Les Plus Beaux Noms, contrastés avec les attributs divins des autres traditions</p>
+              </div>
+            </div>
+
+            {/* Search */}
+            <div className="mb-6">
+              <input
+                type="text"
+                value={nameSearch}
+                onChange={(e) => setNameSearch(e.target.value)}
+                placeholder="Rechercher un nom (arabe, français ou translittération)..."
+                className="w-full bg-secondary/30 border border-glass rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+              />
+            </div>
+
+            <div className="grid lg:grid-cols-3 gap-6">
+              {/* Names List */}
+              <div className="lg:col-span-2 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2 max-h-[400px] overflow-y-auto pr-2">
+                {filteredNames.map((name, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setSelectedName(name)}
+                    className={cn(
+                      "p-3 rounded-xl text-center transition-all border",
+                      selectedName.name === name.name
+                        ? "bg-primary/20 border-primary"
+                        : "bg-secondary/20 border-glass hover:border-primary/50"
+                    )}
+                  >
+                    <p className="text-xl font-arabic text-gradient-gold">{name.arabic}</p>
+                    <p className="text-xs text-primary truncate">{name.name}</p>
+                  </button>
+                ))}
+              </div>
+
+              {/* Selected Name Details */}
+              <div className="space-y-4">
+                <div className="p-6 rounded-xl bg-gradient-to-br from-primary/10 to-accent/10 border border-primary/20 text-center">
+                  <p className="text-5xl font-arabic text-gradient-gold mb-3">{selectedName.arabic}</p>
+                  <p className="text-xl font-display text-primary">{selectedName.name}</p>
+                  <p className="text-lg text-foreground mt-2">{selectedName.meaning}</p>
+                </div>
+
+                <div className="p-4 rounded-xl bg-secondary/30">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Heart className="w-4 h-4 text-primary" />
+                    <h4 className="font-medium text-foreground">Signification</h4>
+                  </div>
+                  <p className="text-sm text-muted-foreground">{selectedName.description}</p>
+                </div>
+
+                <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Shield className="w-4 h-4 text-destructive" />
+                    <h4 className="font-medium text-foreground">Contraste avec autres traditions</h4>
+                  </div>
+                  <p className="text-sm text-muted-foreground">{selectedName.contrast}</p>
+                </div>
+
+                <div className="p-3 rounded-lg bg-primary/10 text-center">
+                  <p className="text-xs text-muted-foreground">
+                    <strong className="text-primary">99 Noms</strong> — Chaque nom révèle un aspect de la perfection divine, ensemble ils forment une théologie complète de l'Unicité (Tawhid).
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Summary Stats */}
+            <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div className="p-3 rounded-lg bg-secondary/30 text-center">
+                <p className="text-2xl font-display text-gradient-gold">99</p>
+                <p className="text-xs text-muted-foreground">Noms Divins</p>
+              </div>
+              <div className="p-3 rounded-lg bg-secondary/30 text-center">
+                <p className="text-2xl font-display text-primary">1</p>
+                <p className="text-xs text-muted-foreground">Essence Unique</p>
+              </div>
+              <div className="p-3 rounded-lg bg-secondary/30 text-center">
+                <p className="text-2xl font-display text-accent">∞</p>
+                <p className="text-xs text-muted-foreground">Perfection</p>
+              </div>
+              <div className="p-3 rounded-lg bg-secondary/30 text-center">
+                <p className="text-2xl font-display text-emerald-400">0</p>
+                <p className="text-xs text-muted-foreground">Défaut/Faiblesse</p>
+              </div>
+            </div>
+          </GlassCard>
+        )}
         <GlassCard>
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center">
