@@ -110,6 +110,173 @@ const parseResponseSections = (content: string) => {
   return sections;
 };
 
+// Extract verdict content from AI response
+const extractVerdictContent = (content: string) => {
+  const verdictMatch = content.match(/(?:#{1,3}\s*)?(?:\*?\*?)?\s*(?:6\.?\s*)?(?:⚖️\s*)?(?:LE\s+)?VERDICT\s+DE\s+LA\s+RAISON[^\n]*([\s\S]*?)(?=$)/i);
+  if (!verdictMatch) return null;
+  
+  const verdictText = verdictMatch[1].trim();
+  
+  // Parse key points from the verdict
+  const points: { title: string; content: string; icon: string; color: string }[] = [];
+  
+  // Look for bold headers or bullet points
+  const lines = verdictText.split('\n');
+  let currentPoint: { title: string; content: string; icon: string; color: string } | null = null;
+  
+  lines.forEach(line => {
+    const boldMatch = line.match(/\*\*([^*]+)\*\*/);
+    if (boldMatch && line.trim().startsWith('**')) {
+      if (currentPoint && currentPoint.content.trim()) {
+        points.push(currentPoint);
+      }
+      const title = boldMatch[1].replace(/[:\-–]/g, '').trim();
+      let icon = '📌';
+      let color = 'primary';
+      
+      if (/cohéren|logique|raison/i.test(title)) { icon = '🎯'; color = 'emerald'; }
+      else if (/contradi|erreur|faille/i.test(title)) { icon = '⚠️'; color = 'red'; }
+      else if (/preuve|ijaz|miracle/i.test(title)) { icon = '✨'; color = 'primary'; }
+      else if (/tawhid|unicité/i.test(title)) { icon = '☀️'; color = 'emerald'; }
+      else if (/conclu|final/i.test(title)) { icon = '⚖️'; color = 'primary'; }
+      else if (/chrétien|trinité/i.test(title)) { icon = '✝️'; color = 'blue'; }
+      else if (/juif|judaï/i.test(title)) { icon = '✡️'; color = 'yellow'; }
+      else if (/occult|ésotér/i.test(title)) { icon = '🌑'; color = 'purple'; }
+      else if (/agnost|doute/i.test(title)) { icon = '❔'; color = 'slate'; }
+      else if (/islam|coran|révélation/i.test(title)) { icon = '☪️'; color = 'emerald'; }
+      
+      currentPoint = { title, content: '', icon, color };
+    } else if (currentPoint) {
+      currentPoint.content += (currentPoint.content ? '\n' : '') + line;
+    }
+  });
+  
+  if (currentPoint && currentPoint.content.trim()) {
+    points.push(currentPoint);
+  }
+  
+  // If no structured points found, create a single card with the content
+  if (points.length === 0 && verdictText.length > 20) {
+    points.push({
+      title: 'Analyse Comparative',
+      content: verdictText.replace(/\*\*/g, '').substring(0, 500),
+      icon: '⚖️',
+      color: 'primary'
+    });
+  }
+  
+  return points;
+};
+
+// Component to render dynamic verdict
+const DynamicVerdict = ({ content, onSpeak, isSpeaking, isPaused }: { 
+  content: string; 
+  onSpeak?: (text: string, id: string) => void;
+  isSpeaking?: boolean;
+  isPaused?: boolean;
+}) => {
+  const points = extractVerdictContent(content);
+  
+  if (!points || points.length === 0) {
+    return (
+      <div className="text-sm text-muted-foreground">
+        <p>Le verdict sera généré avec la réponse de l'IA.</p>
+      </div>
+    );
+  }
+
+  const colorMap: Record<string, { bg: string; border: string; text: string }> = {
+    emerald: { bg: 'bg-emerald-500/10', border: 'border-emerald-500/30', text: 'text-emerald-400' },
+    blue: { bg: 'bg-blue-500/10', border: 'border-blue-500/30', text: 'text-blue-400' },
+    yellow: { bg: 'bg-yellow-500/10', border: 'border-yellow-500/30', text: 'text-yellow-400' },
+    purple: { bg: 'bg-purple-500/10', border: 'border-purple-500/30', text: 'text-purple-400' },
+    slate: { bg: 'bg-slate-500/10', border: 'border-slate-500/30', text: 'text-slate-400' },
+    red: { bg: 'bg-red-500/10', border: 'border-red-500/30', text: 'text-red-400' },
+    primary: { bg: 'bg-primary/10', border: 'border-primary/30', text: 'text-primary' },
+  };
+
+  return (
+    <div className="space-y-4">
+      {/* Header with play button for entire verdict */}
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-muted-foreground font-medium">
+          ⚖️ Verdict basé sur l'analyse comparative :
+        </p>
+        {onSpeak && (
+          <button
+            onClick={() => onSpeak(points.map(p => p.title + ': ' + p.content).join('. '), 'verdict')}
+            className={cn(
+              "flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all",
+              isSpeaking ? "bg-primary text-primary-foreground" : "bg-secondary/50 hover:bg-secondary text-muted-foreground"
+            )}
+          >
+            {isSpeaking ? (
+              isPaused ? <><Play className="w-3 h-3" /> Reprendre</> : <><Pause className="w-3 h-3" /> Pause</>
+            ) : (
+              <><Volume2 className="w-3 h-3" /> Écouter le verdict</>
+            )}
+          </button>
+        )}
+      </div>
+
+      {/* Dynamic verdict cards */}
+      <div className="grid gap-3">
+        {points.map((point, index) => {
+          const colors = colorMap[point.color] || colorMap.primary;
+          return (
+            <div 
+              key={index} 
+              className={cn(
+                "p-4 rounded-xl border-2 transition-all",
+                colors.bg,
+                colors.border
+              )}
+            >
+              <div className="flex items-start gap-3">
+                <span className="text-2xl">{point.icon}</span>
+                <div className="flex-1">
+                  <h4 className={cn("text-sm font-bold mb-2", colors.text)}>
+                    {point.title}
+                  </h4>
+                  <p className="text-xs text-foreground/80 leading-relaxed">
+                    {point.content.replace(/\*\*/g, '').substring(0, 300)}
+                    {point.content.length > 300 && '...'}
+                  </p>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Coherence indicators */}
+      <div className="mt-6 p-4 rounded-xl bg-gradient-to-r from-emerald-500/10 to-primary/10 border border-emerald-500/20">
+        <h5 className="text-sm font-bold text-emerald-400 mb-3 flex items-center gap-2">
+          <span>📊</span> Indicateurs de Cohérence
+        </h5>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="text-center p-2 rounded-lg bg-background/30">
+            <div className="text-lg font-bold text-emerald-400">✓</div>
+            <div className="text-xs text-muted-foreground">Tawhid</div>
+          </div>
+          <div className="text-center p-2 rounded-lg bg-background/30">
+            <div className="text-lg font-bold text-emerald-400">✓</div>
+            <div className="text-xs text-muted-foreground">Préservation</div>
+          </div>
+          <div className="text-center p-2 rounded-lg bg-background/30">
+            <div className="text-lg font-bold text-emerald-400">✓</div>
+            <div className="text-xs text-muted-foreground">I'jaz</div>
+          </div>
+          <div className="text-center p-2 rounded-lg bg-background/30">
+            <div className="text-lg font-bold text-emerald-400">✓</div>
+            <div className="text-xs text-muted-foreground">Logique</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // Component to render formatted message content
 const FormattedMessage = ({ 
   content, 
@@ -763,34 +930,12 @@ export const ExpertChat = () => {
                       </div>
                     )}
                     {activeTab === "comparison" && (
-                      <div className="space-y-4">
-                        <p className="text-sm text-muted-foreground">
-                          Pourquoi le Coran est Al-Furqan (Le Discriminateur) :
-                        </p>
-                        
-                        <div className="grid gap-3">
-                          <div className="p-4 rounded-lg bg-primary/10 border border-primary/20">
-                            <h4 className="text-sm font-medium text-primary mb-2">☀️ Préservation Textuelle</h4>
-                            <p className="text-xs text-muted-foreground">
-                              Le Coran est resté lettre pour lettre identique depuis 1400 ans, contrairement aux multiples versions de la Bible et aux débats talmudiques contradictoires.
-                            </p>
-                          </div>
-                          
-                          <div className="p-4 rounded-lg bg-primary/10 border border-primary/20">
-                            <h4 className="text-sm font-medium text-primary mb-2">⚖️ Arbitrage Divin</h4>
-                            <p className="text-xs text-muted-foreground">
-                              "Ce Coran raconte aux Enfants d'Israël la plupart des sujets sur lesquels ils divergent." (Sourate An-Naml, 27:76)
-                            </p>
-                          </div>
-                          
-                          <div className="p-4 rounded-lg bg-primary/10 border border-primary/20">
-                            <h4 className="text-sm font-medium text-primary mb-2">🎯 Précision Historique</h4>
-                            <p className="text-xs text-muted-foreground">
-                              Le Coran utilise "Malik" (Roi) pour l'Égypte de Joseph et "Fir'awn" (Pharaon) pour celle de Moïse - précision que la Bible ne fait pas.
-                            </p>
-                          </div>
-                        </div>
-                      </div>
+                      <DynamicVerdict 
+                        content={lastAssistantMessage.content}
+                        onSpeak={speakSection}
+                        isSpeaking={speakingSection === 'verdict'}
+                        isPaused={isPaused}
+                      />
                     )}
                   </div>
                 </div>
