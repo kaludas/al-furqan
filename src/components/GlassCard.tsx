@@ -13,7 +13,7 @@ export const GlassCard = ({ children, className, glow = false, delay = 0 }: Glas
     <div
       className={cn(
         glow ? "glass-card-glow" : "glass-card",
-        "p-6 md:p-8 transition-all duration-500 hover:scale-[1.02]",
+        "p-6 md:p-8",
         className
       )}
       style={{
