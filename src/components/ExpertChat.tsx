@@ -60,56 +60,152 @@ const formatDoctrineContent = (content: string) => {
   return content;
 };
 
-// Component to render formatted message content
-const FormattedMessage = ({ content }: { content: string }) => {
-  // Check for doctrine section headers and apply colors
-  const renderFormattedContent = () => {
-    const lines = content.split('\n');
+// Parse response into sections
+const parseResponseSections = (content: string) => {
+  const sections: { id: string; title: string; content: string; color: string; icon: string }[] = [];
+  
+  // Split by numbered sections
+  const sectionPatterns = [
+    { regex: /(?:^|\n)\s*\*?\*?1\.\s*(?:✝️\s*)?LE PRISME CHRÉTIEN\*?\*?/i, id: 'chretien', title: 'Le Prisme Chrétien', color: 'blue', icon: '✝️' },
+    { regex: /(?:^|\n)\s*\*?\*?2\.\s*(?:✡️\s*)?LE PRISME JUDAÏQUE\*?\*?/i, id: 'judaique', title: 'Le Prisme Judaïque', color: 'yellow', icon: '✡️' },
+    { regex: /(?:^|\n)\s*\*?\*?3\.\s*(?:🌑\s*)?L['']ILLUSION OCCULTE\*?\*?/i, id: 'occulte', title: "L'Illusion Occulte", color: 'purple', icon: '🌑' },
+    { regex: /(?:^|\n)\s*\*?\*?4\.\s*(?:❔\s*)?LE PRISME AGNOSTIQUE\*?\*?/i, id: 'agnostique', title: 'Le Prisme Agnostique', color: 'slate', icon: '❔' },
+    { regex: /(?:^|\n)\s*\*?\*?5\.\s*(?:☀️\s*)?LA LUMIÈRE DE LA RÉVÉLATION\*?\*?/i, id: 'revelation', title: 'La Lumière de la Révélation', color: 'emerald', icon: '☀️' },
+    { regex: /(?:^|\n)\s*\*?\*?6\.\s*(?:⚖️\s*)?LE VERDICT DE LA RAISON\*?\*?/i, id: 'verdict', title: 'Le Verdict de la Raison', color: 'primary', icon: '⚖️' },
+  ];
+
+  let positions: { start: number; end: number; pattern: typeof sectionPatterns[0] }[] = [];
+  
+  sectionPatterns.forEach((pattern) => {
+    const match = content.match(pattern.regex);
+    if (match && match.index !== undefined) {
+      positions.push({ start: match.index, end: match.index + match[0].length, pattern });
+    }
+  });
+
+  positions.sort((a, b) => a.start - b.start);
+
+  for (let i = 0; i < positions.length; i++) {
+    const current = positions[i];
+    const nextStart = positions[i + 1]?.start || content.length;
+    const sectionContent = content.slice(current.end, nextStart).trim();
     
-    return lines.map((line, index) => {
-      // Christianity header (blue)
-      if (line.match(/1\.\s*✝️?\s*LE PRISME CHRÉTIEN|LE PRISME CHRÉTIEN/i)) {
-        return <p key={index} className="text-blue-400 font-bold mt-4 mb-2 text-base">{line.replace(/\*\*/g, '')}</p>;
-      }
-      // Judaism header (yellow)
-      if (line.match(/2\.\s*✡️?\s*LE PRISME JUDAÏQUE|LE PRISME JUDAÏQUE/i)) {
-        return <p key={index} className="text-yellow-400 font-bold mt-4 mb-2 text-base">{line.replace(/\*\*/g, '')}</p>;
-      }
-      // Occultism header (purple)
-      if (line.match(/3\.\s*🌑?\s*L['']ILLUSION OCCULTE|L['']ILLUSION OCCULTE/i)) {
-        return <p key={index} className="text-purple-400 font-bold mt-4 mb-2 text-base">{line.replace(/\*\*/g, '')}</p>;
-      }
-      // Agnosticism header (gray/slate)
-      if (line.match(/4\.\s*❔?\s*LE PRISME AGNOSTIQUE|LE PRISME AGNOSTIQUE/i)) {
-        return <p key={index} className="text-slate-400 font-bold mt-4 mb-2 text-base">{line.replace(/\*\*/g, '')}</p>;
-      }
-      // Quran header (emerald)
-      if (line.match(/5\.\s*☀️?\s*LA LUMIÈRE DE LA RÉVÉLATION|LA LUMIÈRE DE LA RÉVÉLATION/i)) {
-        return <p key={index} className="text-emerald-400 font-bold mt-4 mb-2 text-base">{line.replace(/\*\*/g, '')}</p>;
-      }
-      // Verdict header (primary/gold)
-      if (line.match(/6\.\s*⚖️?\s*LE VERDICT DE LA RAISON|LE VERDICT DE LA RAISON/i)) {
-        return <p key={index} className="text-primary font-bold mt-4 mb-2 text-base">{line.replace(/\*\*/g, '')}</p>;
-      }
+    sections.push({
+      id: current.pattern.id,
+      title: current.pattern.title,
+      content: sectionContent,
+      color: current.pattern.color,
+      icon: current.pattern.icon
+    });
+  }
+
+  return sections;
+};
+
+// Component to render formatted message content
+const FormattedMessage = ({ 
+  content, 
+  onSpeakSection 
+}: { 
+  content: string; 
+  onSpeakSection?: (text: string, sectionId: string) => void;
+}) => {
+  const sections = parseResponseSections(content);
+  
+  const colorClasses: Record<string, { text: string; bg: string; border: string }> = {
+    blue: { text: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/30' },
+    yellow: { text: 'text-yellow-400', bg: 'bg-yellow-500/10', border: 'border-yellow-500/30' },
+    purple: { text: 'text-purple-400', bg: 'bg-purple-500/10', border: 'border-purple-500/30' },
+    slate: { text: 'text-slate-400', bg: 'bg-slate-500/10', border: 'border-slate-500/30' },
+    emerald: { text: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/30' },
+    primary: { text: 'text-primary', bg: 'bg-primary/10', border: 'border-primary/30' },
+  };
+
+  const formatSectionContent = (text: string) => {
+    const lines = text.split('\n');
+    return lines.map((line, idx) => {
       // Quran verses in quotes
       if (line.match(/«.*»/) || line.match(/".*"/)) {
-        return <p key={index} className="text-emerald-300 italic my-1">{line}</p>;
+        return <p key={idx} className="text-emerald-300 italic my-2 pl-3 border-l-2 border-emerald-500/40">{line}</p>;
       }
       // Sourate references
       if (line.match(/Sourate|Coran\s+\d+:\d+/i)) {
-        return <p key={index} className="text-emerald-400/80 text-xs my-1">{line}</p>;
+        return <p key={idx} className="text-emerald-400/80 text-xs my-1">{line}</p>;
       }
-      // Bold text (surrounded by **)
+      // Bold text
       if (line.match(/\*\*[^*]+\*\*/)) {
         const formatted = line.replace(/\*\*([^*]+)\*\*/g, '<strong class="text-foreground">$1</strong>');
-        return <p key={index} className="my-1" dangerouslySetInnerHTML={{ __html: formatted }} />;
+        return <p key={idx} className="my-1" dangerouslySetInnerHTML={{ __html: formatted }} />;
       }
-      // Normal line
-      return <p key={index} className="my-1">{line}</p>;
+      // Table header detection - skip markdown tables
+      if (line.match(/^\|.*\|$/) || line.match(/^[\-:|\s]+$/)) {
+        return null; // Skip table rows, we'll handle them differently
+      }
+      return line.trim() ? <p key={idx} className="my-1">{line}</p> : null;
     });
   };
 
-  return <div className="whitespace-pre-wrap text-sm leading-relaxed">{renderFormattedContent()}</div>;
+  // If no sections found, render plain content
+  if (sections.length === 0) {
+    const lines = content.split('\n');
+    return (
+      <div className="whitespace-pre-wrap text-sm leading-relaxed">
+        {lines.map((line, index) => {
+          if (line.match(/«.*»/) || line.match(/".*"/)) {
+            return <p key={index} className="text-emerald-300 italic my-1">{line}</p>;
+          }
+          if (line.match(/\*\*[^*]+\*\*/)) {
+            const formatted = line.replace(/\*\*([^*]+)\*\*/g, '<strong class="text-foreground">$1</strong>');
+            return <p key={index} className="my-1" dangerouslySetInnerHTML={{ __html: formatted }} />;
+          }
+          return <p key={index} className="my-1">{line}</p>;
+        })}
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      {sections.map((section) => {
+        const colors = colorClasses[section.color] || colorClasses.primary;
+        return (
+          <div 
+            key={section.id} 
+            className={cn(
+              "rounded-xl border p-4 transition-all",
+              colors.bg,
+              colors.border
+            )}
+          >
+            <div className="flex items-center justify-between mb-3">
+              <h4 className={cn("font-semibold flex items-center gap-2", colors.text)}>
+                <span>{section.icon}</span>
+                {section.title}
+              </h4>
+              {onSpeakSection && (
+                <button
+                  onClick={() => onSpeakSection(section.content, section.id)}
+                  className={cn(
+                    "flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs transition-colors",
+                    colors.bg,
+                    colors.text,
+                    "hover:opacity-80"
+                  )}
+                  title={`Écouter ${section.title}`}
+                >
+                  <Volume2 className="w-3 h-3" />
+                  Écouter
+                </button>
+              )}
+            </div>
+            <div className="text-sm text-muted-foreground leading-relaxed">
+              {formatSectionContent(section.content)}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
 };
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/theology-chat`;
@@ -192,6 +288,7 @@ export const ExpertChat = () => {
   const [activeTab, setActiveTab] = useState<"response" | "sources" | "comparison">("response");
   const [questionSeed, setQuestionSeed] = useState(() => Math.random());
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [speakingSection, setSpeakingSection] = useState<string | null>(null);
   const [currentVoice, setCurrentVoice] = useState<SpeechSynthesisVoice | null>(null);
   const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -209,27 +306,45 @@ export const ExpertChat = () => {
     speechSynthesis.onvoiceschanged = loadVoices;
   }, []);
 
-  const speakText = useCallback((text: string) => {
+  const speakSection = useCallback((text: string, sectionId: string) => {
     if (!('speechSynthesis' in window)) {
       toast({ title: "Non supporté", description: "La synthèse vocale n'est pas supportée par ce navigateur.", variant: "destructive" });
       return;
     }
     
+    // If already speaking this section, stop it
+    if (isSpeaking && speakingSection === sectionId) {
+      speechSynthesis.cancel();
+      setIsSpeaking(false);
+      setSpeakingSection(null);
+      return;
+    }
+    
     speechSynthesis.cancel();
-    const cleanText = text.replace(/\*\*/g, '').replace(/[☀️✝️✡️🌑❔⚖️📖]/g, '');
+    const cleanText = text.replace(/\*\*/g, '').replace(/[☀️✝️✡️🌑❔⚖️📖|:\-]/g, '').replace(/\n+/g, '. ');
     const utterance = new SpeechSynthesisUtterance(cleanText);
     if (currentVoice) utterance.voice = currentVoice;
     utterance.rate = 0.9;
     utterance.pitch = 1;
-    utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => setIsSpeaking(false);
+    utterance.onstart = () => {
+      setIsSpeaking(true);
+      setSpeakingSection(sectionId);
+    };
+    utterance.onend = () => {
+      setIsSpeaking(false);
+      setSpeakingSection(null);
+    };
+    utterance.onerror = () => {
+      setIsSpeaking(false);
+      setSpeakingSection(null);
+    };
     speechSynthesis.speak(utterance);
-  }, [currentVoice, toast]);
+  }, [currentVoice, toast, isSpeaking, speakingSection]);
 
   const stopSpeaking = useCallback(() => {
     speechSynthesis.cancel();
     setIsSpeaking(false);
+    setSpeakingSection(null);
   }, []);
 
   const suggestedQuestions = useMemo(() => {
@@ -533,25 +648,20 @@ export const ExpertChat = () => {
                               ))}
                             </select>
                           </div>
-                          {isSpeaking ? (
+                          {isSpeaking && (
                             <button
                               onClick={stopSpeaking}
                               className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-destructive/20 text-destructive text-xs hover:bg-destructive/30 transition-colors"
                             >
                               <Square className="w-3 h-3" />
-                              Arrêter
-                            </button>
-                          ) : (
-                            <button
-                              onClick={() => speakText(lastAssistantMessage?.content || '')}
-                              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/20 text-primary text-xs hover:bg-primary/30 transition-colors"
-                            >
-                              <Volume2 className="w-3 h-3" />
-                              Écouter
+                              Arrêter la lecture
                             </button>
                           )}
                         </div>
-                        <FormattedMessage content={lastAssistantMessage.content} />
+                        <FormattedMessage 
+                          content={lastAssistantMessage.content} 
+                          onSpeakSection={speakSection}
+                        />
                       </div>
                     )}
                     {activeTab === "sources" && (
