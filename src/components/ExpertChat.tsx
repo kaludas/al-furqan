@@ -1,8 +1,9 @@
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { GlassCard } from "./GlassCard";
 import { SectionTitle } from "./SectionTitle";
-import { Send, Loader2, Sparkles, BookOpen, ShieldAlert, Lightbulb, RefreshCw, Cross, Star, Moon, Eye, HelpCircle } from "lucide-react";
+import { Send, Loader2, Sparkles, BookOpen, ShieldAlert, Lightbulb, RefreshCw, Cross, Star, Moon, Eye, HelpCircle, Volume2, VolumeX, Square } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
 
 type Message = {
   role: "user" | "assistant";
@@ -190,7 +191,46 @@ export const ExpertChat = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<"response" | "sources" | "comparison">("response");
   const [questionSeed, setQuestionSeed] = useState(() => Math.random());
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [currentVoice, setCurrentVoice] = useState<SpeechSynthesisVoice | null>(null);
+  const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { toast } = useToast();
+
+  // Load available voices
+  useEffect(() => {
+    const loadVoices = () => {
+      const voices = speechSynthesis.getVoices();
+      const frenchVoices = voices.filter(v => v.lang.startsWith('fr'));
+      setAvailableVoices(frenchVoices.length > 0 ? frenchVoices : voices.slice(0, 5));
+      if (frenchVoices.length > 0) setCurrentVoice(frenchVoices[0]);
+    };
+    loadVoices();
+    speechSynthesis.onvoiceschanged = loadVoices;
+  }, []);
+
+  const speakText = useCallback((text: string) => {
+    if (!('speechSynthesis' in window)) {
+      toast({ title: "Non supporté", description: "La synthèse vocale n'est pas supportée par ce navigateur.", variant: "destructive" });
+      return;
+    }
+    
+    speechSynthesis.cancel();
+    const cleanText = text.replace(/\*\*/g, '').replace(/[☀️✝️✡️🌑❔⚖️📖]/g, '');
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    if (currentVoice) utterance.voice = currentVoice;
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
+    speechSynthesis.speak(utterance);
+  }, [currentVoice, toast]);
+
+  const stopSpeaking = useCallback(() => {
+    speechSynthesis.cancel();
+    setIsSpeaking(false);
+  }, []);
 
   const suggestedQuestions = useMemo(() => {
     return shuffleArray(allSuggestedQuestions).slice(0, 4);
@@ -480,6 +520,37 @@ export const ExpertChat = () => {
                   <div className="p-5">
                     {activeTab === "response" && (
                       <div className="text-muted-foreground text-sm leading-relaxed">
+                        <div className="flex items-center justify-between mb-4 pb-3 border-b border-glass">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-muted-foreground">Voix :</span>
+                            <select
+                              value={currentVoice?.name || ''}
+                              onChange={(e) => setCurrentVoice(availableVoices.find(v => v.name === e.target.value) || null)}
+                              className="bg-secondary/50 text-xs rounded px-2 py-1 border border-glass"
+                            >
+                              {availableVoices.map(voice => (
+                                <option key={voice.name} value={voice.name}>{voice.name}</option>
+                              ))}
+                            </select>
+                          </div>
+                          {isSpeaking ? (
+                            <button
+                              onClick={stopSpeaking}
+                              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-destructive/20 text-destructive text-xs hover:bg-destructive/30 transition-colors"
+                            >
+                              <Square className="w-3 h-3" />
+                              Arrêter
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => speakText(lastAssistantMessage?.content || '')}
+                              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/20 text-primary text-xs hover:bg-primary/30 transition-colors"
+                            >
+                              <Volume2 className="w-3 h-3" />
+                              Écouter
+                            </button>
+                          )}
+                        </div>
                         <FormattedMessage content={lastAssistantMessage.content} />
                       </div>
                     )}
