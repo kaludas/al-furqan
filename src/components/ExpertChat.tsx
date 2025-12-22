@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { GlassCard } from "./GlassCard";
 import { SectionTitle } from "./SectionTitle";
-import { Send, Loader2, Sparkles, BookOpen, ShieldAlert, Lightbulb, RefreshCw, Cross, Star, Moon, Eye, HelpCircle, Volume2, Pause, Play, Square } from "lucide-react";
+import { Send, Loader2, Sparkles, BookOpen, ShieldAlert, Lightbulb, RefreshCw, Cross, Star, Moon, Eye, HelpCircle, Volume2, Pause, Play, Square, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 
@@ -768,6 +768,21 @@ export const ExpertChat = () => {
           {/* Messages with Tabs */}
           {messages.length > 0 && (
             <div className="mb-6">
+              {/* New Question Button */}
+              <div className="flex justify-end mb-3">
+                <button
+                  onClick={() => {
+                    setMessages([]);
+                    stopSpeaking();
+                    refreshQuestions();
+                  }}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary/10 text-primary text-sm font-medium hover:bg-primary/20 transition-colors"
+                >
+                  <Plus size={16} />
+                  Nouvelle question
+                </button>
+              </div>
+              
               {/* Conversation */}
               <div className="max-h-[400px] overflow-y-auto space-y-4 p-4 rounded-xl bg-secondary/20 mb-4">
                 {messages.map((message, index) => (
