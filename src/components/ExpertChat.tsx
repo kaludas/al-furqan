@@ -731,9 +731,9 @@ export const ExpertChat = () => {
                 <HelpCircle className="w-5 h-5 mx-auto mb-1 text-slate-400" />
                 <p className="text-xs text-slate-400 font-medium">Agnosticisme</p>
               </div>
-              <div className="p-3 rounded-xl bg-primary/10 border border-primary/20 text-center col-span-3 md:col-span-1">
-                <Moon className="w-5 h-5 mx-auto mb-1 text-primary" />
-                <p className="text-xs text-primary font-medium">Coran</p>
+              <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-center col-span-3 md:col-span-1">
+                <Moon className="w-5 h-5 mx-auto mb-1 text-emerald-400" />
+                <p className="text-xs text-emerald-400 font-medium">Coran</p>
               </div>
             </div>
           </div>
