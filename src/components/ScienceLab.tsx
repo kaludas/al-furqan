@@ -234,6 +234,7 @@ export const ScienceLab = () => {
   const [activeStage, setActiveStage] = useState(0);
   const [universeExpansion, setUniverseExpansion] = useState(1);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [activeInteractiveTab, setActiveInteractiveTab] = useState<"embryology" | "universe">("embryology");
 
   const currentCategory = categories.find(c => c.id === activeCategory) || categories[0];
   const currentMiracle = currentCategory.miracles[activeMiracle];
@@ -408,100 +409,133 @@ export const ScienceLab = () => {
           </div>
         </GlassCard>
 
-        {/* Embryology Section */}
+        {/* Interactive Tabs: Embryology & Universe Expansion */}
         <GlassCard className="mb-8">
-          <h3 className="font-display text-2xl text-foreground mb-2">Embryologie Coranique</h3>
-          <p className="text-muted-foreground mb-6">Faites glisser le curseur pour explorer les stades du développement embryonnaire.</p>
-
-          <div className="mb-8">
-            <input
-              type="range"
-              min={0}
-              max={embryologyStages.length - 1}
-              value={activeStage}
-              onChange={(e) => setActiveStage(parseInt(e.target.value))}
-              className="w-full h-2 bg-secondary rounded-lg appearance-none cursor-pointer accent-primary"
-            />
-            <div className="flex justify-between mt-2 text-xs text-muted-foreground">
-              {embryologyStages.map((stage, idx) => (
-                <span key={idx} className={cn(idx === activeStage && "text-primary font-medium")}>
-                  {stage.week}
-                </span>
-              ))}
-            </div>
+          {/* Tab Navigation */}
+          <div className="flex border-b border-glass mb-6">
+            <button
+              onClick={() => setActiveInteractiveTab("embryology")}
+              className={cn(
+                "flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-all",
+                activeInteractiveTab === "embryology"
+                  ? "bg-red-500/10 text-red-400 border-b-2 border-red-400"
+                  : "text-muted-foreground hover:text-foreground hover:bg-secondary/30"
+              )}
+            >
+              <Heart className="w-4 h-4" />
+              Embryologie Coranique
+            </button>
+            <button
+              onClick={() => setActiveInteractiveTab("universe")}
+              className={cn(
+                "flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-all",
+                activeInteractiveTab === "universe"
+                  ? "bg-purple-500/10 text-purple-400 border-b-2 border-purple-400"
+                  : "text-muted-foreground hover:text-foreground hover:bg-secondary/30"
+              )}
+            >
+              <Atom className="w-4 h-4" />
+              Expansion de l'Univers
+            </button>
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-6">
-            <div className="text-center p-6 rounded-xl bg-primary/10 border border-primary/20">
-              <p className="text-5xl font-display text-gradient-gold mb-2">{embryologyStages[activeStage].arabic}</p>
-              <p className="text-xl font-display text-foreground mb-1">{embryologyStages[activeStage].transliteration}</p>
-              <p className="text-muted-foreground">{embryologyStages[activeStage].meaning}</p>
-            </div>
+          {/* Embryology Content */}
+          {activeInteractiveTab === "embryology" && (
+            <div className="animate-fade-in">
+              <p className="text-muted-foreground mb-6">Faites glisser le curseur pour explorer les stades du développement embryonnaire.</p>
 
-            <div className="lg:col-span-2 space-y-4">
-              <div className="p-4 rounded-xl bg-secondary/30">
-                <h4 className="text-primary font-medium mb-2">📖 Verset Coranique</h4>
-                <p className="text-foreground/90 italic">"{embryologyStages[activeStage].quran}"</p>
-                <p className="text-xs text-primary mt-2">{embryologyStages[activeStage].reference}</p>
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="p-4 rounded-xl bg-accent/10 border border-accent/20">
-                  <h4 className="text-accent font-medium mb-2">🔬 Science Moderne</h4>
-                  <p className="text-sm text-muted-foreground">{embryologyStages[activeStage].modern}</p>
+              <div className="mb-8">
+                <input
+                  type="range"
+                  min={0}
+                  max={embryologyStages.length - 1}
+                  value={activeStage}
+                  onChange={(e) => setActiveStage(parseInt(e.target.value))}
+                  className="w-full h-2 bg-secondary rounded-lg appearance-none cursor-pointer accent-primary"
+                />
+                <div className="flex justify-between mt-2 text-xs text-muted-foreground">
+                  {embryologyStages.map((stage, idx) => (
+                    <span key={idx} className={cn(idx === activeStage && "text-primary font-medium")}>
+                      {stage.week}
+                    </span>
+                  ))}
                 </div>
-                <div className="p-4 rounded-xl bg-muted/30">
-                  <h4 className="text-muted-foreground font-medium mb-2">📜 Croyance Historique</h4>
-                  <p className="text-sm text-muted-foreground">{embryologyStages[activeStage].historical}</p>
+              </div>
+
+              <div className="grid lg:grid-cols-3 gap-6">
+                <div className="text-center p-6 rounded-xl bg-primary/10 border border-primary/20">
+                  <p className="text-5xl font-display text-gradient-gold mb-2">{embryologyStages[activeStage].arabic}</p>
+                  <p className="text-xl font-display text-foreground mb-1">{embryologyStages[activeStage].transliteration}</p>
+                  <p className="text-muted-foreground">{embryologyStages[activeStage].meaning}</p>
+                </div>
+
+                <div className="lg:col-span-2 space-y-4">
+                  <div className="p-4 rounded-xl bg-secondary/30">
+                    <h4 className="text-primary font-medium mb-2">📖 Verset Coranique</h4>
+                    <p className="text-foreground/90 italic">"{embryologyStages[activeStage].quran}"</p>
+                    <p className="text-xs text-primary mt-2">{embryologyStages[activeStage].reference}</p>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="p-4 rounded-xl bg-accent/10 border border-accent/20">
+                      <h4 className="text-accent font-medium mb-2">🔬 Science Moderne</h4>
+                      <p className="text-sm text-muted-foreground">{embryologyStages[activeStage].modern}</p>
+                    </div>
+                    <div className="p-4 rounded-xl bg-muted/30">
+                      <h4 className="text-muted-foreground font-medium mb-2">📜 Croyance Historique</h4>
+                      <p className="text-sm text-muted-foreground">{embryologyStages[activeStage].historical}</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </GlassCard>
+          )}
 
-        {/* Universe Expansion */}
-        <GlassCard>
-          <h3 className="font-display text-2xl text-foreground mb-2">Expansion de l'Univers</h3>
-          <p className="text-muted-foreground mb-6">Le Coran a décrit l'expansion continue de l'univers 1300 ans avant Hubble.</p>
+          {/* Universe Expansion Content */}
+          {activeInteractiveTab === "universe" && (
+            <div className="animate-fade-in">
+              <p className="text-muted-foreground mb-6">Le Coran a décrit l'expansion continue de l'univers 1300 ans avant Hubble.</p>
 
-          <div className="grid lg:grid-cols-2 gap-8 items-center">
-            <div className="relative h-64 flex items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-background to-secondary/30">
-              <div className="absolute w-4 h-4 rounded-full bg-primary/80 animate-pulse" style={{ transform: `scale(${universeExpansion})` }} />
-              {[...Array(8)].map((_, i) => (
-                <div key={i} className="absolute w-2 h-2 rounded-full bg-primary/40" style={{ transform: `rotate(${i * 45}deg) translateX(${40 * universeExpansion}px) scale(${0.8 + universeExpansion * 0.2})`, transition: "transform 0.1s ease-out" }} />
-              ))}
-              {[...Array(12)].map((_, i) => (
-                <div key={i} className="absolute w-1 h-1 rounded-full bg-foreground/30" style={{ transform: `rotate(${i * 30}deg) translateX(${80 * universeExpansion}px)`, transition: "transform 0.1s ease-out" }} />
-              ))}
-              <div className="absolute bottom-4 left-4 right-4 text-center">
-                <p className="text-sm font-display text-gradient-gold">وَالسَّمَاءَ بَنَيْنَاهَا بِأَيْدٍ وَإِنَّا لَمُوسِعُونَ</p>
+              <div className="grid lg:grid-cols-2 gap-8 items-center">
+                <div className="relative h-64 flex items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-background to-secondary/30">
+                  <div className="absolute w-4 h-4 rounded-full bg-primary/80 animate-pulse" style={{ transform: `scale(${universeExpansion})` }} />
+                  {[...Array(8)].map((_, i) => (
+                    <div key={i} className="absolute w-2 h-2 rounded-full bg-primary/40" style={{ transform: `rotate(${i * 45}deg) translateX(${40 * universeExpansion}px) scale(${0.8 + universeExpansion * 0.2})`, transition: "transform 0.1s ease-out" }} />
+                  ))}
+                  {[...Array(12)].map((_, i) => (
+                    <div key={i} className="absolute w-1 h-1 rounded-full bg-foreground/30" style={{ transform: `rotate(${i * 30}deg) translateX(${80 * universeExpansion}px)`, transition: "transform 0.1s ease-out" }} />
+                  ))}
+                  <div className="absolute bottom-4 left-4 right-4 text-center">
+                    <p className="text-sm font-display text-gradient-gold">وَالسَّمَاءَ بَنَيْنَاهَا بِأَيْدٍ وَإِنَّا لَمُوسِعُونَ</p>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <button
+                    onClick={() => setIsAnimating(!isAnimating)}
+                    className={cn(
+                      "px-6 py-3 rounded-xl font-medium transition-all",
+                      isAnimating ? "bg-destructive text-destructive-foreground" : "bg-primary text-primary-foreground hover:scale-105"
+                    )}
+                  >
+                    {isAnimating ? "Arrêter l'animation" : "Voir l'expansion"}
+                  </button>
+
+                  <blockquote className="border-l-2 border-primary pl-4 text-foreground/90 italic">
+                    « Le ciel, Nous l'avons construit par Notre puissance et Nous l'étendons [constamment]. »
+                    <footer className="text-primary text-xs mt-2 not-italic font-medium">Sourate Adh-Dhariyat (51:47)</footer>
+                  </blockquote>
+
+                  <div className="p-4 rounded-xl bg-secondary/30">
+                    <h4 className="text-foreground font-medium mb-2">Le terme "مُوسِعُون" (Musi'un)</h4>
+                    <p className="text-sm text-muted-foreground">
+                      Ce participe actif implique une action continue : "ceux qui étendent". L'expansion de l'univers fut découverte par Hubble en 1929, confirmant ce que le Coran affirmait depuis le 7ème siècle.
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
-
-            <div className="space-y-4">
-              <button
-                onClick={() => setIsAnimating(!isAnimating)}
-                className={cn(
-                  "px-6 py-3 rounded-xl font-medium transition-all",
-                  isAnimating ? "bg-destructive text-destructive-foreground" : "bg-primary text-primary-foreground hover:scale-105"
-                )}
-              >
-                {isAnimating ? "Arrêter l'animation" : "Voir l'expansion"}
-              </button>
-
-              <blockquote className="border-l-2 border-primary pl-4 text-foreground/90 italic">
-                « Le ciel, Nous l'avons construit par Notre puissance et Nous l'étendons [constamment]. »
-                <footer className="text-primary text-xs mt-2 not-italic font-medium">Sourate Adh-Dhariyat (51:47)</footer>
-              </blockquote>
-
-              <div className="p-4 rounded-xl bg-secondary/30">
-                <h4 className="text-foreground font-medium mb-2">Le terme "مُوسِعُون" (Musi'un)</h4>
-                <p className="text-sm text-muted-foreground">
-                  Ce participe actif implique une action continue : "ceux qui étendent". L'expansion de l'univers fut découverte par Hubble en 1929, confirmant ce que le Coran affirmait depuis le 7ème siècle.
-                </p>
-              </div>
-            </div>
-          </div>
+          )}
         </GlassCard>
       </div>
     </section>
