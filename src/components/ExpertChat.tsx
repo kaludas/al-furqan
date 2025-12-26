@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { GlassCard } from "./GlassCard";
 import { SectionTitle } from "./SectionTitle";
-import { Send, Loader2, Sparkles, BookOpen, ShieldAlert, Lightbulb, RefreshCw, Cross, Star, Moon, Eye, HelpCircle, Volume2, Pause, Play, Square, Plus } from "lucide-react";
+import { Send, Loader2, Sparkles, BookOpen, ShieldAlert, Lightbulb, RefreshCw, Cross, Star, Moon, Eye, HelpCircle, Volume2, Pause, Play, Square, Plus, Copy, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 
@@ -497,8 +497,46 @@ export const ExpertChat = () => {
   const [speakingSection, setSpeakingSection] = useState<string | null>(null);
   const [currentVoice, setCurrentVoice] = useState<SpeechSynthesisVoice | null>(null);
   const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [activePrism, setActivePrism] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+
+  // Detect which prism is currently being generated
+  useEffect(() => {
+    if (!isLoading) {
+      setActivePrism(null);
+      return;
+    }
+    
+    const lastMessage = messages[messages.length - 1];
+    if (lastMessage?.role !== "assistant") return;
+    
+    const content = lastMessage.content;
+    // Check which section is currently being written (last one mentioned)
+    if (content.match(/VERDICT\s+DE\s+LA\s+RAISON/i)) setActivePrism("verdict");
+    else if (content.match(/LUMIÈRE\s+DE\s+LA\s+RÉVÉLATION/i)) setActivePrism("coran");
+    else if (content.match(/PRISME\s+AGNOSTIQUE/i)) setActivePrism("agnostique");
+    else if (content.match(/ILLUSION\s+OCCULTE/i)) setActivePrism("occulte");
+    else if (content.match(/PRISME\s+JUDAÏQUE/i)) setActivePrism("judaique");
+    else if (content.match(/PRISME\s+CHRÉTIEN/i)) setActivePrism("chretien");
+    else setActivePrism(null);
+  }, [isLoading, messages]);
+
+  // Copy response to clipboard
+  const copyToClipboard = useCallback(async () => {
+    const lastMessage = messages.filter(m => m.role === "assistant").pop();
+    if (!lastMessage) return;
+    
+    try {
+      await navigator.clipboard.writeText(lastMessage.content);
+      setCopied(true);
+      toast({ title: "Copié !", description: "La réponse a été copiée dans le presse-papier." });
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast({ title: "Erreur", description: "Impossible de copier la réponse.", variant: "destructive" });
+    }
+  }, [messages, toast]);
 
   // Load available voices
   useEffect(() => {
@@ -715,23 +753,38 @@ export const ExpertChat = () => {
             </div>
             
             <div className="grid grid-cols-3 md:grid-cols-5 gap-3 mt-6">
-              <div className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-center">
+              <div className={cn(
+                "p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-center transition-all duration-300",
+                activePrism === "chretien" && "ring-2 ring-blue-400 animate-pulse bg-blue-500/20 scale-105"
+              )}>
                 <Cross className="w-5 h-5 mx-auto mb-1 text-blue-400" />
                 <p className="text-xs text-blue-400 font-medium">Christianisme</p>
               </div>
-              <div className="p-3 rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-center">
+              <div className={cn(
+                "p-3 rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-center transition-all duration-300",
+                activePrism === "judaique" && "ring-2 ring-yellow-400 animate-pulse bg-yellow-500/20 scale-105"
+              )}>
                 <Star className="w-5 h-5 mx-auto mb-1 text-yellow-400" />
                 <p className="text-xs text-yellow-400 font-medium">Judaïsme</p>
               </div>
-              <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 text-center">
+              <div className={cn(
+                "p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 text-center transition-all duration-300",
+                activePrism === "occulte" && "ring-2 ring-purple-400 animate-pulse bg-purple-500/20 scale-105"
+              )}>
                 <Eye className="w-5 h-5 mx-auto mb-1 text-purple-400" />
                 <p className="text-xs text-purple-400 font-medium">Occultisme</p>
               </div>
-              <div className="p-3 rounded-xl bg-slate-500/10 border border-slate-500/20 text-center">
+              <div className={cn(
+                "p-3 rounded-xl bg-slate-500/10 border border-slate-500/20 text-center transition-all duration-300",
+                activePrism === "agnostique" && "ring-2 ring-slate-400 animate-pulse bg-slate-500/20 scale-105"
+              )}>
                 <HelpCircle className="w-5 h-5 mx-auto mb-1 text-slate-400" />
                 <p className="text-xs text-slate-400 font-medium">Agnosticisme</p>
               </div>
-              <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-center col-span-3 md:col-span-1">
+              <div className={cn(
+                "p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-center col-span-3 md:col-span-1 transition-all duration-300",
+                (activePrism === "coran" || activePrism === "verdict") && "ring-2 ring-emerald-400 animate-pulse bg-emerald-500/20 scale-105"
+              )}>
                 <Moon className="w-5 h-5 mx-auto mb-1 text-emerald-400" />
                 <p className="text-xs text-emerald-400 font-medium">Coran</p>
               </div>
@@ -872,7 +925,7 @@ export const ExpertChat = () => {
                   <div className="p-5">
                     {activeTab === "response" && (
                       <div className="text-muted-foreground text-sm leading-relaxed">
-                        <div className="flex items-center justify-between mb-4 pb-3 border-b border-glass">
+                        <div className="flex items-center justify-between mb-4 pb-3 border-b border-glass flex-wrap gap-2">
                           <div className="flex items-center gap-2">
                             <span className="text-xs text-muted-foreground">Voix :</span>
                             <select
@@ -885,17 +938,31 @@ export const ExpertChat = () => {
                               ))}
                             </select>
                           </div>
-                          {isSpeaking && (
+                          <div className="flex items-center gap-2">
                             <button
-                              onClick={stopSpeaking}
-                              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-destructive/20 text-destructive text-xs hover:bg-destructive/30 transition-colors"
+                              onClick={copyToClipboard}
+                              className={cn(
+                                "flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs transition-colors",
+                                copied 
+                                  ? "bg-emerald-500/20 text-emerald-400" 
+                                  : "bg-secondary/50 hover:bg-secondary text-muted-foreground"
+                              )}
                             >
-                              <Square className="w-3 h-3" />
-                              Arrêter la lecture
+                              {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                              {copied ? "Copié !" : "Copier"}
                             </button>
-                          )}
+                            {isSpeaking && (
+                              <button
+                                onClick={stopSpeaking}
+                                className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-destructive/20 text-destructive text-xs hover:bg-destructive/30 transition-colors"
+                              >
+                                <Square className="w-3 h-3" />
+                                Arrêter
+                              </button>
+                            )}
+                          </div>
                         </div>
-                        <FormattedMessage 
+                        <FormattedMessage
                           content={lastAssistantMessage.content} 
                           onSpeakSection={speakSection}
                           speakingSection={speakingSection}
