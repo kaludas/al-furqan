@@ -912,7 +912,7 @@ export const ExpertChat = () => {
         <SectionTitle
           arabicTitle="الفرقان"
           title="Al-Furqan : Le Discriminateur"
-          subtitle="Théologie comparée entre Islam, Christianisme, Judaïsme, Occultisme et Agnosticisme. L'IA analyse chaque question sous 5 prismes différents."
+          subtitle="Posez une question, et découvrez comment chaque tradition y répond. Notre IA présente objectivement 5 perspectives — chrétienne, juive, occultiste, agnostique et coranique — avant de synthétiser un verdict basé sur la cohérence logique et textuelle. Aucun jugement hâtif : vous comprenez d'abord, puis vous discernez."
         />
 
         <GlassCard glow className="p-6 md:p-8">
