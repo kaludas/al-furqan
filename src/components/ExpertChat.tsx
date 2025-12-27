@@ -485,6 +485,55 @@ const allSuggestedQuestions = [
   "Qu'est-ce que le raisonnement par l'absurde coranique ?",
   "Pourquoi l'Islam est une religion de preuve, pas de mystère ?",
   "Les signes de l'univers prouvent-ils un Créateur ?",
+  
+  // Questions sur la vie après la mort
+  "Qu'est-ce que le Barzakh et comment y préparer ?",
+  "Le Paradis et l'Enfer : différences entre Islam et Christianisme ?",
+  "Que dit le Coran sur le jour du Jugement ?",
+  "Comment le Coran décrit-il les anges et les djinns ?",
+  
+  // Questions sur les prophètes
+  "Adam et Ève : version coranique vs biblique ?",
+  "Qui était Dhul-Qarnayn mentionné dans le Coran ?",
+  "L'histoire de Moïse : Coran vs Torah ?",
+  "Pourquoi Abraham est-il le père du monothéisme ?",
+  "Comment le Coran raconte-t-il l'histoire de Noé ?",
+  
+  // Questions sur la science et le Coran
+  "Le Big Bang est-il mentionné dans le Coran ?",
+  "Que dit le Coran sur les montagnes et la tectonique ?",
+  "Comment le Coran décrit-il les océans et les barrières ?",
+  "Le Coran et la création de l'univers en 6 jours ?",
+  
+  // Questions existentielles
+  "Quel est le sens de la vie selon l'Islam ?",
+  "Pourquoi Dieu a-t-il créé l'humanité ?",
+  "Comment le libre arbitre fonctionne-t-il en Islam ?",
+  "Qu'est-ce que le Qadr (destin) en Islam ?",
+  
+  // Questions sur l'Islam pratique
+  "Pourquoi le porc est-il interdit en Islam ?",
+  "Quelle est la sagesse derrière le jeûne du Ramadan ?",
+  "Pourquoi les musulmans prient-ils vers La Mecque ?",
+  "Qu'est-ce que la Zakat et pourquoi est-elle obligatoire ?",
+  
+  // Questions sur les femmes et la société
+  "Le voile en Islam : obligation ou culture ?",
+  "Quel est le statut de la femme en Islam vs autres religions ?",
+  "Le mariage en Islam vs le mariage chrétien ?",
+  "L'héritage en Islam : pourquoi des parts différentes ?",
+  
+  // Questions sur l'athéisme et le matérialisme
+  "Comment répondre aux arguments de l'athéisme ?",
+  "Le matérialisme peut-il expliquer la conscience ?",
+  "L'évolution contredit-elle la création ?",
+  "Pourquoi le hasard ne peut pas tout expliquer ?",
+  
+  // Questions sur l'histoire islamique
+  "Le Prophète Muhammad était-il illettré ?",
+  "Comment le Coran a-t-il été préservé ?",
+  "Qui étaient les compagnons du Prophète ?",
+  "L'âge d'or islamique : science et foi ?",
 ];
 
 function shuffleArray<T>(array: T[]): T[] {
@@ -602,15 +651,23 @@ export const ExpertChat = () => {
     else setActivePrism(null);
   }, [isLoading, messages]);
 
-  // Auto-scroll to active prism
+  // Scroll to keep the response section visible (not below it)
+  const sectionRef = useRef<HTMLDivElement>(null);
+  
   useEffect(() => {
-    if (activePrism && prismRefs.current[activePrism] && conversationRef.current) {
-      conversationRef.current.scrollTo({
-        top: conversationRef.current.scrollHeight,
-        behavior: 'smooth'
-      });
+    if (isLoading && sectionRef.current) {
+      // Scroll to keep the section in view, not past it
+      sectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-  }, [activePrism]);
+  }, [isLoading]);
+  
+  // Auto-scroll conversation container to show new content
+  useEffect(() => {
+    if (activePrism && conversationRef.current) {
+      // Scroll within the conversation container only
+      conversationRef.current.scrollTop = conversationRef.current.scrollHeight;
+    }
+  }, [activePrism, messages]);
 
   // Copy response to clipboard
   const copyToClipboard = useCallback(async () => {
@@ -847,7 +904,7 @@ export const ExpertChat = () => {
   const lastAssistantMessage = [...messages].reverse().find((m) => m.role === "assistant");
 
   return (
-    <section id="expert" className="relative py-24 px-4">
+    <section id="expert" className="relative py-24 px-4" ref={sectionRef}>
       <div className="absolute top-0 right-1/4 w-80 h-80 bg-primary/10 rounded-full blur-3xl" />
       <div className="absolute bottom-1/4 left-0 w-64 h-64 bg-accent/10 rounded-full blur-3xl" />
 
