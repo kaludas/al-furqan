@@ -19,6 +19,7 @@ const Index = () => {
         <HeroSection />
       </div>
       <ExpertChat />
+      <SymbolScanner />
       <ReligionComparator />
       <div id="tawhid">
         <TawhidSection />
@@ -27,7 +28,6 @@ const Index = () => {
       <ScienceLab />
       <PropheciesModule />
       <ProphetTimeline />
-      <SymbolScanner />
       <FitraTest />
       <Footer />
     </main>
