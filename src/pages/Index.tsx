@@ -10,6 +10,11 @@ import { TawhidSection } from "@/components/TawhidSection";
 import { FitraTest } from "@/components/FitraTest";
 import { SymbolScanner } from "@/components/SymbolScanner";
 import { Footer } from "@/components/Footer";
+import { HamanModule } from "@/components/HamanModule";
+import { RingCompositionModule } from "@/components/RingCompositionModule";
+import { EntropyModule } from "@/components/EntropyModule";
+import { OccultDisenchantmentModule } from "@/components/OccultDisenchantmentModule";
+import { FloatingChatButton } from "@/components/FloatingChatButton";
 
 const Index = () => {
   return (
@@ -24,12 +29,17 @@ const Index = () => {
       <div id="tawhid">
         <TawhidSection />
       </div>
+      <HamanModule />
+      <RingCompositionModule />
       <IjazModule />
       <ScienceLab />
+      <EntropyModule />
+      <OccultDisenchantmentModule />
       <PropheciesModule />
       <ProphetTimeline />
       <FitraTest />
       <Footer />
+      <FloatingChatButton />
     </main>
   );
 };
