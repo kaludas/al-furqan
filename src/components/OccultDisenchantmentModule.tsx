@@ -4,43 +4,59 @@ import { SectionTitle } from "./SectionTitle";
 import { Eye, Search, ArrowRight, Sparkles, AlertTriangle, BookOpen, Lightbulb } from "lucide-react";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Term {
   occult: string;
-  meaning: string;
+  meaningFr: string;
+  meaningEn: string;
   quran: string;
-  verse: string;
-  analysis: string;
+  verseFr: string;
+  verseEn: string;
+  analysisFr: string;
+  analysisEn: string;
 }
 
 const terms: Term[] = [
   {
     occult: "Gnose",
-    meaning: "Connaissance secrète réservée aux initiés",
+    meaningFr: "Connaissance secrète réservée aux initiés",
+    meaningEn: "Secret knowledge reserved for initiates",
     quran: "ʿIlm (العلم)",
-    verse: "Dis: 'Mon Seigneur, accroît ma science' (20:114)",
-    analysis: "L'Islam démocratise la connaissance. Pas de caste d'initiés, mais une invitation universelle à apprendre.",
+    verseFr: "Dis: 'Mon Seigneur, accroît ma science' (20:114)",
+    verseEn: "Say: 'My Lord, increase me in knowledge' (20:114)",
+    analysisFr: "L'Islam démocratise la connaissance. Pas de caste d'initiés, mais une invitation universelle à apprendre.",
+    analysisEn: "Islam democratizes knowledge. No caste of initiates, but a universal invitation to learn.",
   },
   {
     occult: "Illumination",
-    meaning: "Éveil spirituel par des pratiques ésotériques",
+    meaningFr: "Éveil spirituel par des pratiques ésotériques",
+    meaningEn: "Spiritual awakening through esoteric practices",
     quran: "Nūr (النور)",
-    verse: "Allah est la Lumière des cieux et de la terre (24:35)",
-    analysis: "La vraie lumière vient d'Allah, non de rituels secrets. L'illumination est une grâce, pas une conquête.",
+    verseFr: "Allah est la Lumière des cieux et de la terre (24:35)",
+    verseEn: "Allah is the Light of the heavens and the earth (24:35)",
+    analysisFr: "La vraie lumière vient d'Allah, non de rituels secrets. L'illumination est une grâce, pas une conquête.",
+    analysisEn: "True light comes from Allah, not secret rituals. Illumination is grace, not conquest.",
   },
   {
     occult: "Hermétisme",
-    meaning: "Doctrine secrète attribuée à Hermès Trismégiste",
+    meaningFr: "Doctrine secrète attribuée à Hermès Trismégiste",
+    meaningEn: "Secret doctrine attributed to Hermes Trismegistus",
     quran: "Bayān (البيان)",
-    verse: "Ceci est un exposé clair pour les gens (3:138)",
-    analysis: "Le Coran rejette l'obscurantisme. Le message divin est clair, accessible, sans code secret.",
+    verseFr: "Ceci est un exposé clair pour les gens (3:138)",
+    verseEn: "This is a clear statement for the people (3:138)",
+    analysisFr: "Le Coran rejette l'obscurantisme. Le message divin est clair, accessible, sans code secret.",
+    analysisEn: "The Quran rejects obscurantism. The divine message is clear, accessible, without secret codes.",
   },
   {
     occult: "Initiation",
-    meaning: "Rites secrets pour accéder à la vérité cachée",
+    meaningFr: "Rites secrets pour accéder à la vérité cachée",
+    meaningEn: "Secret rites to access hidden truth",
     quran: "Shahada (الشهادة)",
-    verse: "Il n'y a de divinité que Dieu (47:19)",
-    analysis: "L'entrée en Islam est une déclaration publique, non un rituel caché. Transparence vs. Secret.",
+    verseFr: "Il n'y a de divinité que Dieu (47:19)",
+    verseEn: "There is no deity except Allah (47:19)",
+    analysisFr: "L'entrée en Islam est une déclaration publique, non un rituel caché. Transparence vs. Secret.",
+    analysisEn: "Entry into Islam is a public declaration, not a hidden ritual. Transparency vs. Secrecy.",
   },
 ];
 
@@ -56,6 +72,7 @@ const sampleTexts = [
 ];
 
 export const OccultDisenchantmentModule = () => {
+  const { t, language } = useLanguage();
   const [selectedTerm, setSelectedTerm] = useState<number | null>(null);
   const [mirrorText, setMirrorText] = useState("");
   const [analysis, setAnalysis] = useState<{ contradictions: string[]; liberation: string[] } | null>(null);
@@ -68,7 +85,7 @@ export const OccultDisenchantmentModule = () => {
     
     // Simulated analysis (in production, this would call an AI)
     setTimeout(() => {
-      setAnalysis({
+      setAnalysis(language === "fr" ? {
         contradictions: [
           "\"Do what thou wilt\" — Contradiction : Si tous font ce qu'ils veulent, les volontés s'opposent inévitablement.",
           "\"Man is the only god\" — Servitude déguisée : L'homme devient esclave de ses propres désirs et ego.",
@@ -78,6 +95,17 @@ export const OccultDisenchantmentModule = () => {
           "\"Et quiconque craint Allah, Il lui donnera une issue\" (65:2) — Libération par la soumission au Créateur.",
           "\"Allah n'impose à aucune âme une charge supérieure à sa capacité\" (2:286) — Cadre clair vs. chaos du 'fais ce que tu veux'.",
           "\"C'est Lui qui fait sortir le vivant du mort\" (30:19) — La vraie illumination vient de la Source de la Lumière.",
+        ],
+      } : {
+        contradictions: [
+          "\"Do what thou wilt\" — Contradiction: If everyone does what they want, wills inevitably clash.",
+          "\"Man is the only god\" — Disguised servitude: Man becomes slave to his own desires and ego.",
+          "\"No religion higher than Truth\" — Irony: This statement itself is a religious dogma.",
+        ],
+        liberation: [
+          "\"And whoever fears Allah, He will make for him a way out\" (65:2) — Liberation through submission to the Creator.",
+          "\"Allah does not burden a soul beyond that it can bear\" (2:286) — Clear framework vs. chaos of 'do what you will'.",
+          "\"It is He who brings the living out of the dead\" (30:19) — True illumination comes from the Source of Light.",
         ],
       });
       setIsAnalyzing(false);
@@ -95,16 +123,16 @@ export const OccultDisenchantmentModule = () => {
 
       <div className="max-w-6xl mx-auto relative z-10">
         <SectionTitle
-          arabicTitle="فك السحر"
-          title="Désenchantement de l'Occulte"
-          subtitle="Analyse linguistique : comment l'occultisme utilise des vérités partielles pour mener au Shirk"
+          arabicTitle={t("occult.arabicTitle")}
+          title={t("occult.title")}
+          subtitle={t("occult.subtitle")}
         />
 
         {/* Term Analysis */}
         <div className="mt-12 space-y-6">
           <h3 className="text-xl font-semibold text-foreground flex items-center gap-2">
             <Search className="w-5 h-5 text-primary" />
-            Lexique Comparé : Occultisme vs. Coran
+            {t("occult.lexicon")}
           </h3>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -122,7 +150,9 @@ export const OccultDisenchantmentModule = () => {
                   <Eye className="w-4 h-4 text-muted-foreground" />
                   <span className="font-bold text-foreground">{term.occult}</span>
                 </div>
-                <p className="text-xs text-muted-foreground">{term.meaning}</p>
+                <p className="text-xs text-muted-foreground">
+                  {language === "fr" ? term.meaningFr : term.meaningEn}
+                </p>
               </button>
             ))}
           </div>
@@ -133,29 +163,35 @@ export const OccultDisenchantmentModule = () => {
                 <div className="space-y-4">
                   <div className="flex items-center gap-2">
                     <AlertTriangle className="w-5 h-5 text-destructive" />
-                    <h4 className="font-semibold text-destructive">Concept Occulte</h4>
+                    <h4 className="font-semibold text-destructive">{t("occult.occultConcept")}</h4>
                   </div>
                   <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/20">
                     <p className="font-bold text-foreground">{terms[selectedTerm].occult}</p>
-                    <p className="text-sm text-muted-foreground mt-1">{terms[selectedTerm].meaning}</p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {language === "fr" ? terms[selectedTerm].meaningFr : terms[selectedTerm].meaningEn}
+                    </p>
                   </div>
                 </div>
 
                 <div className="space-y-4">
                   <div className="flex items-center gap-2">
                     <Sparkles className="w-5 h-5 text-emerald-500" />
-                    <h4 className="font-semibold text-emerald-500">Alternative Coranique</h4>
+                    <h4 className="font-semibold text-emerald-500">{t("occult.quranicAlternative")}</h4>
                   </div>
                   <div className="p-4 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
                     <p className="font-bold text-foreground">{terms[selectedTerm].quran}</p>
-                    <p className="text-sm text-muted-foreground mt-1 italic">"{terms[selectedTerm].verse}"</p>
+                    <p className="text-sm text-muted-foreground mt-1 italic">
+                      "{language === "fr" ? terms[selectedTerm].verseFr : terms[selectedTerm].verseEn}"
+                    </p>
                   </div>
                 </div>
 
                 <div className="md:col-span-2 p-4 rounded-lg bg-primary/10 border border-primary/20">
                   <div className="flex items-start gap-2">
                     <Lightbulb className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-                    <p className="text-muted-foreground">{terms[selectedTerm].analysis}</p>
+                    <p className="text-muted-foreground">
+                      {language === "fr" ? terms[selectedTerm].analysisFr : terms[selectedTerm].analysisEn}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -167,10 +203,10 @@ export const OccultDisenchantmentModule = () => {
         <div className="mt-16 space-y-6">
           <h3 className="text-xl font-semibold text-foreground flex items-center gap-2">
             <Eye className="w-5 h-5 text-primary" />
-            Le Miroir d'Iblis
+            {t("occult.mirrorTitle")}
           </h3>
           <p className="text-muted-foreground">
-            Collez un texte "illuminé" et découvrez ses contradictions internes face à la clarté coranique.
+            {t("occult.mirrorDesc")}
           </p>
 
           <div className="grid lg:grid-cols-2 gap-6">
@@ -189,7 +225,7 @@ export const OccultDisenchantmentModule = () => {
               </div>
 
               <Textarea
-                placeholder="Collez ici un texte occulte ou ésotérique..."
+                placeholder={t("occult.placeholder")}
                 value={mirrorText}
                 onChange={(e) => {
                   setMirrorText(e.target.value);
@@ -206,12 +242,12 @@ export const OccultDisenchantmentModule = () => {
                 {isAnalyzing ? (
                   <>
                     <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin mr-2" />
-                    Analyse en cours...
+                    {t("occult.analyzing")}
                   </>
                 ) : (
                   <>
                     <ArrowRight className="w-4 h-4 mr-2" />
-                    Activer le Miroir
+                    {t("occult.activateMirror")}
                   </>
                 )}
               </Button>
@@ -223,7 +259,7 @@ export const OccultDisenchantmentModule = () => {
                   <div className="space-y-4">
                     <Eye className="w-16 h-16 text-muted-foreground/30 mx-auto" />
                     <p className="text-muted-foreground">
-                      Le miroir attend un texte à analyser
+                      {t("occult.waitingText")}
                     </p>
                   </div>
                 </div>
@@ -232,7 +268,7 @@ export const OccultDisenchantmentModule = () => {
                   <div className="space-y-3">
                     <h4 className="font-semibold text-destructive flex items-center gap-2">
                       <AlertTriangle className="w-4 h-4" />
-                      Contradictions détectées
+                      {t("occult.contradictions")}
                     </h4>
                     {analysis.contradictions.map((item, index) => (
                       <p key={index} className="text-sm text-destructive/80 p-2 rounded bg-destructive/10">
@@ -244,7 +280,7 @@ export const OccultDisenchantmentModule = () => {
                   <div className="space-y-3">
                     <h4 className="font-semibold text-emerald-500 flex items-center gap-2">
                       <BookOpen className="w-4 h-4" />
-                      Clarté libératrice du Coran
+                      {t("occult.liberation")}
                     </h4>
                     {analysis.liberation.map((item, index) => (
                       <p key={index} className="text-sm text-emerald-500/80 p-2 rounded bg-emerald-500/10">
@@ -261,17 +297,15 @@ export const OccultDisenchantmentModule = () => {
         {/* Verse of Light */}
         <GlassCard className="mt-8 p-6" glow>
           <div className="text-center space-y-4">
-            <h3 className="text-xl font-bold text-primary">Le Verset de la Lumière (24:35)</h3>
+            <h3 className="text-xl font-bold text-primary">{t("occult.verseOfLight")}</h3>
             <p className="text-lg text-foreground font-arabic leading-relaxed">
               اللَّهُ نُورُ السَّمَاوَاتِ وَالْأَرْضِ
             </p>
             <p className="text-muted-foreground italic">
-              "Allah est la Lumière des cieux et de la terre"
+              {t("occult.verseOfLightText")}
             </p>
             <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
-              L'occultisme promet une illumination par des chemins tortueux. Le Coran affirme 
-              que la Source de toute lumière est unique et accessible — sans rituels secrets, 
-              sans hiérarchies initiatiques, sans servitude cachée.
+              {t("occult.conclusion")}
             </p>
           </div>
         </GlassCard>

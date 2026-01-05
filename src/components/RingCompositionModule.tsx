@@ -2,26 +2,34 @@ import { useState } from "react";
 import { GlassCard } from "./GlassCard";
 import { SectionTitle } from "./SectionTitle";
 import { Layers, ChevronRight, Sparkles, BookOpen, Target } from "lucide-react";
-import { Button } from "./ui/button";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface RingPair {
   start: number;
   end: number;
-  theme: string;
+  themeFr: string;
+  themeEn: string;
   color: string;
 }
 
 const ringPairs: RingPair[] = [
-  { start: 1, end: 286, theme: "Foi et guidance", color: "from-blue-500 to-blue-600" },
-  { start: 8, end: 281, theme: "Commerce et usure", color: "from-purple-500 to-purple-600" },
-  { start: 21, end: 260, theme: "Résurrection", color: "from-pink-500 to-pink-600" },
-  { start: 40, end: 252, theme: "Épreuves et patience", color: "from-orange-500 to-orange-600" },
-  { start: 122, end: 141, theme: "Ibrahim et la Kaaba", color: "from-emerald-500 to-emerald-600" },
+  { start: 1, end: 286, themeFr: "Foi et guidance", themeEn: "Faith and guidance", color: "from-blue-500 to-blue-600" },
+  { start: 8, end: 281, themeFr: "Commerce et usure", themeEn: "Commerce and usury", color: "from-purple-500 to-purple-600" },
+  { start: 21, end: 260, themeFr: "Résurrection", themeEn: "Resurrection", color: "from-pink-500 to-pink-600" },
+  { start: 40, end: 252, themeFr: "Épreuves et patience", themeEn: "Trials and patience", color: "from-orange-500 to-orange-600" },
+  { start: 122, end: 141, themeFr: "Ibrahim et la Kaaba", themeEn: "Ibrahim and the Kaaba", color: "from-emerald-500 to-emerald-600" },
 ];
 
 export const RingCompositionModule = () => {
+  const { t, language } = useLanguage();
   const [selectedPair, setSelectedPair] = useState<number | null>(null);
   const [showCenter, setShowCenter] = useState(false);
+
+  const getMirrorDesc = (start: number, end: number) => {
+    return language === "fr"
+      ? `Les versets ${start} et ${end} traitent du même thème avec une symétrie structurelle parfaite, comme un miroir littéraire.`
+      : `Verses ${start} and ${end} deal with the same theme with perfect structural symmetry, like a literary mirror.`;
+  };
 
   return (
     <section className="py-20 px-4 relative overflow-hidden">
@@ -44,9 +52,9 @@ export const RingCompositionModule = () => {
 
       <div className="max-w-6xl mx-auto relative z-10">
         <SectionTitle
-          arabicTitle="البقرة"
-          title="Ring Composition : L'Architecture Miraculeuse"
-          subtitle="Comment 286 versets révélés sur 23 ans forment une structure en miroir mathématiquement parfaite"
+          arabicTitle={t("ring.arabicTitle")}
+          title={t("ring.title")}
+          subtitle={t("ring.subtitle")}
         />
 
         <div className="grid lg:grid-cols-5 gap-8 mt-12">
@@ -54,7 +62,7 @@ export const RingCompositionModule = () => {
           <div className="lg:col-span-2 space-y-4">
             <h3 className="text-lg font-semibold text-foreground flex items-center gap-2 mb-4">
               <Layers className="w-5 h-5 text-primary" />
-              Structure en Chiasme
+              {t("ring.chiasmStructure")}
             </h3>
 
             {ringPairs.map((pair, index) => (
@@ -78,13 +86,12 @@ export const RingCompositionModule = () => {
                     selectedPair === index ? "rotate-90" : ""
                   }`} />
                 </div>
-                <p className="text-foreground mt-1">{pair.theme}</p>
+                <p className="text-foreground mt-1">{language === "fr" ? pair.themeFr : pair.themeEn}</p>
                 
                 {selectedPair === index && (
                   <div className="mt-3 pt-3 border-t border-border animate-fade-in">
                     <p className="text-sm text-muted-foreground">
-                      Les versets {pair.start} et {pair.end} traitent du même thème avec une 
-                      symétrie structurelle parfaite, comme un miroir littéraire.
+                      {getMirrorDesc(pair.start, pair.end)}
                     </p>
                   </div>
                 )}
@@ -98,7 +105,7 @@ export const RingCompositionModule = () => {
               <div className="flex flex-col h-full">
                 <h3 className="text-lg font-semibold text-foreground flex items-center gap-2 mb-6">
                   <Target className="w-5 h-5 text-primary" />
-                  Visualisation de la Structure
+                  {t("ring.visualization")}
                 </h3>
 
                 {/* Ring visualization */}
@@ -155,11 +162,9 @@ export const RingCompositionModule = () => {
                     <div className="flex items-start gap-3">
                       <BookOpen className="w-5 h-5 text-primary mt-0.5 shrink-0" />
                       <div>
-                        <h4 className="font-semibold text-foreground">Ayat al-Kursi (v.255)</h4>
+                        <h4 className="font-semibold text-foreground">{t("ring.ayatKursi")}</h4>
                         <p className="text-sm text-muted-foreground mt-1">
-                          Le Verset du Trône se trouve au centre exact de la structure en anneau de 
-                          Sourate Al-Baqara. Ce verset, considéré comme le plus grand du Coran, 
-                          proclame l'Unicité absolue d'Allah — le cœur du message coranique.
+                          {t("ring.ayatKursiDesc")}
                         </p>
                       </div>
                     </div>
@@ -173,23 +178,19 @@ export const RingCompositionModule = () => {
         {/* Bottom argument */}
         <GlassCard className="mt-8 p-6" glow>
           <div className="text-center space-y-4">
-            <h3 className="text-xl font-bold text-primary">L'Argument Choc</h3>
+            <h3 className="text-xl font-bold text-primary">{t("ring.shockArgument")}</h3>
             <p className="text-muted-foreground max-w-3xl mx-auto">
-              Le Coran a été révélé <span className="text-foreground font-semibold">oralement</span>, 
-              verset par verset, sur <span className="text-foreground font-semibold">23 ans</span>, 
-              en réponse à des événements contemporains. Comment un homme prêchant dans ces conditions 
-              pourrait-il placer le cœur de son message au centre mathématique exact d'un texte 
-              de plusieurs centaines de pages ?
+              {t("ring.shockText")}
             </p>
             <div className="flex flex-wrap justify-center gap-4 pt-4">
               <div className="px-4 py-2 rounded-full bg-muted text-muted-foreground text-sm">
-                286 versets
+                {t("ring.verses")}
               </div>
               <div className="px-4 py-2 rounded-full bg-muted text-muted-foreground text-sm">
-                23 ans de révélation
+                {t("ring.years")}
               </div>
               <div className="px-4 py-2 rounded-full bg-primary/20 text-primary text-sm font-semibold">
-                1 structure parfaite
+                {t("ring.structure")}
               </div>
             </div>
           </div>

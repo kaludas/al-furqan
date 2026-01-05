@@ -3,10 +3,12 @@ import { GlassCard } from "./GlassCard";
 import { SectionTitle } from "./SectionTitle";
 import { Upload, Scan, Loader2, X, Camera, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const ANALYZE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/analyze-symbol`;
 
 export const SymbolScanner = () => {
+  const { t } = useLanguage();
   const [image, setImage] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<string | null>(null);
@@ -17,7 +19,7 @@ export const SymbolScanner = () => {
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        setError("L'image ne doit pas dépasser 5MB");
+        setError(t("symbol.maxSizeError"));
         return;
       }
       const reader = new FileReader();
@@ -48,14 +50,14 @@ export const SymbolScanner = () => {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || "Erreur lors de l'analyse");
+        throw new Error(errorData.error || t("common.error"));
       }
 
       const data = await response.json();
       setAnalysis(data.analysis);
     } catch (err) {
       console.error("Analysis error:", err);
-      setError(err instanceof Error ? err.message : "Erreur lors de l'analyse");
+      setError(err instanceof Error ? err.message : t("common.error"));
     } finally {
       setIsAnalyzing(false);
     }
@@ -76,9 +78,9 @@ export const SymbolScanner = () => {
       
       <div className="container max-w-5xl relative z-10">
         <SectionTitle
-          arabicTitle="فك رموز الباطل"
-          title="Scanner de Symboles"
-          subtitle="Uploadez une image d'un symbole occulte et l'IA analysera son origine historique et expliquera la perspective coranique du Tawhid."
+          arabicTitle={t("symbol.arabicTitle")}
+          title={t("symbol.title")}
+          subtitle={t("symbol.subtitle")}
         />
 
         <div className="grid lg:grid-cols-2 gap-8">
@@ -89,8 +91,8 @@ export const SymbolScanner = () => {
                 <Scan className="w-5 h-5 text-destructive" />
               </div>
               <div>
-                <h3 className="font-display text-xl text-foreground">Analyser un Symbole</h3>
-                <p className="text-sm text-muted-foreground">Pentagramme, Baphomet, Œil d'Horus...</p>
+                <h3 className="font-display text-xl text-foreground">{t("symbol.analyzeTitle")}</h3>
+                <p className="text-sm text-muted-foreground">{t("symbol.analyzeDesc")}</p>
               </div>
             </div>
 
@@ -111,12 +113,12 @@ export const SymbolScanner = () => {
                   <Upload className="w-8 h-8 text-muted-foreground group-hover:text-primary" />
                 </div>
                 <div className="text-center">
-                  <p className="text-foreground font-medium">Cliquez pour uploader</p>
-                  <p className="text-sm text-muted-foreground">ou glissez-déposez une image</p>
+                  <p className="text-foreground font-medium">{t("symbol.clickUpload")}</p>
+                  <p className="text-sm text-muted-foreground">{t("symbol.dragDrop")}</p>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                   <Camera size={14} />
-                  <span>PNG, JPG jusqu'à 5MB</span>
+                  <span>{t("symbol.maxSize")}</span>
                 </div>
               </button>
             ) : (
@@ -148,12 +150,12 @@ export const SymbolScanner = () => {
                 {isAnalyzing ? (
                   <>
                     <Loader2 className="w-5 h-5 animate-spin" />
-                    Analyse en cours...
+                    {t("symbol.analyzing")}
                   </>
                 ) : (
                   <>
                     <Scan className="w-5 h-5" />
-                    Analyser ce symbole
+                    {t("symbol.analyzeBtn")}
                   </>
                 )}
               </button>
@@ -173,8 +175,8 @@ export const SymbolScanner = () => {
                 <ShieldCheck className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <h3 className="font-display text-xl text-foreground">Perspective du Tawhid</h3>
-                <p className="text-sm text-muted-foreground">Analyse et réfutation par la logique coranique</p>
+                <h3 className="font-display text-xl text-foreground">{t("symbol.perspectiveTitle")}</h3>
+                <p className="text-sm text-muted-foreground">{t("symbol.perspectiveDesc")}</p>
               </div>
             </div>
 
@@ -188,9 +190,7 @@ export const SymbolScanner = () => {
 
                 <div className="p-4 rounded-xl bg-primary/5 border border-primary/20">
                   <p className="text-sm text-foreground">
-                    <strong className="text-primary">Rappel du Tawhid :</strong> Allah est Un, sans associé ni image. 
-                    Les symboles occultes sont des créations humaines qui ne possèdent aucun pouvoir. 
-                    Le Coran libère l'homme de cette "servitude symbolique" pour le ramener au Créateur Unique.
+                    <strong className="text-primary">{t("symbol.tawhidReminder")}</strong> {t("symbol.tawhidReminderText")}
                   </p>
                 </div>
               </div>
@@ -200,10 +200,10 @@ export const SymbolScanner = () => {
                   <ShieldCheck className="w-10 h-10 text-muted-foreground/50" />
                 </div>
                 <p className="text-muted-foreground mb-2">
-                  Uploadez un symbole pour l'analyser
+                  {t("symbol.uploadPrompt")}
                 </p>
                 <p className="text-sm text-muted-foreground/70">
-                  L'IA expliquera son origine humaine et comment le Tawhid libère de la superstition.
+                  {t("symbol.uploadInfo")}
                 </p>
               </div>
             )}
@@ -215,23 +215,23 @@ export const SymbolScanner = () => {
           <div className="grid md:grid-cols-3 gap-6 text-center">
             <div>
               <p className="text-3xl font-display text-gradient-gold mb-2">☪️</p>
-              <h4 className="font-medium text-foreground mb-1">Tawhid</h4>
+              <h4 className="font-medium text-foreground mb-1">{t("symbol.tawhidTitle")}</h4>
               <p className="text-sm text-muted-foreground">
-                L'Unicité d'Allah dissipe les superstitions et libère l'esprit humain.
+                {t("symbol.tawhidDesc")}
               </p>
             </div>
             <div>
               <p className="text-3xl font-display text-muted-foreground mb-2">⚠️</p>
-              <h4 className="font-medium text-foreground mb-1">Origine Humaine</h4>
+              <h4 className="font-medium text-foreground mb-1">{t("symbol.originTitle")}</h4>
               <p className="text-sm text-muted-foreground">
-                Tous les symboles occultes ont une origine historique documentée.
+                {t("symbol.originDesc")}
               </p>
             </div>
             <div>
               <p className="text-3xl font-display text-primary mb-2">🔓</p>
-              <h4 className="font-medium text-foreground mb-1">Libération</h4>
+              <h4 className="font-medium text-foreground mb-1">{t("symbol.liberationTitle")}</h4>
               <p className="text-sm text-muted-foreground">
-                Le Coran libère de la peur des symboles et des superstitions.
+                {t("symbol.liberationDesc")}
               </p>
             </div>
           </div>

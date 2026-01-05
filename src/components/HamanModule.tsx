@@ -3,8 +3,10 @@ import { GlassCard } from "./GlassCard";
 import { SectionTitle } from "./SectionTitle";
 import { Book, ScrollText, CheckCircle2, XCircle, Search, Landmark, ArrowRight } from "lucide-react";
 import { Button } from "./ui/button";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const HamanModule = () => {
+  const { t } = useLanguage();
   const [activeView, setActiveView] = useState<"intro" | "bible" | "quran">("intro");
   const [showProof, setShowProof] = useState(false);
 
@@ -14,9 +16,9 @@ export const HamanModule = () => {
       
       <div className="max-w-6xl mx-auto relative z-10">
         <SectionTitle
-          arabicTitle="هامان"
-          title="Le Miracle de Haman"
-          subtitle="L'argument archéologique définitif : comment le Coran mentionne un personnage historique que seuls les hiéroglyphes pouvaient révéler"
+          arabicTitle={t("haman.arabicTitle")}
+          title={t("haman.title")}
+          subtitle={t("haman.subtitle")}
         />
 
         <div className="grid lg:grid-cols-2 gap-8 mt-12">
@@ -26,26 +28,26 @@ export const HamanModule = () => {
               <div className="p-3 rounded-xl bg-primary/20">
                 <Landmark className="w-6 h-6 text-primary" />
               </div>
-              <h3 className="text-xl font-bold text-foreground">Le Contexte Historique</h3>
+              <h3 className="text-xl font-bold text-foreground">{t("haman.contextTitle")}</h3>
             </div>
 
             <div className="space-y-4 text-muted-foreground">
               <p>
-                Le Coran mentionne <span className="text-primary font-semibold">"Haman"</span> comme 
-                un ministre de Pharaon en Égypte. Pendant des siècles, les critiques ont affirmé 
-                qu'il s'agissait d'une erreur grossière...
+                {t("haman.contextIntro").split('"Haman"')[0]}
+                <span className="text-primary font-semibold">"Haman"</span>
+                {t("haman.contextIntro").split('"Haman"')[1]}
               </p>
               
               <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/20">
                 <p className="text-destructive font-medium">
-                  Objection classique : "Dans la Bible, Haman est un Perse vivant 1000 ans après 
-                  Pharaon ! Muhammad a confondu les deux récits."
+                  {t("haman.objection")}
                 </p>
               </div>
 
               <p>
-                Cette critique semblait irréfutable... jusqu'au déchiffrement de la 
-                <span className="text-primary font-semibold"> Pierre de Rosette</span> au XIXe siècle.
+                {t("haman.until").split("Pierre de Rosette")[0]}
+                <span className="text-primary font-semibold">Pierre de Rosette</span>
+                {t("haman.until").split("Pierre de Rosette")[1]}
               </p>
             </div>
 
@@ -56,7 +58,7 @@ export const HamanModule = () => {
                 className="flex-1"
               >
                 <Book className="w-4 h-4 mr-2" />
-                Vérifier la Bible
+                {t("haman.verifyBible")}
               </Button>
               <Button
                 variant={activeView === "quran" ? "default" : "outline"}
@@ -64,7 +66,7 @@ export const HamanModule = () => {
                 className="flex-1"
               >
                 <ScrollText className="w-4 h-4 mr-2" />
-                Vérifier le Coran
+                {t("haman.verifyQuran")}
               </Button>
             </div>
           </GlassCard>
@@ -75,7 +77,7 @@ export const HamanModule = () => {
               <div className="h-full flex flex-col items-center justify-center text-center space-y-4 py-8">
                 <Search className="w-16 h-16 text-muted-foreground/50" />
                 <p className="text-muted-foreground">
-                  Cliquez sur un bouton pour comparer les sources
+                  {t("haman.clickCompare")}
                 </p>
               </div>
             )}
@@ -86,40 +88,40 @@ export const HamanModule = () => {
                   <div className="p-3 rounded-xl bg-destructive/20">
                     <XCircle className="w-6 h-6 text-destructive" />
                   </div>
-                  <h3 className="text-xl font-bold text-foreground">Dans la Bible</h3>
+                  <h3 className="text-xl font-bold text-foreground">{t("haman.inBible")}</h3>
                 </div>
 
                 <div className="space-y-4">
                   <div className="p-4 rounded-lg bg-card border border-border">
-                    <p className="text-sm text-muted-foreground mb-2">Livre d'Esther (Ve siècle av. J.-C.)</p>
+                    <p className="text-sm text-muted-foreground mb-2">{t("haman.bookEsther")}</p>
                     <p className="text-foreground italic">
-                      "Après ces choses, le roi Assuérus [Xerxès Ier de Perse] éleva <span className="text-destructive font-bold">Haman</span>, 
-                      fils d'Hammedatha, l'Agaguite..."
+                      {t("haman.estherQuote").split("Haman")[0]}
+                      <span className="text-destructive font-bold">Haman</span>
+                      {t("haman.estherQuote").split("Haman")[1]}
                     </p>
                     <p className="text-xs text-muted-foreground mt-2">— Esther 3:1</p>
                   </div>
 
                   <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/20">
-                    <h4 className="font-semibold text-destructive mb-2">Problème chronologique</h4>
+                    <h4 className="font-semibold text-destructive mb-2">{t("haman.chronoProblem")}</h4>
                     <ul className="space-y-2 text-sm text-muted-foreground">
                       <li className="flex items-start gap-2">
                         <XCircle className="w-4 h-4 text-destructive mt-0.5 shrink-0" />
-                        <span>Haman biblique : Perse, ~480 av. J.-C.</span>
+                        <span>{t("haman.biblicalHaman")}</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <XCircle className="w-4 h-4 text-destructive mt-0.5 shrink-0" />
-                        <span>Pharaon de Moïse : Égypte, ~1250 av. J.-C.</span>
+                        <span>{t("haman.pharaohMoses")}</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <XCircle className="w-4 h-4 text-destructive mt-0.5 shrink-0" />
-                        <span>Écart : environ 800 ans et deux civilisations différentes</span>
+                        <span>{t("haman.gap")}</span>
                       </li>
                     </ul>
                   </div>
 
                   <p className="text-muted-foreground text-sm">
-                    Si Muhammad avait copié la Bible, pourquoi aurait-il placé Haman en Égypte 
-                    plutôt qu'en Perse ?
+                    {t("haman.whyCopy")}
                   </p>
                 </div>
               </div>
@@ -131,16 +133,16 @@ export const HamanModule = () => {
                   <div className="p-3 rounded-xl bg-emerald-500/20">
                     <CheckCircle2 className="w-6 h-6 text-emerald-500" />
                   </div>
-                  <h3 className="text-xl font-bold text-foreground">Dans le Coran</h3>
+                  <h3 className="text-xl font-bold text-foreground">{t("haman.inQuran")}</h3>
                 </div>
 
                 <div className="space-y-4">
                   <div className="p-4 rounded-lg bg-card border border-border">
-                    <p className="text-sm text-muted-foreground mb-2">Sourate Al-Qasas (28:38)</p>
+                    <p className="text-sm text-muted-foreground mb-2">{t("haman.surahQasas")}</p>
                     <p className="text-foreground italic">
-                      "Et Pharaon dit : 'Ô notables, je ne vous connais pas de divinité autre que moi. 
-                      Allume-moi donc, ô <span className="text-emerald-500 font-bold">Haman</span>, un feu sur l'argile 
-                      et construis-moi une tour...'"
+                      {t("haman.qasasQuote").split("Haman")[0]}
+                      <span className="text-emerald-500 font-bold">Haman</span>
+                      {t("haman.qasasQuote").split("Haman")[1]}
                     </p>
                   </div>
 
@@ -149,39 +151,37 @@ export const HamanModule = () => {
                     variant="outline"
                     className="w-full"
                   >
-                    {showProof ? "Masquer" : "Révéler"} la preuve archéologique
+                    {showProof ? t("haman.hideProof") : t("haman.revealProof")}
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
 
                   {showProof && (
                     <div className="p-4 rounded-lg bg-emerald-500/10 border border-emerald-500/20 animate-fade-in">
-                      <h4 className="font-semibold text-emerald-500 mb-3">Découverte au Musée Hofburg, Vienne</h4>
+                      <h4 className="font-semibold text-emerald-500 mb-3">{t("haman.discoveryTitle")}</h4>
                       <p className="text-muted-foreground text-sm mb-3">
-                        Une inscription hiéroglyphique mentionne un fonctionnaire égyptien nommé 
-                        <span className="text-emerald-500 font-bold"> "Haman"</span> (Ha-Amen) comme 
-                        <span className="font-semibold"> chef des carrières de pierre</span> — 
-                        exactement le rôle décrit dans le Coran !
+                        {t("haman.discoveryText").split('"Haman"')[0]}
+                        <span className="text-emerald-500 font-bold">"Haman"</span>
+                        {t("haman.discoveryText").split('"Haman"')[1]}
                       </p>
                       
                       <div className="p-3 rounded bg-background/50">
                         <p className="text-xs text-muted-foreground">
-                          <span className="font-semibold">Source :</span> "Die Altaegyptischen 
-                          Personennamen" de H. Ranke, Institut Archéologique Allemand, 1935
+                          <span className="font-semibold">{t("haman.source")}</span> {t("haman.sourceText")}
                         </p>
                       </div>
 
                       <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
                         <li className="flex items-start gap-2">
                           <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
-                          <span>Nom correct : Haman</span>
+                          <span>{t("haman.correctName")}</span>
                         </li>
                         <li className="flex items-start gap-2">
                           <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
-                          <span>Époque correcte : Égypte pharaonique</span>
+                          <span>{t("haman.correctEra")}</span>
                         </li>
                         <li className="flex items-start gap-2">
                           <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
-                          <span>Fonction correcte : Travaux de construction</span>
+                          <span>{t("haman.correctRole")}</span>
                         </li>
                       </ul>
                     </div>
@@ -195,14 +195,12 @@ export const HamanModule = () => {
         {/* Conclusion */}
         <GlassCard className="mt-8 p-6" glow>
           <div className="text-center space-y-4">
-            <h3 className="text-xl font-bold text-primary">La Question Décisive</h3>
+            <h3 className="text-xl font-bold text-primary">{t("haman.decisiveQuestion")}</h3>
             <p className="text-muted-foreground max-w-3xl mx-auto">
-              Comment Muhammad ﷺ, au VIIe siècle en Arabie, pouvait-il connaître le nom d'un 
-              fonctionnaire égyptien antique que seul le déchiffrement des hiéroglyphes 
-              — réalisé 1200 ans plus tard — pouvait révéler ?
+              {t("haman.conclusionQuestion")}
             </p>
             <p className="text-lg font-semibold text-foreground">
-              La Bible contenait une erreur. Le Coran contenait la vérité historique.
+              {t("haman.conclusion")}
             </p>
           </div>
         </GlassCard>

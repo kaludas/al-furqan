@@ -3,6 +3,7 @@ import { MessageCircle, X, Send, Loader2, Sparkles } from "lucide-react";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Message {
   role: "user" | "assistant";
@@ -10,6 +11,7 @@ interface Message {
 }
 
 export const FloatingChatButton = () => {
+  const { t, language } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -40,7 +42,8 @@ export const FloatingChatButton = () => {
     setIsLoading(true);
 
     try {
-      const systemPrompt = `Tu es Al-Furqan, un assistant expert en théologie comparée entre Islam, Christianisme, Judaïsme et traditions ésotériques.
+      const systemPrompt = language === "fr" 
+        ? `Tu es Al-Furqan, un assistant expert en théologie comparée entre Islam, Christianisme, Judaïsme et traditions ésotériques.
       
 Tu réponds de manière concise et éducative. Tu peux générer des tableaux comparatifs si l'utilisateur le demande.
 
@@ -50,7 +53,18 @@ Règles :
 - Sois objectif et respectueux de toutes les traditions
 - Cite les sources (versets, textes) quand pertinent
 - Propose des comparaisons structurées si utile
-- Reste concis mais complet`;
+- Reste concis mais complet`
+        : `You are Al-Furqan, an expert assistant in comparative theology between Islam, Christianity, Judaism and esoteric traditions.
+      
+You respond concisely and educationally. You can generate comparative tables if requested.
+
+Current user context: They are browsing the "${currentSection}" section of the application.
+
+Rules:
+- Be objective and respectful of all traditions
+- Cite sources (verses, texts) when relevant
+- Offer structured comparisons if useful
+- Stay concise but complete`;
 
       const { data, error } = await supabase.functions.invoke("theology-chat", {
         body: {
@@ -74,7 +88,7 @@ Règles :
         ...prev,
         {
           role: "assistant",
-          content: "Une erreur s'est produite. Veuillez réessayer.",
+          content: t("chat.error"),
         },
       ]);
     } finally {
@@ -99,7 +113,7 @@ Règles :
             ? "bg-muted text-muted-foreground rotate-90"
             : "bg-primary text-primary-foreground hover:scale-110"
         }`}
-        aria-label={isOpen ? "Fermer le chat" : "Interroger Al-Furqan"}
+        aria-label={isOpen ? t("chat.close") : t("chat.open")}
       >
         {isOpen ? (
           <X className="w-6 h-6" />
@@ -114,7 +128,7 @@ Règles :
           <div className="bg-card border border-border rounded-lg px-3 py-2 shadow-lg">
             <p className="text-sm text-foreground whitespace-nowrap flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-primary" />
-              Interroger Al-Furqan
+              {t("chat.open")}
             </p>
           </div>
         </div>
@@ -131,9 +145,9 @@ Règles :
                   <Sparkles className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-foreground">Al-Furqan</h3>
+                  <h3 className="font-semibold text-foreground">{t("chat.title")}</h3>
                   <p className="text-xs text-muted-foreground">
-                    Assistant en théologie comparée
+                    {t("chat.subtitle")}
                   </p>
                 </div>
               </div>
@@ -146,10 +160,10 @@ Règles :
                   <MessageCircle className="w-12 h-12 text-muted-foreground/30 mx-auto" />
                   <div className="space-y-1">
                     <p className="text-muted-foreground">
-                      Posez votre question
+                      {t("chat.askQuestion")}
                     </p>
                     <p className="text-xs text-muted-foreground/70">
-                      Ex: "Compare la Trinité et le Tawhid"
+                      {t("chat.example")}
                     </p>
                   </div>
                 </div>
@@ -193,7 +207,7 @@ Règles :
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  placeholder="Votre question..."
+                  placeholder={t("chat.placeholder")}
                   className="min-h-[44px] max-h-[120px] resize-none"
                   rows={1}
                 />
