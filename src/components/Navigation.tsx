@@ -1,18 +1,21 @@
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Menu, X } from "lucide-react";
-
-const navItems = [
-  { id: "hero", label: "Accueil", arabic: "الرئيسية" },
-  { id: "expert", label: "Expert IA", arabic: "الخبير" },
-  { id: "ijaz", label: "I'jaz", arabic: "الإعجاز" },
-  { id: "timeline", label: "Chronologie", arabic: "التاريخ" },
-  { id: "laboratory", label: "Laboratoire", arabic: "المختبر" },
-  { id: "tawhid", label: "Tawhid", arabic: "التوحيد" },
-  { id: "fitra", label: "Fitra", arabic: "الفطرة" }
-];
+import { LanguageToggle } from "./LanguageToggle";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const Navigation = () => {
+  const { t } = useLanguage();
+  
+  const navItems = [
+    { id: "hero", label: t("nav.home"), arabic: "الرئيسية" },
+    { id: "expert", label: t("nav.expert"), arabic: "الخبير" },
+    { id: "ijaz", label: t("nav.ijaz"), arabic: "الإعجاز" },
+    { id: "timeline", label: t("nav.timeline"), arabic: "التاريخ" },
+    { id: "laboratory", label: t("nav.laboratory"), arabic: "المختبر" },
+    { id: "tawhid", label: t("nav.tawhid"), arabic: "التوحيد" },
+    { id: "fitra", label: t("nav.fitra"), arabic: "الفطرة" }
+  ];
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("hero");
@@ -72,15 +75,19 @@ export const Navigation = () => {
                 {item.label}
               </button>
             ))}
+            <LanguageToggle />
           </div>
 
-          {/* Mobile Toggle */}
-          <button
-            onClick={() => setIsMobileOpen(!isMobileOpen)}
-            className="lg:hidden p-2 rounded-lg hover:bg-secondary/50 transition-colors"
-          >
-            {isMobileOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          {/* Language Toggle for Mobile (visible before menu button) */}
+          <div className="flex lg:hidden items-center gap-2">
+            <LanguageToggle />
+            <button
+              onClick={() => setIsMobileOpen(!isMobileOpen)}
+              className="p-2 rounded-lg hover:bg-secondary/50 transition-colors"
+            >
+              {isMobileOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
       </nav>
 
