@@ -3,6 +3,7 @@ import { GlassCard } from "./GlassCard";
 import { SectionTitle } from "./SectionTitle";
 import { Atom, Plus, Minus, Play, RotateCcw, AlertTriangle, CheckCircle2 } from "lucide-react";
 import { Button } from "./ui/button";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Planet {
   id: number;
@@ -14,6 +15,7 @@ interface Planet {
 }
 
 export const EntropyModule = () => {
+  const { t } = useLanguage();
   const [godCount, setGodCount] = useState(1);
   const [isSimulating, setIsSimulating] = useState(false);
   const [planets, setPlanets] = useState<Planet[]>([]);
@@ -80,9 +82,9 @@ export const EntropyModule = () => {
 
       <div className="max-w-6xl mx-auto relative z-10">
         <SectionTitle
-          arabicTitle="الإنتروبيا"
-          title="L'Agnostique face à l'Entropie"
-          subtitle="La Deuxième Loi de la Thermodynamique démontre mathématiquement l'impossibilité du polythéisme"
+          arabicTitle={t("entropy.arabicTitle")}
+          title={t("entropy.title")}
+          subtitle={t("entropy.subtitle")}
         />
 
         <div className="grid lg:grid-cols-2 gap-8 mt-12">
@@ -92,20 +94,19 @@ export const EntropyModule = () => {
               <div className="p-3 rounded-xl bg-primary/20">
                 <Atom className="w-6 h-6 text-primary" />
               </div>
-              <h3 className="text-xl font-bold text-foreground">Simulation du Cosmos</h3>
+              <h3 className="text-xl font-bold text-foreground">{t("entropy.simulation")}</h3>
             </div>
 
             <div className="p-4 rounded-lg bg-card border border-border">
-              <p className="text-sm text-muted-foreground mb-2">Sourate Al-Anbiya (21:22)</p>
+              <p className="text-sm text-muted-foreground mb-2">{t("entropy.verseRef")}</p>
               <p className="text-foreground italic">
-                "S'il y avait dans [les cieux et la terre] des divinités autres qu'Allah, 
-                ils seraient certainement dans le <span className="text-destructive font-bold">chaos</span>."
+                {t("entropy.verse")}
               </p>
             </div>
 
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-foreground font-medium">Nombre de divinités :</span>
+                <span className="text-foreground font-medium">{t("entropy.godCount")}</span>
                 <div className="flex items-center gap-3">
                   <Button
                     size="icon"
@@ -138,7 +139,7 @@ export const EntropyModule = () => {
                   variant={isSimulating ? "destructive" : "default"}
                 >
                   <Play className="w-4 h-4 mr-2" />
-                  {isSimulating ? "Arrêter" : "Lancer"} la simulation
+                  {isSimulating ? t("entropy.stop") : t("entropy.start")} {t("entropy.theSimulation")}
                 </Button>
                 <Button variant="outline" onClick={resetSimulation}>
                   <RotateCcw className="w-4 h-4" />
@@ -149,7 +150,7 @@ export const EntropyModule = () => {
             {/* Chaos meter */}
             <div className="space-y-2">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Niveau de chaos :</span>
+                <span className="text-muted-foreground">{t("entropy.chaosLevel")}</span>
                 <span className={`font-bold ${
                   chaosLevel < 30 ? "text-emerald-500" : 
                   chaosLevel < 70 ? "text-yellow-500" : "text-destructive"
@@ -184,12 +185,12 @@ export const EntropyModule = () => {
                   <h4 className={`font-semibold ${
                     godCount === 1 ? "text-emerald-500" : "text-destructive"
                   }`}>
-                    {godCount === 1 ? "Ordre Cosmique" : "Désordre Croissant"}
+                    {godCount === 1 ? t("entropy.cosmicOrder") : t("entropy.growingDisorder")}
                   </h4>
                   <p className="text-sm text-muted-foreground mt-1">
                     {godCount === 1 
-                      ? "Une Volonté Unique maintient l'harmonie des orbites et la précision des constantes physiques."
-                      : `Avec ${godCount} volontés concurrentes, chaque décision contradictoire accroît l'entropie du système.`
+                      ? t("entropy.singleWill")
+                      : t("entropy.multipleWills").replace("{count}", godCount.toString())
                     }
                   </p>
                 </div>
@@ -262,8 +263,8 @@ export const EntropyModule = () => {
 
             <p className="text-center text-sm text-muted-foreground mt-6">
               {godCount === 1 
-                ? "L'ordre cosmique résulte d'une Volonté Unique et cohérente"
-                : "Les volontés concurrentes créent inévitablement le chaos"
+                ? t("entropy.orderResult")
+                : t("entropy.chaosResult")
               }
             </p>
           </GlassCard>
@@ -273,17 +274,15 @@ export const EntropyModule = () => {
         <GlassCard className="mt-8 p-6" glow>
           <div className="grid md:grid-cols-2 gap-6">
             <div className="p-4 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-              <h4 className="font-semibold text-emerald-500 mb-2">Contre l'Agnosticisme</h4>
+              <h4 className="font-semibold text-emerald-500 mb-2">{t("entropy.againstAgnosticism")}</h4>
               <p className="text-sm text-muted-foreground">
-                L'ordre n'est pas un accident. Les constantes physiques finement réglées et 
-                les lois mathématiques de l'univers témoignent d'une Intelligence.
+                {t("entropy.againstAgnosticismText")}
               </p>
             </div>
             <div className="p-4 rounded-lg bg-primary/10 border border-primary/20">
-              <h4 className="font-semibold text-primary mb-2">Contre le Polythéisme</h4>
+              <h4 className="font-semibold text-primary mb-2">{t("entropy.againstPolytheism")}</h4>
               <p className="text-sm text-muted-foreground">
-                Cet ordre ne peut être partagé. Deux volontés absolues sont logiquement 
-                contradictoires — confirmant le Tawhid coranique.
+                {t("entropy.againstPolytheismText")}
               </p>
             </div>
           </div>
