@@ -3,6 +3,7 @@ import { GlassCard } from "./GlassCard";
 import { SectionTitle } from "./SectionTitle";
 import { cn } from "@/lib/utils";
 import { Check, X, Clock, BookOpen, Globe, AlertTriangle } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Prophecy {
   id: string;
