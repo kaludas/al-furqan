@@ -3,6 +3,7 @@ import { GlassCard } from "./GlassCard";
 import { SectionTitle } from "./SectionTitle";
 import { Check, X, ArrowRight, RotateCcw, Shuffle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Question {
   question: string;

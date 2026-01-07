@@ -3,6 +3,7 @@ import { GlassCard } from "./GlassCard";
 import { SectionTitle } from "./SectionTitle";
 import { cn } from "@/lib/utils";
 import { Atom, Globe, Droplets, Mountain, Heart, Cloud, Moon, Microscope, Leaf, Wind, ChevronLeft, ChevronRight, BookOpen } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface ScientificMiracle {
   id: number;

@@ -4,6 +4,7 @@ import { SectionTitle } from "./SectionTitle";
 import { Send, Loader2, Sparkles, BookOpen, ShieldAlert, Lightbulb, RefreshCw, Cross, Star, Moon, Eye, HelpCircle, Volume2, Pause, Play, Square, Plus, Copy, Check, Share2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 type Message = {
   role: "user" | "assistant";
@@ -546,6 +547,7 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 export const ExpertChat = () => {
+  const { t } = useLanguage();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -911,8 +913,8 @@ export const ExpertChat = () => {
       <div className="container max-w-5xl relative z-10">
         <SectionTitle
           arabicTitle="الفرقان"
-          title="Al-Furqan : Le Discriminateur"
-          subtitle="Posez une question, et découvrez comment chaque tradition y répond. Notre IA présente objectivement 5 perspectives — chrétienne, juive, occultiste, agnostique et coranique — avant de synthétiser un verdict basé sur la cohérence logique et textuelle. Aucun jugement hâtif : vous comprenez d'abord, puis vous discernez."
+          title={t('expertChat.title')}
+          subtitle={t('expertChat.subtitle')}
         />
 
         <GlassCard glow className="p-6 md:p-8">
@@ -920,7 +922,7 @@ export const ExpertChat = () => {
           <div className="text-center mb-8">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm mb-4">
               <Sparkles size={16} />
-              <span>Mode Confrontation à 5 Prismes</span>
+              <span>{t('expertChat.mode')}</span>
             </div>
             
             <div className="grid grid-cols-3 md:grid-cols-6 gap-3 mt-6">
@@ -936,7 +938,7 @@ export const ExpertChat = () => {
                 )}
                 {prismProgress.chretien === 100 && <div className="absolute top-1 right-1 w-2 h-2 rounded-full bg-blue-400" />}
                 <Cross className="w-5 h-5 mx-auto mb-1 text-blue-400" />
-                <p className="text-xs text-blue-400 font-medium">Christianisme</p>
+                <p className="text-xs text-blue-400 font-medium">{t('expertChat.christianity')}</p>
                 {isLoading && prismProgress.chretien > 0 && <p className="text-[10px] text-blue-400/70 mt-1">{prismProgress.chretien}%</p>}
               </div>
               <div 
@@ -951,7 +953,7 @@ export const ExpertChat = () => {
                 )}
                 {prismProgress.judaique === 100 && <div className="absolute top-1 right-1 w-2 h-2 rounded-full bg-yellow-400" />}
                 <Star className="w-5 h-5 mx-auto mb-1 text-yellow-400" />
-                <p className="text-xs text-yellow-400 font-medium">Judaïsme</p>
+                <p className="text-xs text-yellow-400 font-medium">{t('expertChat.judaism')}</p>
                 {isLoading && prismProgress.judaique > 0 && <p className="text-[10px] text-yellow-400/70 mt-1">{prismProgress.judaique}%</p>}
               </div>
               <div 
@@ -966,7 +968,7 @@ export const ExpertChat = () => {
                 )}
                 {prismProgress.occulte === 100 && <div className="absolute top-1 right-1 w-2 h-2 rounded-full bg-purple-400" />}
                 <Eye className="w-5 h-5 mx-auto mb-1 text-purple-400" />
-                <p className="text-xs text-purple-400 font-medium">Occultisme</p>
+                <p className="text-xs text-purple-400 font-medium">{t('expertChat.occultism')}</p>
                 {isLoading && prismProgress.occulte > 0 && <p className="text-[10px] text-purple-400/70 mt-1">{prismProgress.occulte}%</p>}
               </div>
               <div 
@@ -981,7 +983,7 @@ export const ExpertChat = () => {
                 )}
                 {prismProgress.agnostique === 100 && <div className="absolute top-1 right-1 w-2 h-2 rounded-full bg-slate-400" />}
                 <HelpCircle className="w-5 h-5 mx-auto mb-1 text-slate-400" />
-                <p className="text-xs text-slate-400 font-medium">Agnosticisme</p>
+                <p className="text-xs text-slate-400 font-medium">{t('expertChat.agnosticism')}</p>
                 {isLoading && prismProgress.agnostique > 0 && <p className="text-[10px] text-slate-400/70 mt-1">{prismProgress.agnostique}%</p>}
               </div>
               <div 
@@ -996,7 +998,7 @@ export const ExpertChat = () => {
                 )}
                 {prismProgress.coran === 100 && <div className="absolute top-1 right-1 w-2 h-2 rounded-full bg-emerald-400" />}
                 <Moon className="w-5 h-5 mx-auto mb-1 text-emerald-400" />
-                <p className="text-xs text-emerald-400 font-medium">Coran</p>
+                <p className="text-xs text-emerald-400 font-medium">{t('expertChat.quran')}</p>
                 {isLoading && prismProgress.coran > 0 && <p className="text-[10px] text-emerald-400/70 mt-1">{prismProgress.coran}%</p>}
               </div>
               <div 
@@ -1011,7 +1013,7 @@ export const ExpertChat = () => {
                 )}
                 {prismProgress.verdict === 100 && <div className="absolute top-1 right-1 w-2 h-2 rounded-full bg-primary" />}
                 <ShieldAlert className="w-5 h-5 mx-auto mb-1 text-primary" />
-                <p className="text-xs text-primary font-medium">Verdict</p>
+                <p className="text-xs text-primary font-medium">{t('expertChat.verdict')}</p>
                 {isLoading && prismProgress.verdict > 0 && <p className="text-[10px] text-primary/70 mt-1">{prismProgress.verdict}%</p>}
               </div>
             </div>
@@ -1021,13 +1023,13 @@ export const ExpertChat = () => {
           {messages.length === 0 && (
             <div className="mb-8">
               <div className="flex items-center justify-between mb-4">
-                <p className="text-sm text-muted-foreground">Questions suggérées :</p>
+                <p className="text-sm text-muted-foreground">{t('expertChat.suggestedQuestions')}</p>
                 <button
                   onClick={refreshQuestions}
                   className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors"
                 >
                   <RefreshCw size={14} />
-                  Autres questions
+                  {t('expertChat.otherQuestions')}
                 </button>
               </div>
               <div className="grid sm:grid-cols-2 gap-3">
@@ -1058,7 +1060,7 @@ export const ExpertChat = () => {
                   className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary/10 text-primary text-sm font-medium hover:bg-primary/20 transition-colors"
                 >
                   <Plus size={16} />
-                  Nouvelle question
+                  {t('expertChat.newQuestion')}
                 </button>
               </div>
               
@@ -1098,7 +1100,7 @@ export const ExpertChat = () => {
                     <div className="bg-card/80 border border-glass rounded-2xl rounded-bl-md px-5 py-4">
                       <div className="flex items-center gap-2 text-muted-foreground">
                         <Loader2 className="w-4 h-4 animate-spin" />
-                        <span className="text-sm">Analyse comparative en cours...</span>
+                        <span className="text-sm">{t('expertChat.analyzing')}</span>
                       </div>
                     </div>
                   </div>
@@ -1120,7 +1122,7 @@ export const ExpertChat = () => {
                       )}
                     >
                       <Lightbulb size={16} />
-                      Réponse
+                      {t('expertChat.response')}
                     </button>
                     <button
                       onClick={() => setActiveTab("sources")}
@@ -1132,7 +1134,7 @@ export const ExpertChat = () => {
                       )}
                     >
                       <BookOpen size={16} />
-                      Sources
+                      {t('expertChat.sources')}
                     </button>
                     <button
                       onClick={() => setActiveTab("comparison")}
@@ -1153,7 +1155,7 @@ export const ExpertChat = () => {
                       <div className="text-muted-foreground text-sm leading-relaxed">
                         <div className="flex items-center justify-between mb-4 pb-3 border-b border-glass flex-wrap gap-2">
                           <div className="flex items-center gap-2">
-                            <span className="text-xs text-muted-foreground">Voix :</span>
+                            <span className="text-xs text-muted-foreground">{t('expertChat.voice')}</span>
                             <select
                               value={currentVoice?.name || ''}
                               onChange={(e) => setCurrentVoice(availableVoices.find(v => v.name === e.target.value) || null)}
@@ -1167,7 +1169,7 @@ export const ExpertChat = () => {
                           <div className="flex items-center gap-2 flex-wrap">
                             {/* Share buttons */}
                             <div className="flex items-center gap-1 mr-2">
-                              <span className="text-xs text-muted-foreground mr-1">Partager:</span>
+                              <span className="text-xs text-muted-foreground mr-1">{t('expertChat.share')}</span>
                               <button
                                 onClick={shareOnTwitter}
                                 className="p-1.5 rounded-lg bg-[#1DA1F2]/10 hover:bg-[#1DA1F2]/20 text-[#1DA1F2] transition-colors"
@@ -1200,7 +1202,7 @@ export const ExpertChat = () => {
                               )}
                             >
                               {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-                              {copied ? "Copié !" : "Copier"}
+                              {copied ? t('expertChat.copied') : t('expertChat.copy')}
                             </button>
                             {isSpeaking && (
                               <button
@@ -1208,7 +1210,7 @@ export const ExpertChat = () => {
                                 className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-destructive/20 text-destructive text-xs hover:bg-destructive/30 transition-colors"
                               >
                                 <Square className="w-3 h-3" />
-                                Arrêter
+                                {t('expertChat.stop')}
                               </button>
                             )}
                           </div>
@@ -1283,7 +1285,7 @@ export const ExpertChat = () => {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyPress}
-              placeholder="Posez votre question comparative : Coran, Bible, Talmud, Occultisme..."
+              placeholder={t('expertChat.placeholder')}
               className="flex-1 bg-secondary/30 border border-glass rounded-xl px-5 py-4 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
               disabled={isLoading}
             />
@@ -1297,7 +1299,7 @@ export const ExpertChat = () => {
               )}
             >
               <Send size={18} />
-              <span className="hidden sm:inline">Envoyer</span>
+              <span className="hidden sm:inline">{t('expertChat.send')}</span>
             </button>
           </div>
         </GlassCard>

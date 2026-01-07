@@ -3,6 +3,7 @@ import { GlassCard } from "./GlassCard";
 import { SectionTitle } from "./SectionTitle";
 import { Search, BookOpen, Zap, ArrowRight, Calculator, Scale, Sparkles, Crown, Heart, Shield } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 // 99 Names of Allah with meanings and contrasts
 const namesOfAllah = [
