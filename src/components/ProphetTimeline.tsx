@@ -3,7 +3,6 @@ import { GlassCard } from "./GlassCard";
 import { SectionTitle } from "./SectionTitle";
 import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Prophet {
   name: string;
