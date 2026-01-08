@@ -4,6 +4,7 @@ import { SectionTitle } from "./SectionTitle";
 import { Send, Loader2, Sparkles, BookOpen, ShieldAlert, Lightbulb, RefreshCw, Cross, Star, Moon, Eye, HelpCircle, Volume2, Pause, Play, Square, Plus, Copy, Check, Share2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 type Message = {
   role: "user" | "assistant";
@@ -179,18 +180,19 @@ const extractVerdictContent = (content: string) => {
 };
 
 // Component to render dynamic verdict
-const DynamicVerdict = ({ content, onSpeak, isSpeaking, isPaused }: { 
+const DynamicVerdict = ({ content, onSpeak, isSpeaking, isPaused, t }: { 
   content: string; 
   onSpeak?: (text: string, id: string) => void;
   isSpeaking?: boolean;
   isPaused?: boolean;
+  t: (key: string) => string;
 }) => {
   const points = extractVerdictContent(content);
   
   if (!points || points.length === 0) {
     return (
       <div className="text-sm text-muted-foreground">
-        <p>Le verdict sera généré avec la réponse de l'IA.</p>
+        <p>{t("expert.verdictWillGenerate")}</p>
       </div>
     );
   }
@@ -210,7 +212,7 @@ const DynamicVerdict = ({ content, onSpeak, isSpeaking, isPaused }: {
       {/* Header with play button for entire verdict */}
       <div className="flex items-center justify-between">
         <p className="text-sm text-muted-foreground font-medium">
-          ⚖️ Verdict basé sur l'analyse comparative :
+          ⚖️ {t("expert.verdictBasedOn")}
         </p>
         {onSpeak && (
           <button
@@ -221,9 +223,9 @@ const DynamicVerdict = ({ content, onSpeak, isSpeaking, isPaused }: {
             )}
           >
             {isSpeaking ? (
-              isPaused ? <><Play className="w-3 h-3" /> Reprendre</> : <><Pause className="w-3 h-3" /> Pause</>
+              isPaused ? <><Play className="w-3 h-3" /> {t("expert.resume")}</> : <><Pause className="w-3 h-3" /> {t("expert.pause")}</>
             ) : (
-              <><Volume2 className="w-3 h-3" /> Écouter le verdict</>
+              <><Volume2 className="w-3 h-3" /> {t("expert.listenVerdict")}</>
             )}
           </button>
         )}
@@ -262,24 +264,24 @@ const DynamicVerdict = ({ content, onSpeak, isSpeaking, isPaused }: {
       {/* Coherence indicators */}
       <div className="mt-6 p-4 rounded-xl bg-gradient-to-r from-emerald-500/10 to-primary/10 border border-emerald-500/20">
         <h5 className="text-sm font-bold text-emerald-400 mb-3 flex items-center gap-2">
-          <span>📊</span> Indicateurs de Cohérence
+          <span>📊</span> {t("expert.coherenceIndicators")}
         </h5>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <div className="text-center p-2 rounded-lg bg-background/30">
             <div className="text-lg font-bold text-emerald-400">✓</div>
-            <div className="text-xs text-muted-foreground">Tawhid</div>
+            <div className="text-xs text-muted-foreground">{t("expert.tawhidIndicator")}</div>
           </div>
           <div className="text-center p-2 rounded-lg bg-background/30">
             <div className="text-lg font-bold text-emerald-400">✓</div>
-            <div className="text-xs text-muted-foreground">Préservation</div>
+            <div className="text-xs text-muted-foreground">{t("expert.preservationIndicator")}</div>
           </div>
           <div className="text-center p-2 rounded-lg bg-background/30">
             <div className="text-lg font-bold text-emerald-400">✓</div>
-            <div className="text-xs text-muted-foreground">I'jaz</div>
+            <div className="text-xs text-muted-foreground">{t("expert.ijazIndicator")}</div>
           </div>
           <div className="text-center p-2 rounded-lg bg-background/30">
             <div className="text-lg font-bold text-emerald-400">✓</div>
-            <div className="text-xs text-muted-foreground">Logique</div>
+            <div className="text-xs text-muted-foreground">{t("expert.logicIndicator")}</div>
           </div>
         </div>
       </div>
@@ -546,6 +548,7 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 export const ExpertChat = () => {
+  const { language, t } = useLanguage();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -677,12 +680,12 @@ export const ExpertChat = () => {
     try {
       await navigator.clipboard.writeText(lastMessage.content);
       setCopied(true);
-      toast({ title: "Copié !", description: "La réponse a été copiée dans le presse-papier." });
+      toast({ title: t("expert.copied"), description: t("expert.copiedToClipboard") });
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      toast({ title: "Erreur", description: "Impossible de copier la réponse.", variant: "destructive" });
+      toast({ title: t("common.error"), description: t("expert.copyError"), variant: "destructive" });
     }
-  }, [messages, toast]);
+  }, [messages, toast, t]);
 
   // Share functions
   const shareOnTwitter = useCallback(() => {
@@ -709,21 +712,22 @@ export const ExpertChat = () => {
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
   }, [messages]);
 
-  // Load available voices
+  // Load appropriate voices based on language
   useEffect(() => {
     const loadVoices = () => {
       const voices = speechSynthesis.getVoices();
-      const frenchVoices = voices.filter(v => v.lang.startsWith('fr'));
-      setAvailableVoices(frenchVoices.length > 0 ? frenchVoices : voices.slice(0, 5));
-      if (frenchVoices.length > 0) setCurrentVoice(frenchVoices[0]);
+      const langPrefix = language === "en" ? "en" : "fr";
+      const langVoices = voices.filter(v => v.lang.startsWith(langPrefix));
+      setAvailableVoices(langVoices.length > 0 ? langVoices : voices.slice(0, 5));
+      if (langVoices.length > 0) setCurrentVoice(langVoices[0]);
     };
     loadVoices();
     speechSynthesis.onvoiceschanged = loadVoices;
-  }, []);
+  }, [language]);
 
   const speakSection = useCallback((text: string, sectionId: string) => {
     if (!('speechSynthesis' in window)) {
-      toast({ title: "Non supporté", description: "La synthèse vocale n'est pas supportée par ce navigateur.", variant: "destructive" });
+      toast({ title: t("expert.notSupported"), description: t("expert.speechNotSupported"), variant: "destructive" });
       return;
     }
     
@@ -824,12 +828,13 @@ export const ExpertChat = () => {
             role: m.role,
             content: m.content,
           })),
+          language: language,
         }),
       });
 
       if (!response.ok || !response.body) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || "Erreur de connexion");
+        throw new Error(errorData.error || t("expert.connectionError"));
       }
 
       const reader = response.body.getReader();
@@ -910,9 +915,9 @@ export const ExpertChat = () => {
 
       <div className="container max-w-5xl relative z-10">
         <SectionTitle
-          arabicTitle="الفرقان"
-          title="Al-Furqan : Le Discriminateur"
-          subtitle="Posez une question, et découvrez comment chaque tradition y répond. Notre IA présente objectivement 5 perspectives — chrétienne, juive, occultiste, agnostique et coranique — avant de synthétiser un verdict basé sur la cohérence logique et textuelle. Aucun jugement hâtif : vous comprenez d'abord, puis vous discernez."
+          arabicTitle={t("expert.arabicTitle")}
+          title={t("expert.title")}
+          subtitle={t("expert.subtitle")}
         />
 
         <GlassCard glow className="p-6 md:p-8">
@@ -920,7 +925,7 @@ export const ExpertChat = () => {
           <div className="text-center mb-8">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm mb-4">
               <Sparkles size={16} />
-              <span>Mode Confrontation à 5 Prismes</span>
+              <span>{t("expert.fivePrisms")}</span>
             </div>
             
             <div className="grid grid-cols-3 md:grid-cols-6 gap-3 mt-6">
@@ -936,7 +941,7 @@ export const ExpertChat = () => {
                 )}
                 {prismProgress.chretien === 100 && <div className="absolute top-1 right-1 w-2 h-2 rounded-full bg-blue-400" />}
                 <Cross className="w-5 h-5 mx-auto mb-1 text-blue-400" />
-                <p className="text-xs text-blue-400 font-medium">Christianisme</p>
+                <p className="text-xs text-blue-400 font-medium">{t("expert.christianity")}</p>
                 {isLoading && prismProgress.chretien > 0 && <p className="text-[10px] text-blue-400/70 mt-1">{prismProgress.chretien}%</p>}
               </div>
               <div 
@@ -951,7 +956,7 @@ export const ExpertChat = () => {
                 )}
                 {prismProgress.judaique === 100 && <div className="absolute top-1 right-1 w-2 h-2 rounded-full bg-yellow-400" />}
                 <Star className="w-5 h-5 mx-auto mb-1 text-yellow-400" />
-                <p className="text-xs text-yellow-400 font-medium">Judaïsme</p>
+                <p className="text-xs text-yellow-400 font-medium">{t("expert.judaism")}</p>
                 {isLoading && prismProgress.judaique > 0 && <p className="text-[10px] text-yellow-400/70 mt-1">{prismProgress.judaique}%</p>}
               </div>
               <div 
@@ -966,7 +971,7 @@ export const ExpertChat = () => {
                 )}
                 {prismProgress.occulte === 100 && <div className="absolute top-1 right-1 w-2 h-2 rounded-full bg-purple-400" />}
                 <Eye className="w-5 h-5 mx-auto mb-1 text-purple-400" />
-                <p className="text-xs text-purple-400 font-medium">Occultisme</p>
+                <p className="text-xs text-purple-400 font-medium">{t("expert.occultism")}</p>
                 {isLoading && prismProgress.occulte > 0 && <p className="text-[10px] text-purple-400/70 mt-1">{prismProgress.occulte}%</p>}
               </div>
               <div 
@@ -981,7 +986,7 @@ export const ExpertChat = () => {
                 )}
                 {prismProgress.agnostique === 100 && <div className="absolute top-1 right-1 w-2 h-2 rounded-full bg-slate-400" />}
                 <HelpCircle className="w-5 h-5 mx-auto mb-1 text-slate-400" />
-                <p className="text-xs text-slate-400 font-medium">Agnosticisme</p>
+                <p className="text-xs text-slate-400 font-medium">{t("expert.agnosticism")}</p>
                 {isLoading && prismProgress.agnostique > 0 && <p className="text-[10px] text-slate-400/70 mt-1">{prismProgress.agnostique}%</p>}
               </div>
               <div 
@@ -996,7 +1001,7 @@ export const ExpertChat = () => {
                 )}
                 {prismProgress.coran === 100 && <div className="absolute top-1 right-1 w-2 h-2 rounded-full bg-emerald-400" />}
                 <Moon className="w-5 h-5 mx-auto mb-1 text-emerald-400" />
-                <p className="text-xs text-emerald-400 font-medium">Coran</p>
+                <p className="text-xs text-emerald-400 font-medium">{t("expert.quran")}</p>
                 {isLoading && prismProgress.coran > 0 && <p className="text-[10px] text-emerald-400/70 mt-1">{prismProgress.coran}%</p>}
               </div>
               <div 
@@ -1011,7 +1016,7 @@ export const ExpertChat = () => {
                 )}
                 {prismProgress.verdict === 100 && <div className="absolute top-1 right-1 w-2 h-2 rounded-full bg-primary" />}
                 <ShieldAlert className="w-5 h-5 mx-auto mb-1 text-primary" />
-                <p className="text-xs text-primary font-medium">Verdict</p>
+                <p className="text-xs text-primary font-medium">{t("expert.verdict")}</p>
                 {isLoading && prismProgress.verdict > 0 && <p className="text-[10px] text-primary/70 mt-1">{prismProgress.verdict}%</p>}
               </div>
             </div>
@@ -1021,13 +1026,13 @@ export const ExpertChat = () => {
           {messages.length === 0 && (
             <div className="mb-8">
               <div className="flex items-center justify-between mb-4">
-                <p className="text-sm text-muted-foreground">Questions suggérées :</p>
+                <p className="text-sm text-muted-foreground">{t("expert.suggested")}</p>
                 <button
                   onClick={refreshQuestions}
                   className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors"
                 >
                   <RefreshCw size={14} />
-                  Autres questions
+                  {t("expert.otherQuestions")}
                 </button>
               </div>
               <div className="grid sm:grid-cols-2 gap-3">
@@ -1268,6 +1273,7 @@ export const ExpertChat = () => {
                         onSpeak={speakSection}
                         isSpeaking={speakingSection === 'verdict'}
                         isPaused={isPaused}
+                        t={t}
                       />
                     )}
                   </div>
