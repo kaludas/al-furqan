@@ -427,115 +427,66 @@ const FormattedMessage = ({
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/theology-chat`;
 
-const allSuggestedQuestions = [
-  // Questions sur Jésus et le Christianisme
+const allSuggestedQuestionsFR = [
   "Qui est Jésus selon le Coran vs la Bible ?",
   "Comment la Trinité contredit-elle le Tawhid ?",
   "Le péché originel existe-t-il en Islam ?",
   "Jésus est-il mort sur la croix ?",
-  "Qu'est-ce que le Paraclet annoncé dans l'Évangile ?",
-  "Comment les Conciles ont-ils modifié le message de Jésus ?",
-  "Pourquoi le Coran rejette-t-il la divinité de Jésus ?",
-  "Quelle est la différence entre l'Injil et les Évangiles actuels ?",
-  
-  // Questions sur le Judaïsme et le Sionisme
   "Quelle est la différence entre Torah et Talmud ?",
   "Le peuple élu : vision juive vs vision coranique ?",
   "À qui appartient la Terre Sainte selon le Coran ?",
-  "Comment le Coran critique-t-il les altérations de la Torah ?",
   "Qu'est-ce que la Kabbale et pourquoi l'Islam la rejette ?",
-  "Le sionisme est-il religieux ou politique ?",
-  "Pourquoi le Coran dit 'Roi' pour Joseph et 'Pharaon' pour Moïse ?",
-  "Comment le Talmud diffère-t-il de la révélation originelle ?",
-  
-  // Questions sur l'Occultisme
   "Comment le Tawhid s'oppose-t-il au symbolisme du Baphomet ?",
   "Quelle est la différence entre 'Ilm et Gnose ?",
-  "Qui était Hermès Trismégiste et pourquoi est-ce une illusion ?",
   "Comment le Coran traite-t-il la magie et la sorcellerie ?",
-  "Quelle est la position islamique sur les sociétés secrètes ?",
-  "Pourquoi l'Islam rejette-t-il l'astrologie ?",
-  "Qu'est-ce que le shirk et comment se manifeste-t-il dans l'occultisme ?",
-  "Comment le Tawhid libère-t-il de la superstition ?",
-  
-  // Questions sur le Coran et l'I'jaz
   "Qu'est-ce que l'I'jaz et pourquoi le Coran est-il inimitable ?",
   "Comment le Coran décrit-il le développement embryonnaire ?",
   "Expliquez le miracle de l'expansion de l'univers dans le Coran.",
-  "Qu'est-ce que le Nazm coranique et pourquoi est-il unique ?",
-  "Comment le Coran prouve-t-il son origine divine ?",
-  "Pourquoi le Coran est-il resté préservé contrairement à la Bible ?",
-  "Comment le Coran corrige-t-il les erreurs de la Bible ?",
-  "Qu'est-ce que Al-Furqan (le Discriminateur) ?",
-  
-  // Questions comparatives générales
   "Comment obtenir le salut : Islam vs Christianisme vs Judaïsme ?",
   "Dieu peut-il avoir un fils ou un égal ?",
-  "Quelle est la vraie nature du Messie ?",
-  "Pourquoi l'Islam est-il la voie du milieu ?",
-  "Comment le Coran restaure-t-il le message original des prophètes ?",
-  "Qu'est-ce que la Fitra et comment la préserver ?",
-  "Pourquoi le monothéisme pur est-il la seule logique ?",
-  "Comment distinguer révélation divine et tradition humaine ?",
-  
-  // Questions sur l'Agnosticisme
   "Dieu existe-t-il ? Réponse à l'agnosticisme.",
   "Comment le Coran répond-il au doute ?",
   "Peut-on prouver l'existence de Dieu rationnellement ?",
-  "Pourquoi l'incertitude n'est-elle pas une option logique ?",
-  "Comment sortir du scepticisme spirituel ?",
-  "Qu'est-ce que le raisonnement par l'absurde coranique ?",
-  "Pourquoi l'Islam est une religion de preuve, pas de mystère ?",
-  "Les signes de l'univers prouvent-ils un Créateur ?",
-  
-  // Questions sur la vie après la mort
   "Qu'est-ce que le Barzakh et comment y préparer ?",
   "Le Paradis et l'Enfer : différences entre Islam et Christianisme ?",
-  "Que dit le Coran sur le jour du Jugement ?",
-  "Comment le Coran décrit-il les anges et les djinns ?",
-  
-  // Questions sur les prophètes
   "Adam et Ève : version coranique vs biblique ?",
-  "Qui était Dhul-Qarnayn mentionné dans le Coran ?",
-  "L'histoire de Moïse : Coran vs Torah ?",
-  "Pourquoi Abraham est-il le père du monothéisme ?",
-  "Comment le Coran raconte-t-il l'histoire de Noé ?",
-  
-  // Questions sur la science et le Coran
   "Le Big Bang est-il mentionné dans le Coran ?",
   "Que dit le Coran sur les montagnes et la tectonique ?",
-  "Comment le Coran décrit-il les océans et les barrières ?",
-  "Le Coran et la création de l'univers en 6 jours ?",
-  
-  // Questions existentielles
   "Quel est le sens de la vie selon l'Islam ?",
-  "Pourquoi Dieu a-t-il créé l'humanité ?",
-  "Comment le libre arbitre fonctionne-t-il en Islam ?",
-  "Qu'est-ce que le Qadr (destin) en Islam ?",
-  
-  // Questions sur l'Islam pratique
   "Pourquoi le porc est-il interdit en Islam ?",
-  "Quelle est la sagesse derrière le jeûne du Ramadan ?",
-  "Pourquoi les musulmans prient-ils vers La Mecque ?",
   "Qu'est-ce que la Zakat et pourquoi est-elle obligatoire ?",
-  
-  // Questions sur les femmes et la société
-  "Le voile en Islam : obligation ou culture ?",
-  "Quel est le statut de la femme en Islam vs autres religions ?",
-  "Le mariage en Islam vs le mariage chrétien ?",
-  "L'héritage en Islam : pourquoi des parts différentes ?",
-  
-  // Questions sur l'athéisme et le matérialisme
-  "Comment répondre aux arguments de l'athéisme ?",
-  "Le matérialisme peut-il expliquer la conscience ?",
-  "L'évolution contredit-elle la création ?",
-  "Pourquoi le hasard ne peut pas tout expliquer ?",
-  
-  // Questions sur l'histoire islamique
-  "Le Prophète Muhammad était-il illettré ?",
-  "Comment le Coran a-t-il été préservé ?",
-  "Qui étaient les compagnons du Prophète ?",
-  "L'âge d'or islamique : science et foi ?",
+  "Qu'est-ce que la Fitra et comment la préserver ?",
+];
+
+const allSuggestedQuestionsEN = [
+  "Who is Jesus according to the Quran vs the Bible?",
+  "How does the Trinity contradict Tawhid?",
+  "Does original sin exist in Islam?",
+  "Did Jesus die on the cross?",
+  "What's the difference between Torah and Talmud?",
+  "The chosen people: Jewish vs Quranic view?",
+  "Who owns the Holy Land according to the Quran?",
+  "What is Kabbalah and why does Islam reject it?",
+  "How does Tawhid oppose Baphomet symbolism?",
+  "What's the difference between 'Ilm and Gnosis?",
+  "How does the Quran treat magic and sorcery?",
+  "What is I'jaz and why is the Quran inimitable?",
+  "How does the Quran describe embryonic development?",
+  "Explain the miracle of universe expansion in the Quran.",
+  "How to obtain salvation: Islam vs Christianity vs Judaism?",
+  "Can God have a son or an equal?",
+  "Does God exist? Response to agnosticism.",
+  "How does the Quran respond to doubt?",
+  "Can we rationally prove God's existence?",
+  "What is Barzakh and how to prepare for it?",
+  "Paradise and Hell: differences between Islam and Christianity?",
+  "Adam and Eve: Quranic vs Biblical version?",
+  "Is the Big Bang mentioned in the Quran?",
+  "What does the Quran say about mountains and tectonics?",
+  "What is the meaning of life according to Islam?",
+  "Why is pork forbidden in Islam?",
+  "What is Zakat and why is it obligatory?",
+  "What is Fitra and how to preserve it?",
 ];
 
 function shuffleArray<T>(array: T[]): T[] {
@@ -778,8 +729,9 @@ export const ExpertChat = () => {
   }, []);
 
   const suggestedQuestions = useMemo(() => {
-    return shuffleArray(allSuggestedQuestions).slice(0, 4);
-  }, [questionSeed]);
+    const questions = language === "en" ? allSuggestedQuestionsEN : allSuggestedQuestionsFR;
+    return shuffleArray(questions).slice(0, 4);
+  }, [questionSeed, language]);
 
   const refreshQuestions = () => {
     setQuestionSeed(Math.random());
@@ -1063,7 +1015,7 @@ export const ExpertChat = () => {
                   className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary/10 text-primary text-sm font-medium hover:bg-primary/20 transition-colors"
                 >
                   <Plus size={16} />
-                  Nouvelle question
+                  {t("expert.newQuestion")}
                 </button>
               </div>
               
@@ -1103,7 +1055,7 @@ export const ExpertChat = () => {
                     <div className="bg-card/80 border border-glass rounded-2xl rounded-bl-md px-5 py-4">
                       <div className="flex items-center gap-2 text-muted-foreground">
                         <Loader2 className="w-4 h-4 animate-spin" />
-                        <span className="text-sm">Analyse comparative en cours...</span>
+                        <span className="text-sm">{t("expert.analyzing")}</span>
                       </div>
                     </div>
                   </div>
@@ -1125,7 +1077,7 @@ export const ExpertChat = () => {
                       )}
                     >
                       <Lightbulb size={16} />
-                      Réponse
+                      {t("expert.response")}
                     </button>
                     <button
                       onClick={() => setActiveTab("sources")}
@@ -1137,7 +1089,7 @@ export const ExpertChat = () => {
                       )}
                     >
                       <BookOpen size={16} />
-                      Sources
+                      {t("expert.sources")}
                     </button>
                     <button
                       onClick={() => setActiveTab("comparison")}
@@ -1149,7 +1101,7 @@ export const ExpertChat = () => {
                       )}
                     >
                       <ShieldAlert size={16} />
-                      Verdict
+                      {t("expert.verdictTab")}
                     </button>
                   </div>
 
@@ -1158,7 +1110,7 @@ export const ExpertChat = () => {
                       <div className="text-muted-foreground text-sm leading-relaxed">
                         <div className="flex items-center justify-between mb-4 pb-3 border-b border-glass flex-wrap gap-2">
                           <div className="flex items-center gap-2">
-                            <span className="text-xs text-muted-foreground">Voix :</span>
+                            <span className="text-xs text-muted-foreground">{t("expert.voice")}</span>
                             <select
                               value={currentVoice?.name || ''}
                               onChange={(e) => setCurrentVoice(availableVoices.find(v => v.name === e.target.value) || null)}
@@ -1172,25 +1124,25 @@ export const ExpertChat = () => {
                           <div className="flex items-center gap-2 flex-wrap">
                             {/* Share buttons */}
                             <div className="flex items-center gap-1 mr-2">
-                              <span className="text-xs text-muted-foreground mr-1">Partager:</span>
+                              <span className="text-xs text-muted-foreground mr-1">{t("expert.share")}</span>
                               <button
                                 onClick={shareOnTwitter}
                                 className="p-1.5 rounded-lg bg-[#1DA1F2]/10 hover:bg-[#1DA1F2]/20 text-[#1DA1F2] transition-colors"
-                                title="Partager sur Twitter"
+                                title="Twitter"
                               >
                                 <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
                               </button>
                               <button
                                 onClick={shareOnFacebook}
                                 className="p-1.5 rounded-lg bg-[#1877F2]/10 hover:bg-[#1877F2]/20 text-[#1877F2] transition-colors"
-                                title="Partager sur Facebook"
+                                title="Facebook"
                               >
                                 <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
                               </button>
                               <button
                                 onClick={shareOnWhatsApp}
                                 className="p-1.5 rounded-lg bg-[#25D366]/10 hover:bg-[#25D366]/20 text-[#25D366] transition-colors"
-                                title="Partager sur WhatsApp"
+                                title="WhatsApp"
                               >
                                 <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
                               </button>
@@ -1205,7 +1157,7 @@ export const ExpertChat = () => {
                               )}
                             >
                               {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-                              {copied ? "Copié !" : "Copier"}
+                              {copied ? t("expert.copied") : t("expert.copy")}
                             </button>
                             {isSpeaking && (
                               <button
@@ -1213,7 +1165,7 @@ export const ExpertChat = () => {
                                 className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-destructive/20 text-destructive text-xs hover:bg-destructive/30 transition-colors"
                               >
                                 <Square className="w-3 h-3" />
-                                Arrêter
+                                {t("expert.stop")}
                               </button>
                             )}
                           </div>
@@ -1229,40 +1181,40 @@ export const ExpertChat = () => {
                     {activeTab === "sources" && (
                       <div className="space-y-3">
                         <p className="text-sm text-muted-foreground">
-                          Sources utilisées pour l'analyse comparative :
+                          {t("expert.sourcesUsed")}
                         </p>
                         <div className="grid md:grid-cols-2 gap-2">
                           <div className="p-3 rounded-lg bg-primary/10 text-sm">
-                            <span className="text-primary font-medium">📖 Tafsir Ibn Kathir</span>
-                            <p className="text-muted-foreground text-xs mt-1">Exégèse classique du Coran</p>
+                            <span className="text-primary font-medium">📖 {t("expert.tafsirIbnKathir")}</span>
+                            <p className="text-muted-foreground text-xs mt-1">{t("expert.classicalExegesis")}</p>
                           </div>
                           <div className="p-3 rounded-lg bg-primary/10 text-sm">
-                            <span className="text-primary font-medium">📖 Tafsir Al-Qurtubi</span>
-                            <p className="text-muted-foreground text-xs mt-1">Exégèse juridique et linguistique</p>
+                            <span className="text-primary font-medium">📖 {t("expert.tafsirQurtubi")}</span>
+                            <p className="text-muted-foreground text-xs mt-1">{t("expert.legalExegesis")}</p>
                           </div>
                           <div className="p-3 rounded-lg bg-blue-500/10 text-sm">
-                            <span className="text-blue-400 font-medium">✝️ Bible (AT & NT)</span>
-                            <p className="text-muted-foreground text-xs mt-1">Ancien et Nouveau Testament</p>
+                            <span className="text-blue-400 font-medium">✝️ {t("expert.bible")}</span>
+                            <p className="text-muted-foreground text-xs mt-1">{t("expert.oldNewTestament")}</p>
                           </div>
                           <div className="p-3 rounded-lg bg-yellow-500/10 text-sm">
-                            <span className="text-yellow-400 font-medium">✡️ Talmud & Mishna</span>
-                            <p className="text-muted-foreground text-xs mt-1">Tradition rabbinique</p>
+                            <span className="text-yellow-400 font-medium">✡️ {t("expert.talmud")}</span>
+                            <p className="text-muted-foreground text-xs mt-1">{t("expert.rabbinicTradition")}</p>
                           </div>
                           <div className="p-3 rounded-lg bg-purple-500/10 text-sm">
-                            <span className="text-purple-400 font-medium">🔮 Corpus Hermeticum</span>
-                            <p className="text-muted-foreground text-xs mt-1">Textes hermétiques</p>
+                            <span className="text-purple-400 font-medium">🔮 {t("expert.hermeticum")}</span>
+                            <p className="text-muted-foreground text-xs mt-1">{t("expert.hermeticTexts")}</p>
                           </div>
                           <div className="p-3 rounded-lg bg-purple-500/10 text-sm">
-                            <span className="text-purple-400 font-medium">🔮 Sefer ha-Zohar</span>
-                            <p className="text-muted-foreground text-xs mt-1">Texte central de la Kabbale</p>
+                            <span className="text-purple-400 font-medium">🔮 {t("expert.zohar")}</span>
+                            <p className="text-muted-foreground text-xs mt-1">{t("expert.kabbalaText")}</p>
                           </div>
                           <div className="p-3 rounded-lg bg-slate-500/10 text-sm">
-                            <span className="text-slate-400 font-medium">❔ Philosophie Sceptique</span>
-                            <p className="text-muted-foreground text-xs mt-1">Pyrrhon, Hume, Russell</p>
+                            <span className="text-slate-400 font-medium">❔ {t("expert.skepticPhilosophy")}</span>
+                            <p className="text-muted-foreground text-xs mt-1">{t("expert.pyrrhonHumeRussell")}</p>
                           </div>
                           <div className="p-3 rounded-lg bg-slate-500/10 text-sm">
-                            <span className="text-slate-400 font-medium">❔ Arguments Cosmologiques</span>
-                            <p className="text-muted-foreground text-xs mt-1">Kalam, Al-Ghazali, Ibn Rushd</p>
+                            <span className="text-slate-400 font-medium">❔ {t("expert.cosmologicalArgs")}</span>
+                            <p className="text-muted-foreground text-xs mt-1">{t("expert.kalamGhazaliRushd")}</p>
                           </div>
                         </div>
                       </div>
@@ -1289,7 +1241,7 @@ export const ExpertChat = () => {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyPress}
-              placeholder="Posez votre question comparative : Coran, Bible, Talmud, Occultisme..."
+              placeholder={t("expert.placeholder")}
               className="flex-1 bg-secondary/30 border border-glass rounded-xl px-5 py-4 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
               disabled={isLoading}
             />
@@ -1303,7 +1255,7 @@ export const ExpertChat = () => {
               )}
             >
               <Send size={18} />
-              <span className="hidden sm:inline">Envoyer</span>
+              <span className="hidden sm:inline">{t("expert.analyze")}</span>
             </button>
           </div>
         </GlassCard>
