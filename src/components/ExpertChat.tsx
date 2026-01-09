@@ -71,21 +71,33 @@ const formatDoctrineContent = (content: string) => {
   return content;
 };
 
-// Parse response into sections
-const parseResponseSections = (content: string) => {
+// Parse response into sections - supports both French and English
+const parseResponseSections = (content: string, language: string = 'fr') => {
   const sections: { id: string; title: string; content: string; color: string; icon: string }[] = [];
   
-  // Split by numbered sections - improved regex to match various formats including ##
-  const sectionPatterns = [
+  // French patterns
+  const frenchPatterns = [
     { regex: /(?:^|\n)\s*(?:#{1,3}\s*)?\*?\*?\s*1\.?\s*(?:✝️\s*)?(?:LE\s+)?PRISME\s+CHRÉTIEN[^\n]*/i, id: 'chretien', title: 'Le Prisme Chrétien', color: 'blue', icon: '✝️' },
     { regex: /(?:^|\n)\s*(?:#{1,3}\s*)?\*?\*?\s*2\.?\s*(?:✡️\s*)?(?:LE\s+)?PRISME\s+JUDAÏQUE[^\n]*/i, id: 'judaique', title: 'Le Prisme Judaïque', color: 'yellow', icon: '✡️' },
     { regex: /(?:^|\n)\s*(?:#{1,3}\s*)?\*?\*?\s*3\.?\s*(?:🌑\s*)?(?:L['\u2019]?\s*)?ILLUSION\s+OCCULTE[^\n]*/i, id: 'occulte', title: "L'Illusion Occulte", color: 'purple', icon: '🌑' },
     { regex: /(?:^|\n)\s*(?:#{1,3}\s*)?\*?\*?\s*4\.?\s*(?:❔\s*)?(?:LE\s+)?PRISME\s+AGNOSTIQUE[^\n]*/i, id: 'agnostique', title: 'Le Prisme Agnostique', color: 'slate', icon: '❔' },
     { regex: /(?:^|\n)\s*(?:#{1,3}\s*)?\*?\*?\s*5\.?\s*(?:☀️\s*)?(?:LA\s+)?LUMIÈRE\s+DE\s+LA\s+RÉVÉLATION[^\n]*/i, id: 'revelation', title: 'La Lumière de la Révélation', color: 'emerald', icon: '☀️' },
     { regex: /(?:^|\n)\s*(?:#{1,3}\s*)?\*?\*?\s*(?:6\.?\s*)?(?:⚖️\s*)?(?:LE\s+)?VERDICT\s+DE\s+LA\s+RAISON[^\n]*/i, id: 'verdict', title: 'Le Verdict de la Raison', color: 'primary', icon: '⚖️' },
-    // Fallback patterns for simpler formats
     { regex: /(?:^|\n)\s*(?:#{1,3}\s*)?\*?\*?\s*CONCLUSION[^\n]*/i, id: 'conclusion', title: 'Conclusion', color: 'primary', icon: '⚖️' },
   ];
+
+  // English patterns
+  const englishPatterns = [
+    { regex: /(?:^|\n)\s*(?:#{1,3}\s*)?\*?\*?\s*1\.?\s*(?:✝️\s*)?(?:THE\s+)?CHRISTIAN\s+PRISM[^\n]*/i, id: 'chretien', title: 'The Christian Prism', color: 'blue', icon: '✝️' },
+    { regex: /(?:^|\n)\s*(?:#{1,3}\s*)?\*?\*?\s*2\.?\s*(?:✡️\s*)?(?:THE\s+)?JUDAIC\s+PRISM[^\n]*/i, id: 'judaique', title: 'The Judaic Prism', color: 'yellow', icon: '✡️' },
+    { regex: /(?:^|\n)\s*(?:#{1,3}\s*)?\*?\*?\s*3\.?\s*(?:🌑\s*)?(?:THE\s+)?OCCULT\s+ILLUSION[^\n]*/i, id: 'occulte', title: 'The Occult Illusion', color: 'purple', icon: '🌑' },
+    { regex: /(?:^|\n)\s*(?:#{1,3}\s*)?\*?\*?\s*4\.?\s*(?:❔\s*)?(?:THE\s+)?AGNOSTIC\s+PRISM[^\n]*/i, id: 'agnostique', title: 'The Agnostic Prism', color: 'slate', icon: '❔' },
+    { regex: /(?:^|\n)\s*(?:#{1,3}\s*)?\*?\*?\s*5\.?\s*(?:☀️\s*)?(?:THE\s+)?LIGHT\s+OF\s+REVELATION[^\n]*/i, id: 'revelation', title: 'The Light of Revelation', color: 'emerald', icon: '☀️' },
+    { regex: /(?:^|\n)\s*(?:#{1,3}\s*)?\*?\*?\s*(?:6\.?\s*)?(?:⚖️\s*)?(?:THE\s+)?VERDICT\s+OF\s+REASON[^\n]*/i, id: 'verdict', title: 'The Verdict of Reason', color: 'primary', icon: '⚖️' },
+    { regex: /(?:^|\n)\s*(?:#{1,3}\s*)?\*?\*?\s*CONCLUSION[^\n]*/i, id: 'conclusion', title: 'Conclusion', color: 'primary', icon: '⚖️' },
+  ];
+
+  const sectionPatterns = language === 'en' ? englishPatterns : frenchPatterns;
 
   let positions: { start: number; end: number; pattern: typeof sectionPatterns[0] }[] = [];
   
@@ -121,9 +133,16 @@ const parseResponseSections = (content: string) => {
   return sections;
 };
 
-// Extract verdict content from AI response
-const extractVerdictContent = (content: string) => {
-  const verdictMatch = content.match(/(?:#{1,3}\s*)?(?:\*?\*?)?\s*(?:6\.?\s*)?(?:⚖️\s*)?(?:LE\s+)?VERDICT\s+DE\s+LA\s+RAISON[^\n]*([\s\S]*?)(?=$)/i);
+// Extract verdict content from AI response - supports both French and English
+const extractVerdictContent = (content: string, language: string = 'fr') => {
+  // Try English pattern first if language is English
+  const englishPattern = /(?:#{1,3}\s*)?(?:\*?\*?)?\s*(?:6\.?\s*)?(?:⚖️\s*)?(?:THE\s+)?VERDICT\s+OF\s+REASON[^\n]*([\s\S]*?)(?=$)/i;
+  const frenchPattern = /(?:#{1,3}\s*)?(?:\*?\*?)?\s*(?:6\.?\s*)?(?:⚖️\s*)?(?:LE\s+)?VERDICT\s+DE\s+LA\s+RAISON[^\n]*([\s\S]*?)(?=$)/i;
+  
+  const verdictMatch = language === 'en' 
+    ? (content.match(englishPattern) || content.match(frenchPattern))
+    : (content.match(frenchPattern) || content.match(englishPattern));
+    
   if (!verdictMatch) return null;
   
   const verdictText = verdictMatch[1].trim();
@@ -145,16 +164,17 @@ const extractVerdictContent = (content: string) => {
       let icon = '📌';
       let color = 'primary';
       
-      if (/cohéren|logique|raison/i.test(title)) { icon = '🎯'; color = 'emerald'; }
-      else if (/contradi|erreur|faille/i.test(title)) { icon = '⚠️'; color = 'red'; }
-      else if (/preuve|ijaz|miracle/i.test(title)) { icon = '✨'; color = 'primary'; }
-      else if (/tawhid|unicité/i.test(title)) { icon = '☀️'; color = 'emerald'; }
+      // French keywords
+      if (/cohéren|logique|raison|coherent|logical|reason/i.test(title)) { icon = '🎯'; color = 'emerald'; }
+      else if (/contradi|erreur|faille|error|flaw|contradiction/i.test(title)) { icon = '⚠️'; color = 'red'; }
+      else if (/preuve|ijaz|miracle|proof|evidence/i.test(title)) { icon = '✨'; color = 'primary'; }
+      else if (/tawhid|unicité|oneness|unity/i.test(title)) { icon = '☀️'; color = 'emerald'; }
       else if (/conclu|final/i.test(title)) { icon = '⚖️'; color = 'primary'; }
-      else if (/chrétien|trinité/i.test(title)) { icon = '✝️'; color = 'blue'; }
-      else if (/juif|judaï/i.test(title)) { icon = '✡️'; color = 'yellow'; }
-      else if (/occult|ésotér/i.test(title)) { icon = '🌑'; color = 'purple'; }
-      else if (/agnost|doute/i.test(title)) { icon = '❔'; color = 'slate'; }
-      else if (/islam|coran|révélation/i.test(title)) { icon = '☪️'; color = 'emerald'; }
+      else if (/chrétien|trinité|christian|trinity/i.test(title)) { icon = '✝️'; color = 'blue'; }
+      else if (/juif|judaï|jewish|judaic/i.test(title)) { icon = '✡️'; color = 'yellow'; }
+      else if (/occult|ésotér|esoteric/i.test(title)) { icon = '🌑'; color = 'purple'; }
+      else if (/agnost|doute|doubt/i.test(title)) { icon = '❔'; color = 'slate'; }
+      else if (/islam|coran|révélation|quran|revelation/i.test(title)) { icon = '☪️'; color = 'emerald'; }
       
       currentPoint = { title, content: '', icon, color };
     } else if (currentPoint) {
@@ -168,8 +188,9 @@ const extractVerdictContent = (content: string) => {
   
   // If no structured points found, create a single card with the content
   if (points.length === 0 && verdictText.length > 20) {
+    const fallbackTitle = language === 'en' ? 'Comparative Analysis' : 'Analyse Comparative';
     points.push({
-      title: 'Analyse Comparative',
+      title: fallbackTitle,
       content: verdictText.replace(/\*\*/g, '').substring(0, 500),
       icon: '⚖️',
       color: 'primary'
@@ -180,14 +201,15 @@ const extractVerdictContent = (content: string) => {
 };
 
 // Component to render dynamic verdict
-const DynamicVerdict = ({ content, onSpeak, isSpeaking, isPaused, t }: { 
+const DynamicVerdict = ({ content, onSpeak, isSpeaking, isPaused, t, language }: { 
   content: string; 
   onSpeak?: (text: string, id: string) => void;
   isSpeaking?: boolean;
   isPaused?: boolean;
   t: (key: string) => string;
+  language: string;
 }) => {
-  const points = extractVerdictContent(content);
+  const points = extractVerdictContent(content, language);
   
   if (!points || points.length === 0) {
     return (
@@ -294,14 +316,16 @@ const FormattedMessage = ({
   content, 
   onSpeakSection,
   speakingSection,
-  isPaused
+  isPaused,
+  language = 'fr'
 }: { 
   content: string; 
   onSpeakSection?: (text: string, sectionId: string) => void;
   speakingSection?: string | null;
   isPaused?: boolean;
+  language?: string;
 }) => {
-  const sections = parseResponseSections(content);
+  const sections = parseResponseSections(content, language);
   
   const colorClasses: Record<string, { text: string; bg: string; border: string; headerBg: string }> = {
     blue: { text: 'text-blue-300', bg: 'bg-gradient-to-br from-blue-950/60 to-blue-900/40', border: 'border-blue-400/40', headerBg: 'bg-blue-500/20' },
@@ -319,8 +343,8 @@ const FormattedMessage = ({
       if (line.match(/«.*»/) || line.match(/".*"/)) {
         return <p key={idx} className="text-emerald-300 italic my-3 pl-4 border-l-2 border-emerald-400/60 text-base">{line}</p>;
       }
-      // Sourate references
-      if (line.match(/Sourate|Coran\s+\d+:\d+/i)) {
+      // Sourate/Surah references (French and English)
+      if (line.match(/Sourate|Surah|Coran\s+\d+:\d+|Quran\s+\d+:\d+/i)) {
         return <p key={idx} className="text-emerald-400/90 text-sm my-1 font-medium">{line}</p>;
       }
       // Bold text - key arguments
@@ -1043,6 +1067,7 @@ export const ExpertChat = () => {
                           onSpeakSection={speakSection}
                           speakingSection={speakingSection}
                           isPaused={isPaused}
+                          language={language}
                         />
                       ) : (
                         <p className="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</p>
@@ -1175,6 +1200,7 @@ export const ExpertChat = () => {
                           onSpeakSection={speakSection}
                           speakingSection={speakingSection}
                           isPaused={isPaused}
+                          language={language}
                         />
                       </div>
                     )}
@@ -1226,6 +1252,7 @@ export const ExpertChat = () => {
                         isSpeaking={speakingSection === 'verdict'}
                         isPaused={isPaused}
                         t={t}
+                        language={language}
                       />
                     )}
                   </div>
