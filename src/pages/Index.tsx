@@ -14,7 +14,7 @@ import { HamanModule } from "@/components/HamanModule";
 import { RingCompositionModule } from "@/components/RingCompositionModule";
 import { EntropyModule } from "@/components/EntropyModule";
 import { OccultDisenchantmentModule } from "@/components/OccultDisenchantmentModule";
-import { FloatingChatButton } from "@/components/FloatingChatButton";
+
 
 const Index = () => {
   return (
@@ -39,7 +39,7 @@ const Index = () => {
       <ProphetTimeline />
       <FitraTest />
       <Footer />
-      <FloatingChatButton />
+      
     </main>
   );
 };
