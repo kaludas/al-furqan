@@ -3,18 +3,14 @@ import { GlassCard } from "./GlassCard";
 import { SectionTitle } from "./SectionTitle";
 import { cn } from "@/lib/utils";
 import { Check, X, Clock, BookOpen, Globe, AlertTriangle } from "lucide-react";
-import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Prophecy {
   id: string;
-  titleFr: string;
-  titleEn: string;
+  title: string;
   arabic?: string;
   source: string;
-  prophecyFr: string;
-  prophecyEn: string;
-  fulfillmentFr: string;
-  fulfillmentEn: string;
+  prophecy: string;
+  fulfillment: string;
   date: string;
   status: "fulfilled" | "ongoing" | "future";
   category: "quran" | "hadith";
@@ -22,280 +18,146 @@ interface Prophecy {
 
 interface OtherProphecy {
   id: string;
-  titleFr: string;
-  titleEn: string;
+  title: string;
   source: string;
-  religionFr: string;
-  religionEn: string;
-  prophecyFr: string;
-  prophecyEn: string;
-  analysisFr: string;
-  analysisEn: string;
+  religion: string;
+  prophecy: string;
+  analysis: string;
   status: "failed" | "ambiguous" | "unfulfilled";
 }
 
 const quranicProphecies: Prophecy[] = [
   {
     id: "romans",
-    titleFr: "Victoire des Romains",
-    titleEn: "Victory of the Romans",
+    title: "Victoire des Romains",
     arabic: "غُلِبَتِ الرُّومُ",
     source: "Sourate Ar-Rum (30:1-4)",
-    prophecyFr: "Les Romains ont été vaincus, dans le pays voisin, et après leur défaite ils seront les vainqueurs, dans quelques années (بِضْعِ سِنِينَ - 3 à 9 ans).",
-    prophecyEn: "The Romans have been defeated in the nearest land, and after their defeat they will be victorious, within a few years (بِضْعِ سِنِينَ - 3 to 9 years).",
-    fulfillmentFr: "En 614, les Perses ont écrasé les Byzantins. En 622, contre toute attente, l'empereur Héraclius a lancé une contre-offensive victorieuse, exactement dans la fenêtre de temps prédite.",
-    fulfillmentEn: "In 614, the Persians crushed the Byzantines. In 622, against all odds, Emperor Heraclius launched a victorious counter-offensive, exactly within the predicted time window.",
-    date: "614-622 CE",
+    prophecy: "Les Romains ont été vaincus, dans le pays voisin, et après leur défaite ils seront les vainqueurs, dans quelques années (بِضْعِ سِنِينَ - 3 à 9 ans).",
+    fulfillment: "En 614, les Perses ont écrasé les Byzantins. En 622, contre toute attente, l'empereur Héraclius a lancé une contre-offensive victorieuse, exactement dans la fenêtre de temps prédite.",
+    date: "614-622 apr. J.-C.",
     status: "fulfilled",
     category: "quran"
   },
   {
     id: "pharaoh",
-    titleFr: "Préservation du corps de Pharaon",
-    titleEn: "Preservation of Pharaoh's Body",
+    title: "Préservation du corps de Pharaon",
     arabic: "فَالْيَوْمَ نُنَجِّيكَ بِبَدَنِكَ",
     source: "Sourate Yunus (10:92)",
-    prophecyFr: "Aujourd'hui, Nous allons sauver ton corps, afin que tu sois un signe pour ceux qui viendront après toi.",
-    prophecyEn: "Today We will save your body so that you may be a sign for those who come after you.",
-    fulfillmentFr: "La momie de Ramsès II (identifié comme le Pharaon de l'Exode) a été découverte en 1881 et est exposée au Musée du Caire, préservée pour être un 'signe' comme le Coran l'a prédit.",
-    fulfillmentEn: "The mummy of Ramesses II (identified as the Pharaoh of the Exodus) was discovered in 1881 and is displayed at the Cairo Museum, preserved to be a 'sign' as the Quran predicted.",
-    date: "1881",
+    prophecy: "Aujourd'hui, Nous allons sauver ton corps, afin que tu sois un signe pour ceux qui viendront après toi.",
+    fulfillment: "La momie de Ramsès II (identifié comme le Pharaon de l'Exode) a été découverte en 1881 et est exposée au Musée du Caire, préservée pour être un 'signe' comme le Coran l'a prédit.",
+    date: "1881 - Découverte",
     status: "fulfilled",
     category: "quran"
   },
   {
     id: "abu-lahab",
-    titleFr: "Mort d'Abu Lahab en mécréance",
-    titleEn: "Death of Abu Lahab in Disbelief",
+    title: "Mort d'Abu Lahab en mécréance",
     arabic: "تَبَّتْ يَدَا أَبِي لَهَبٍ وَتَبَّ",
     source: "Sourate Al-Masad (111:1-5)",
-    prophecyFr: "Que périssent les deux mains d'Abu Lahab et que lui-même périsse. Ni sa fortune ni ses gains ne lui serviront.",
-    prophecyEn: "May the hands of Abu Lahab perish, and may he himself perish. Neither his wealth nor his gains will avail him.",
-    fulfillmentFr: "Abu Lahab, oncle du Prophète ﷺ, aurait pu falsifier cette prophétie en se convertissant. Pourtant, il est mort mécréant en 624, prouvant l'origine divine de la prédiction.",
-    fulfillmentEn: "Abu Lahab, the Prophet's uncle ﷺ, could have falsified this prophecy by converting. Yet, he died a disbeliever in 624, proving the divine origin of the prediction.",
-    date: "624 CE",
+    prophecy: "Que périssent les deux mains d'Abu Lahab et que lui-même périsse. Ni sa fortune ni ses gains ne lui serviront.",
+    fulfillment: "Abu Lahab, oncle du Prophète ﷺ, aurait pu falsifier cette prophétie en se convertissant. Pourtant, il est mort mécréant en 624, prouvant l'origine divine de la prédiction.",
+    date: "624 apr. J.-C.",
     status: "fulfilled",
     category: "quran"
   },
   {
     id: "mecca-conquest",
-    titleFr: "Conquête de La Mecque",
-    titleEn: "Conquest of Mecca",
+    title: "Conquête de La Mecque",
     arabic: "إِنَّا فَتَحْنَا لَكَ فَتْحًا مُّبِينًا",
     source: "Sourate Al-Fath (48:27)",
-    prophecyFr: "Vous entrerez dans la Mosquée Sacrée, si Allah veut, en toute sécurité, la tête rasée ou les cheveux raccourcis, sans avoir peur.",
-    prophecyEn: "You will surely enter the Sacred Mosque, if Allah wills, in safety, with your heads shaved or hair shortened, not fearing anyone.",
-    fulfillmentFr: "En 630, le Prophète ﷺ est entré à La Mecque avec 10 000 compagnons, sans effusion de sang, exactement comme prédit.",
-    fulfillmentEn: "In 630, the Prophet ﷺ entered Mecca with 10,000 companions, without bloodshed, exactly as predicted.",
-    date: "630 CE",
+    prophecy: "Vous entrerez dans la Mosquée Sacrée, si Allah veut, en toute sécurité, la tête rasée ou les cheveux raccourcis, sans avoir peur.",
+    fulfillment: "En 630, le Prophète ﷺ est entré à La Mecque avec 10 000 compagnons, sans effusion de sang, exactement comme prédit.",
+    date: "630 apr. J.-C.",
     status: "fulfilled",
     category: "quran"
   },
   {
     id: "quran-preservation",
-    titleFr: "Préservation du Coran",
-    titleEn: "Preservation of the Quran",
+    title: "Préservation du Coran",
     arabic: "إِنَّا نَحْنُ نَزَّلْنَا الذِّكْرَ وَإِنَّا لَهُ لَحَافِظُونَ",
     source: "Sourate Al-Hijr (15:9)",
-    prophecyFr: "C'est Nous qui avons fait descendre le Rappel (Coran), et c'est Nous qui en sommes les gardiens.",
-    prophecyEn: "Indeed, it is We who sent down the Reminder (Quran), and indeed, We will be its guardian.",
-    fulfillmentFr: "1400 ans plus tard, le Coran reste inchangé. Aucun livre religieux au monde n'a cette propriété de préservation parfaite, vérifiable par les manuscrits anciens.",
-    fulfillmentEn: "1400 years later, the Quran remains unchanged. No religious book in the world has this property of perfect preservation, verifiable by ancient manuscripts.",
-    date: "632 → Today",
+    prophecy: "C'est Nous qui avons fait descendre le Rappel (Coran), et c'est Nous qui en sommes les gardiens.",
+    fulfillment: "1400 ans plus tard, le Coran reste inchangé. Aucun livre religieux au monde n'a cette propriété de préservation parfaite, vérifiable par les manuscrits anciens.",
+    date: "632 → Aujourd'hui",
     status: "fulfilled",
     category: "quran"
   },
   {
     id: "bedouins",
-    titleFr: "Bédouins construisant des gratte-ciels",
-    titleEn: "Bedouins Building Skyscrapers",
+    title: "Bédouins construisant des gratte-ciels",
     arabic: "رُعَاةُ الإِبِلِ يَتَطَاوَلُونَ فِي البُنْيَانِ",
     source: "Hadith Jibril (Sahih Muslim)",
-    prophecyFr: "Tu verras les bergers de chameaux aux pieds nus, dévêtus et pauvres, rivaliser dans la construction de hauts édifices.",
-    prophecyEn: "You will see barefoot, naked, poor camel herders competing in constructing tall buildings.",
-    fulfillmentFr: "Dubaï, Abu Dhabi, Riyad... Les Arabes du désert, autrefois bergers nomades, possèdent aujourd'hui les plus hauts gratte-ciels du monde (Burj Khalifa: 828m).",
-    fulfillmentEn: "Dubai, Abu Dhabi, Riyadh... The desert Arabs, once nomadic shepherds, now own the world's tallest skyscrapers (Burj Khalifa: 828m).",
-    date: "20th-21st century",
+    prophecy: "Tu verras les bergers de chameaux aux pieds nus, dévêtus et pauvres, rivaliser dans la construction de hauts édifices.",
+    fulfillment: "Dubaï, Abu Dhabi, Riyad... Les Arabes du désert, autrefois bergers nomades, possèdent aujourd'hui les plus hauts gratte-ciels du monde (Burj Khalifa: 828m).",
+    date: "XXe-XXIe siècle",
     status: "fulfilled",
     category: "hadith"
   },
   {
     id: "constantinople",
-    titleFr: "Conquête de Constantinople",
-    titleEn: "Conquest of Constantinople",
+    title: "Conquête de Constantinople",
     arabic: "لَتُفْتَحَنَّ الْقُسْطَنْطِينِيَّةُ",
     source: "Musnad Ahmad",
-    prophecyFr: "Constantinople sera certainement conquise. Quel excellent commandant sera son conquérant, et quelle excellente armée sera cette armée.",
-    prophecyEn: "Constantinople will certainly be conquered. What an excellent commander will be its conqueror, and what an excellent army will that army be.",
-    fulfillmentFr: "En 1453, le Sultan Mehmet II a conquis Constantinople, réalisant la prophétie du Prophète ﷺ faite 800 ans plus tôt.",
-    fulfillmentEn: "In 1453, Sultan Mehmed II conquered Constantinople, fulfilling the Prophet's ﷺ prophecy made 800 years earlier.",
-    date: "1453 CE",
+    prophecy: "Constantinople sera certainement conquise. Quel excellent commandant sera son conquérant, et quelle excellente armée sera cette armée.",
+    fulfillment: "En 1453, le Sultan Mehmet II a conquis Constantinople, réalisant la prophétie du Prophète ﷺ faite 800 ans plus tôt.",
+    date: "1453 apr. J.-C.",
     status: "fulfilled",
     category: "hadith"
   },
   {
     id: "interest",
-    titleFr: "Généralisation de l'usure (Riba)",
-    titleEn: "Spread of Usury (Riba)",
+    title: "Généralisation de l'usure (Riba)",
     arabic: "لَيَأْتِيَنَّ عَلَى النَّاسِ زَمَانٌ لَا يَبْقَى أَحَدٌ إِلَّا أَكَلَ الرِّبَا",
     source: "Sunan Ibn Majah",
-    prophecyFr: "Un temps viendra où personne ne pourra éviter de consommer de l'usure (intérêt bancaire), et celui qui ne la consomme pas sera touché par sa poussière.",
-    prophecyEn: "A time will come when no one will be able to avoid consuming usury (bank interest), and whoever does not consume it will be touched by its dust.",
-    fulfillmentFr: "Aujourd'hui, le système bancaire mondial est entièrement basé sur l'intérêt. Prêts, cartes de crédit, hypothèques... impossible d'y échapper totalement.",
-    fulfillmentEn: "Today, the global banking system is entirely based on interest. Loans, credit cards, mortgages... impossible to completely avoid.",
-    date: "Modern era",
+    prophecy: "Un temps viendra où personne ne pourra éviter de consommer de l'usure (intérêt bancaire), et celui qui ne la consomme pas sera touché par sa poussière.",
+    fulfillment: "Aujourd'hui, le système bancaire mondial est entièrement basé sur l'intérêt. Prêts, cartes de crédit, hypothèques... impossible d'y échapper totalement.",
+    date: "Ère moderne",
     status: "fulfilled",
     category: "hadith"
   },
   {
     id: "communication",
-    titleFr: "Communication instantanée mondiale",
-    titleEn: "Instant Worldwide Communication",
+    title: "Communication instantanée mondiale",
     arabic: "حَتَّى تُكَلِّمَ الرَّجُلَ فَخِذُهُ",
     source: "Musnad Ahmad",
-    prophecyFr: "... jusqu'à ce que la cuisse de l'homme lui parle (l'informe de ce que sa famille fait en son absence).",
-    prophecyEn: "... until a man's thigh speaks to him (informs him of what his family is doing in his absence).",
-    fulfillmentFr: "Le smartphone, porté sur la cuisse/poche, nous permet de communiquer instantanément avec le monde entier et de savoir ce que font nos proches.",
-    fulfillmentEn: "The smartphone, carried on the thigh/pocket, allows us to communicate instantly with the entire world and know what our loved ones are doing.",
-    date: "21st century",
+    prophecy: "... jusqu'à ce que la cuisse de l'homme lui parle (l'informe de ce que sa famille fait en son absence).",
+    fulfillment: "Le smartphone, porté sur la cuisse/poche, nous permet de communiquer instantanément avec le monde entier et de savoir ce que font nos proches.",
+    date: "XXIe siècle",
     status: "fulfilled",
     category: "hadith"
   },
   {
     id: "jerusalem",
-    titleFr: "Retour des Musulmans à Jérusalem",
-    titleEn: "Return of Muslims to Jerusalem",
+    title: "Retour des Musulmans à Jérusalem",
     arabic: "لَا تَقُومُ السَّاعَةُ حَتَّى يُقَاتِلَ الْمُسْلِمُونَ الْيَهُودَ",
     source: "Sahih Muslim",
-    prophecyFr: "La fin des temps ne viendra pas avant que les Musulmans ne combattent les Juifs...",
-    prophecyEn: "The end times will not come until the Muslims fight the Jews...",
-    fulfillmentFr: "Prophétie en cours concernant les événements de la Terre Sainte.",
-    fulfillmentEn: "Ongoing prophecy concerning events in the Holy Land.",
-    date: "Ongoing",
+    prophecy: "La fin des temps ne viendra pas avant que les Musulmans ne combattent les Juifs...",
+    fulfillment: "Prophétie en cours concernant les événements de la Terre Sainte.",
+    date: "À venir",
     status: "ongoing",
     category: "hadith"
   },
   {
     id: "dajjal",
-    titleFr: "Apparition du Dajjal (Antéchrist)",
-    titleEn: "Appearance of the Dajjal (Antichrist)",
+    title: "Apparition du Dajjal (Antéchrist)",
     arabic: "الْمَسِيحُ الدَّجَّالُ",
     source: "Sahih Bukhari & Muslim",
-    prophecyFr: "Le Dajjal émergera... Il prétendra être Dieu, fera des miracles trompeurs, et régnera sur la Terre pendant 40 jours.",
-    prophecyEn: "The Dajjal will emerge... He will claim to be God, perform deceptive miracles, and rule the Earth for 40 days.",
-    fulfillmentFr: "Prophétie des fins des temps, signes précurseurs observés (système mondial de contrôle, désinformation généralisée).",
-    fulfillmentEn: "End times prophecy, precursor signs observed (global control system, widespread misinformation).",
-    date: "End times",
+    prophecy: "Le Dajjal émergera... Il prétendra être Dieu, fera des miracles trompeurs, et régnera sur la Terre pendant 40 jours.",
+    fulfillment: "Prophétie des fins des temps, signes précurseurs observés (système mondial de contrôle, désinformation généralisée).",
+    date: "Fin des temps",
     status: "future",
     category: "hadith"
   },
   {
     id: "isa-return",
-    titleFr: "Retour de Jésus ('Issa)",
-    titleEn: "Return of Jesus (Issa)",
+    title: "Retour de Jésus ('Issa)",
     arabic: "لَيَنْزِلَنَّ ابْنُ مَرْيَمَ حَكَمًا عَدْلًا",
     source: "Sahih Bukhari",
-    prophecyFr: "Le fils de Marie descendra parmi vous en tant que juge équitable. Il brisera la croix, tuera le porc, et abolira la Jizyah.",
-    prophecyEn: "The son of Mary will descend among you as a just judge. He will break the cross, kill the pig, and abolish the Jizyah.",
-    fulfillmentFr: "Prophétie des fins des temps. 'Issa reviendra pour établir la justice et vaincre le Dajjal.",
-    fulfillmentEn: "End times prophecy. Issa will return to establish justice and defeat the Dajjal.",
-    date: "End times",
+    prophecy: "Le fils de Marie descendra parmi vous en tant que juge équitable. Il brisera la croix, tuera le porc, et abolira la Jizyah.",
+    fulfillment: "Prophétie des fins des temps. 'Issa reviendra pour établir la justice et vaincre le Dajjal.",
+    date: "Fin des temps",
     status: "future",
     category: "hadith"
-  }
-];
-
-const otherProphecies: OtherProphecy[] = [
-  {
-    id: "bible-end",
-    titleFr: "Retour imminent de Jésus",
-    titleEn: "Imminent Return of Jesus",
-    source: "Matthew 24:34, 16:28",
-    religionFr: "Christianisme",
-    religionEn: "Christianity",
-    prophecyFr: "Cette génération ne passera pas que tout cela n'arrive... Il y en a ici présents qui ne goûteront pas la mort avant d'avoir vu le Fils de l'homme venir dans son Royaume.",
-    prophecyEn: "This generation will not pass away until all these things take place... There are some standing here who will not taste death until they see the Son of Man coming in his Kingdom.",
-    analysisFr: "2000 ans se sont écoulés. Cette 'génération' est morte depuis longtemps. Les apologistes chrétiens tentent de réinterpréter le sens de 'génération', mais le texte est clair.",
-    analysisEn: "2000 years have passed. This 'generation' died long ago. Christian apologists attempt to reinterpret the meaning of 'generation', but the text is clear.",
-    status: "failed"
-  },
-  {
-    id: "bible-mustard",
-    titleFr: "La graine de moutarde",
-    titleEn: "The Mustard Seed",
-    source: "Matthew 13:31-32",
-    religionFr: "Christianisme",
-    religionEn: "Christianity",
-    prophecyFr: "Jésus dit que le grain de moutarde est 'la plus petite de toutes les graines'.",
-    prophecyEn: "Jesus said that the mustard seed is 'the smallest of all seeds'.",
-    analysisFr: "C'est factuellement faux. Les graines d'orchidées sont bien plus petites. Erreur scientifique dans les paroles attribuées à Jésus.",
-    analysisEn: "This is factually incorrect. Orchid seeds are much smaller. Scientific error in words attributed to Jesus.",
-    status: "failed"
-  },
-  {
-    id: "jewish-messiah",
-    titleFr: "Le Messie reconstruira le Temple",
-    titleEn: "The Messiah Will Rebuild the Temple",
-    source: "Talmud, Maimonide",
-    religionFr: "Judaïsme",
-    religionEn: "Judaism",
-    prophecyFr: "Le Messie juif doit reconstruire le Temple de Jérusalem, rassembler tous les Juifs en Israël, et établir la paix mondiale.",
-    prophecyEn: "The Jewish Messiah must rebuild the Temple of Jerusalem, gather all Jews in Israel, and establish world peace.",
-    analysisFr: "Après 2000 ans, le Temple n'est toujours pas reconstruit. Les Juifs ont rejeté Jésus car il n'a pas accompli ces critères, mais leur propre Messie attendu non plus.",
-    analysisEn: "After 2000 years, the Temple is still not rebuilt. Jews rejected Jesus because he didn't fulfill these criteria, but their own expected Messiah hasn't either.",
-    status: "unfulfilled"
-  },
-  {
-    id: "nostradamus",
-    titleFr: "Prophéties de Nostradamus",
-    titleEn: "Nostradamus Prophecies",
-    source: "Les Centuries (1555)",
-    religionFr: "Occultisme",
-    religionEn: "Occultism",
-    prophecyFr: "Quatrains vagues pouvant être interprétés de multiples façons après coup.",
-    prophecyEn: "Vague quatrains that can be interpreted in multiple ways after the fact.",
-    analysisFr: "Aucune prophétie vérifiable avant l'événement. Les interprétations sont toujours faites a posteriori. Langage volontairement ambigu et cryptique.",
-    analysisEn: "No verifiable prophecy before the event. Interpretations are always made after the fact. Deliberately ambiguous and cryptic language.",
-    status: "ambiguous"
-  },
-  {
-    id: "mayan-2012",
-    titleFr: "Fin du monde Maya",
-    titleEn: "Mayan End of the World",
-    source: "Mayan Calendar",
-    religionFr: "Paganisme",
-    religionEn: "Paganism",
-    prophecyFr: "Le monde devait s'arrêter le 21 décembre 2012 selon le calendrier Maya.",
-    prophecyEn: "The world was supposed to end on December 21, 2012, according to the Mayan calendar.",
-    analysisFr: "Échec complet. Le calendrier Maya indiquait simplement la fin d'un cycle, pas la fin du monde. Interprétation sensationnaliste occidentale.",
-    analysisEn: "Complete failure. The Mayan calendar simply indicated the end of a cycle, not the end of the world. Western sensationalist interpretation.",
-    status: "failed"
-  },
-  {
-    id: "hindu-kalki",
-    titleFr: "Kalki Avatar",
-    titleEn: "Kalki Avatar",
-    source: "Vishnu Purana, Bhagavata Purana",
-    religionFr: "Hindouisme",
-    religionEn: "Hinduism",
-    prophecyFr: "Kalki viendra sur un cheval blanc pour détruire les méchants et restaurer le Dharma à la fin du Kali Yuga.",
-    prophecyEn: "Kalki will come on a white horse to destroy the wicked and restore Dharma at the end of Kali Yuga.",
-    analysisFr: "Prophétie attendue depuis des millénaires, sans date ni critères vérifiables. Nombreux faux prétendants au titre de Kalki.",
-    analysisEn: "Prophecy awaited for millennia, with no date or verifiable criteria. Numerous false claimants to the title of Kalki.",
-    status: "ambiguous"
-  },
-  {
-    id: "zoroaster-end",
-    titleFr: "Saoshyant Zoroastrien",
-    titleEn: "Zoroastrian Saoshyant",
-    source: "Avesta",
-    religionFr: "Zoroastrisme",
-    religionEn: "Zoroastrianism",
-    prophecyFr: "Un sauveur (Saoshyant) naîtra d'une vierge dans un lac sacré et vaincra le mal définitivement.",
-    prophecyEn: "A savior (Saoshyant) will be born of a virgin in a sacred lake and will defeat evil definitively.",
-    analysisFr: "Religion presque éteinte. Le 'lac sacré' n'existe plus. Prophétie impossible à vérifier avec des critères concrets.",
-    analysisEn: "Religion almost extinct. The 'sacred lake' no longer exists. Prophecy impossible to verify with concrete criteria.",
-    status: "unfulfilled"
   }
 ];
 
