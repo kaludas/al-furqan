@@ -1,4 +1,5 @@
 import { useLanguage } from "@/contexts/LanguageContext";
+import { DisclaimerModal } from "./DisclaimerModal";
 
 export const Footer = () => {
   const { t } = useLanguage();
@@ -14,9 +15,12 @@ export const Footer = () => {
             {t("footer.bismillah")}
           </p>
           <div className="h-px w-32 bg-gradient-to-r from-transparent via-primary to-transparent mx-auto mb-6" />
-          <p className="text-muted-foreground text-xs">
+          <p className="text-muted-foreground text-xs mb-4">
             {t("footer.sources")}
           </p>
+          <div className="flex justify-center">
+            <DisclaimerModal />
+          </div>
         </div>
       </div>
     </footer>
