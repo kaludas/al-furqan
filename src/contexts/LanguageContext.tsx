@@ -18,6 +18,7 @@ const translations: Record<Language, Record<string, string>> = {
     "nav.laboratory": "Laboratoire",
     "nav.tawhid": "Tawhid",
     "nav.fitra": "Fitra",
+    "nav.douaa": "Douaa",
     
     // Hero Section
     "hero.subtitle": "Analyse Théologique Comparative",
@@ -399,6 +400,7 @@ const translations: Record<Language, Record<string, string>> = {
     "nav.laboratory": "Laboratory",
     "nav.tawhid": "Tawhid",
     "nav.fitra": "Fitra",
+    "nav.douaa": "Du'a",
     
     // Hero Section
     "hero.subtitle": "Comparative Theological Analysis",
