@@ -10,6 +10,7 @@ export const Navigation = () => {
   const navItems = [
     { id: "hero", label: t("nav.home"), arabic: "الرئيسية" },
     { id: "expert", label: t("nav.expert"), arabic: "الخبير" },
+    { id: "douaa", label: t("nav.douaa"), arabic: "الأدعية" },
     { id: "ijaz", label: t("nav.ijaz"), arabic: "الإعجاز" },
     { id: "timeline", label: t("nav.timeline"), arabic: "التاريخ" },
     { id: "laboratory", label: t("nav.laboratory"), arabic: "المختبر" },
