@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.analyze-symbol]
 verify_jwt = false
+
+[functions.douaa-recommendation]
+verify_jwt = false
