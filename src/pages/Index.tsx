@@ -24,6 +24,7 @@ const Index = () => {
         <HeroSection />
       </div>
       <ExpertChat />
+      <DouaaCompass />
       <SymbolScanner />
       <ReligionComparator />
       <div id="tawhid">
