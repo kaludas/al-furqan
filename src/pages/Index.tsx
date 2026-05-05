@@ -14,7 +14,7 @@ import { HamanModule } from "@/components/HamanModule";
 import { RingCompositionModule } from "@/components/RingCompositionModule";
 import { EntropyModule } from "@/components/EntropyModule";
 import { OccultDisenchantmentModule } from "@/components/OccultDisenchantmentModule";
-
+import { DouaaCompass } from "@/components/DouaaCompass";
 
 const Index = () => {
   return (
