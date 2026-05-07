@@ -762,7 +762,8 @@ export const ExpertChat = () => {
   };
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const el = messagesEndRef.current?.parentElement;
+    if (el) el.scrollTop = el.scrollHeight;
   };
 
   useEffect(() => {

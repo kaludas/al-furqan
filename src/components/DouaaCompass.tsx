@@ -81,7 +81,8 @@ export const DouaaCompass = () => {
   const suggestions = isFr ? SUGGESTIONS_FR : SUGGESTIONS_EN;
 
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: "smooth" });
+    const el = endRef.current?.parentElement;
+    if (el) el.scrollTop = el.scrollHeight;
   }, [messages]);
 
   const send = async (text?: string) => {
